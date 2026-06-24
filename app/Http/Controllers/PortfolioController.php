@@ -113,7 +113,7 @@ class PortfolioController extends Controller
                          ->with('success', 'Karya berhasil dihapus.');
     }
 
-    public function exportPdf(): View
+   public function printView(): View
     {
         $user       = Auth::user();
         $portfolios = Portfolio::with('category')

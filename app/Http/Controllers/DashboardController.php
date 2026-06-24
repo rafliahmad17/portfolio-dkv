@@ -7,11 +7,19 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
     public function siswa()
     {
+        // Fitur Auto-Slug: Membuat URL unik untuk siswa jika belum ada
+        $user = Auth::user();
+        if (empty($user->portfolio_slug)) {
+            $user->portfolio_slug = Str::slug($user->name) . '-' . $user->id;
+            $user->save();
+        }
+
         $portfolios = Portfolio::with('category')
             ->where('user_id', Auth::id())
             ->latest()

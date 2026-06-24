@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PublicPortfolioController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -12,7 +12,7 @@ Route::get('/', function () {
         }
         return redirect()->route('siswa.dashboard');
     }
-    
+
     return view('welcome');
 });
 
@@ -25,24 +25,30 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
 
+// ---------------------------------------------------------------
+// PUBLIC ROUTE — Tidak membutuhkan autentikasi.
+// Dapat diakses oleh siapa saja (pengunjung umum, rekruter, dll.)
+// melalui URL langsung atau scan QR Code.
+// ---------------------------------------------------------------
+Route::get('/p/{slug}', [PublicPortfolioController::class, 'show'])
+    ->name('portfolio.public');
+
 Route::middleware('auth')->group(function () {
 
-    
-    Route::prefix('guru')->name('guru.')->group(function () {
+    Route::prefix('guru')->name('guru.')->middleware('role:admin,guru')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'guru'])->name('dashboard');
     });
 
-    
-    Route::prefix('siswa')->name('siswa.')->group(function () {
+    Route::prefix('siswa')->name('siswa.')->middleware('role:siswa')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'siswa'])->name('dashboard');
 
+        Route::get('/portfolio/print',  [\App\Http\Controllers\PortfolioController::class, 'printView'])->name('portfolio.print');
         Route::get('/portfolio/create', [\App\Http\Controllers\PortfolioController::class, 'create'])->name('portfolio.create');
-        Route::post('/portfolio', [\App\Http\Controllers\PortfolioController::class, 'store'])->name('portfolio.store');
-        
+        Route::post('/portfolio',       [\App\Http\Controllers\PortfolioController::class, 'store'])->name('portfolio.store');
+
         Route::get('/portfolio/{portfolio}/edit', [\App\Http\Controllers\PortfolioController::class, 'edit'])->name('portfolio.edit');
-        Route::put('/portfolio/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'update'])->name('portfolio.update');
-        Route::delete('/portfolio/{portfolio}', [\App\Http\Controllers\PortfolioController::class, 'destroy'])->name('portfolio.destroy');
-        Route::get('/portfolio/export-pdf', [\App\Http\Controllers\PortfolioController::class, 'exportPdf'])->name('portfolio.export');
+        Route::put('/portfolio/{portfolio}',      [\App\Http\Controllers\PortfolioController::class, 'update'])->name('portfolio.update');
+        Route::delete('/portfolio/{portfolio}',   [\App\Http\Controllers\PortfolioController::class, 'destroy'])->name('portfolio.destroy');
     });
 
 });

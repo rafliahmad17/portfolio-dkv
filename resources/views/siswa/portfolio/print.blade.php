@@ -49,19 +49,14 @@ public function printView(): \Illuminate\View\View {
     </script>
 
     <style>
-        /* ============================================================
-           §01 — PAGE CONFIGURATION (PRINT FOUNDATION)
-           Alasan: @page mengontrol ukuran kertas dan margin secara
-           presisi di level CSS engine, tidak bisa digantikan Tailwind.
-           margin 15mm adalah standar laporan profesional.
-        ============================================================ */
+      
         @media print {
             @page {
                 size: A4 portrait;
                 margin: 15mm 14mm 14mm 14mm;
             }
 
-            /* Pastikan semua warna tercetak tepat di Chrome/Edge */
+
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -99,11 +94,7 @@ public function printView(): \Illuminate\View\View {
 
         @media print { body { background: white; } }
 
-        /* ============================================================
-           §03 — WATERMARK
-           Alasan: opacity 0.022 — terlihat hanya saat di-zoom,
-           tidak mengganggu karya namun menunjukkan keaslian institusi
-        ============================================================ */
+       
         .wm {
             position: fixed;
             top: 50%;
@@ -120,11 +111,7 @@ public function printView(): \Illuminate\View\View {
             user-select: none;
         }
 
-        /* ============================================================
-           §04 — A4 PAPER CONTAINER
-           Alasan: Simulasi kertas A4 (210mm) di layar dengan shadow
-           natural. Print mode override ke 100% width tanpa margin.
-        ============================================================ */
+        
         .a4 {
             width: 210mm;
             margin: 0 auto;
@@ -151,21 +138,11 @@ public function printView(): \Illuminate\View\View {
             }
         }
 
-        /* ============================================================
-           §05 — PAGE BREAK SYSTEM
-           Alasan: break-before/after/inside mengontrol alur cetak.
-           avoid-break memastikan item tidak terpotong antar halaman.
-        ============================================================ */
-        .pb-after  { break-after: page; }
+       
         .pb-before { break-before: page; }
         .pb-avoid  { break-inside: avoid; }
 
-        /* ============================================================
-           §06 — COVER PAGE
-           Alasan: Background hitam penuh dengan tipografi putih
-           menciptakan first impression premium — standar internasional
-           portfolio agency seperti Pentagram dan Landor Associates.
-        ============================================================ */
+    
         .cover {
             background-color: #0a0a0a;
             min-height: 297mm;
@@ -173,7 +150,7 @@ public function printView(): \Illuminate\View\View {
             overflow: hidden;
         }
 
-        /* Accent panel kanan — menciptakan asymmetry geometris */
+       
         .cover-panel {
             position: absolute;
             top: 0; right: 0; bottom: 0;
@@ -181,7 +158,7 @@ public function printView(): \Illuminate\View\View {
             background-color: #111111;
         }
 
-        /* Garis merah diagonal — memecah monotoni hitam */
+   
         .cover-diagonal {
             position: absolute;
             top: 0; bottom: 0;
@@ -191,7 +168,7 @@ public function printView(): \Illuminate\View\View {
             transform: skewX(-1.5deg);
         }
 
-        /* Strip merah bawah — grounding visual */
+      
         .cover-foot-red {
             position: absolute;
             bottom: 0; left: 0; right: 0;
@@ -199,13 +176,7 @@ public function printView(): \Illuminate\View\View {
             background-color: #dc2626;
         }
 
-        /* ============================================================
-           §07 — TYPOGRAPHY SYSTEM
-           Alasan: 6 level hierarki yang konsisten di seluruh dokumen.
-           Kontras ukuran ekstrem menciptakan scanability profesional.
-        ============================================================ */
-
-        /* Level 1 — Cover headline, sangat besar */
+        
         .t-cover {
             font-size: 64pt;
             font-weight: 900;
@@ -214,7 +185,7 @@ public function printView(): \Illuminate\View\View {
             color: #ffffff;
         }
 
-        /* Level 2 — Section title, commanding */
+
         .t-section {
             font-size: 28pt;
             font-weight: 800;
@@ -223,7 +194,7 @@ public function printView(): \Illuminate\View\View {
             color: #0a0a0a;
         }
 
-        /* Level 3 — Portfolio title */
+       
         .t-portfolio {
             font-size: 20pt;
             font-weight: 800;
@@ -232,7 +203,7 @@ public function printView(): \Illuminate\View\View {
             color: #0a0a0a;
         }
 
-        /* Level 4 — Body text */
+      
         .t-body {
             font-size: 8.5pt;
             font-weight: 400;
@@ -240,7 +211,7 @@ public function printView(): \Illuminate\View\View {
             color: #374151;
         }
 
-        /* Level 5 — Label / eyebrow */
+      
         .t-label {
             font-size: 6pt;
             font-weight: 700;
@@ -249,18 +220,14 @@ public function printView(): \Illuminate\View\View {
             color: #9ca3af;
         }
 
-        /* Level 6 — Micro / caption */
+       
         .t-micro {
             font-size: 6.5pt;
             font-weight: 500;
             color: #9ca3af;
         }
 
-        /* ============================================================
-           §08 — SECTION LABEL (Red accent + text)
-           Alasan: Penanda section yang konsisten menciptakan
-           identitas visual dan navigasi dalam buku portofolio
-        ============================================================ */
+        
         .section-marker {
             display: flex;
             align-items: center;
