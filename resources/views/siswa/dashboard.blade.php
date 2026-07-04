@@ -34,7 +34,7 @@
             overflow-x: hidden;
         }
 
-        /* ── NOISE ── */
+
         body::before {
             content: '';
             position: fixed; inset: 0;
@@ -42,7 +42,7 @@
             pointer-events: none; z-index: 0;
         }
 
-        /* ── GRID ── */
+
         .bg-grid {
             position: fixed; inset: 0;
             background-image:
@@ -52,7 +52,7 @@
             pointer-events: none; z-index: 0;
         }
 
-        /* ── AMBIENT BLOBS ── */
+
         .blob {
             position: fixed; border-radius: 50%;
             pointer-events: none; z-index: 0;
@@ -79,9 +79,7 @@
         ::-webkit-scrollbar-track { background: #080808; }
         ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
 
-        /* ================================================================
-           SIDEBAR
-        ================================================================ */
+
         .sidebar {
             position: fixed; top: 0; left: 0;
             width: 260px; height: 100vh;
@@ -101,7 +99,7 @@
             background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
         }
 
-        /* Logo */
+
         .sidebar-logo {
             padding: 28px 24px 22px;
             border-bottom: 1px solid var(--border);
@@ -127,7 +125,7 @@
 
         .logo-icon svg { width: 13px; height: 13px; }
 
-        /* Profile Block */
+
         .sidebar-profile {
             padding: 20px 24px;
             border-bottom: 1px solid var(--border);
@@ -273,16 +271,14 @@
 
         .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-        /* ================================================================
-           MAIN CONTENT
-        ================================================================ */
+    
         .main-content {
             margin-left: 260px;
             min-height: 100vh;
             position: relative; z-index: 1;
         }
 
-        /* Top Bar */
+        
         .topbar {
             position: sticky; top: 0; z-index: 30;
             background: rgba(8,8,8,0.85);
@@ -678,7 +674,7 @@
 
         .btn-action-delete svg { width: 13px; height: 13px; }
 
-        /* ── EMPTY STATE ── */
+        
         .empty-wrap {
             padding: 80px 40px;
             text-align: center;
@@ -709,7 +705,7 @@
             line-height: 1.6;
         }
 
-        /* ── FLASH MESSAGE ── */
+   
         .flash-success {
             display: flex; align-items: center; gap: 12px;
             background: rgba(34,197,94,0.08);
@@ -724,7 +720,7 @@
 
         .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: #4ade80; }
 
-        /* ── ADD PLACEHOLDER CARD ── */
+        
         .add-card {
             border: 1.5px dashed rgba(255,255,255,0.07);
             border-radius: 16px;
@@ -792,9 +788,15 @@
     {{-- Profile --}}
     <div class="sidebar-profile">
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-            <div class="profile-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-            </div>
+            <div class="profile-avatar" style="overflow:hidden; padding:0;">
+    @if(auth()->user()->photo)
+        <img src="{{ asset('storage/' . auth()->user()->photo) }}"
+             alt="{{ auth()->user()->name }}"
+             style="width:100%; height:100%; object-fit:cover; border-radius:inherit;">
+    @else
+        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+    @endif
+</div>
             <div style="flex:1; min-width:0;">
                 <div class="profile-name">{{ auth()->user()->name }}</div>
                 <div class="profile-nis">NIS: {{ auth()->user()->nis_nip ?? '—' }}</div>
@@ -837,7 +839,7 @@
 
         <div class="nav-label" style="margin-top:20px;">Akun</div>
 
-        <a href="#" class="nav-item">
+        <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
