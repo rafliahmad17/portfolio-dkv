@@ -25,4 +25,26 @@ class PublicPortfolioController extends Controller
             ->get();
         return view('public.portfolio.show', compact('portfolio', 'relatedPortfolios'));
     }
+
+    /**
+     * Halaman profil publik siswa — menampilkan seluruh karya
+     * milik satu siswa melalui portfolio_slug miliknya.
+     * Inilah implementasi "Live URL Portfolio" yang dimaksud di proposal.
+     */
+    public function profile($slug)
+    {
+        $user = User::where('portfolio_slug', $slug)
+            ->where('role', 'siswa')
+            ->firstOrFail();
+
+        $portfolios = Portfolio::with('category')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        $totalKarya = $portfolios->count();
+        $totalKategori = $portfolios->pluck('category_id')->unique()->count();
+
+        return view('public.portfolio.profile', compact('user', 'portfolios', 'totalKarya', 'totalKategori'));
+    }
 }

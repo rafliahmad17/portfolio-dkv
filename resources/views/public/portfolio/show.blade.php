@@ -506,7 +506,7 @@
                     <div style="font-size:0.7rem; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.2); margin-bottom:12px;">
                         Dokumen Pendukung
                     </div>
-                    
+                    <a
                         href="{{ asset('storage/' . $portfolio->file_pdf_path) }}"
                         target="_blank"
                         style="display:inline-flex; align-items:center; gap:8px; background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.2); color:#fca5a5; padding:10px 16px; border-radius:10px; font-size:0.78rem; font-weight:700; text-decoration:none; transition:all 0.22s ease;"
@@ -636,7 +636,7 @@
                     </a>
                     @endif
 
-                    <a href="{{ url('/') }}" class="btn-outline" style="margin-top:8px;">
+                    <a href="{{ route('portfolio.profile', $portfolio->user->portfolio_slug) }}" class="btn-outline" style="margin-top:8px;">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>

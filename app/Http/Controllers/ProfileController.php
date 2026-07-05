@@ -47,7 +47,9 @@ class ProfileController extends Controller
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);
-        }save();
+        }
+
+        $user->save();
 
         return redirect()->route('siswa.profile.edit')
                          ->with('success', 'Profil berhasil diperbarui! ✏️');

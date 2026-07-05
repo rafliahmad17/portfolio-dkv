@@ -29,8 +29,11 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 
-Route::get('/p/{slug}', [PortfolioController::class, 'publicShow'])
+Route::get('/p/{slug}', [PublicPortfolioController::class, 'show'])
     ->name('portfolio.public');
+
+Route::get('/u/{slug}', [PublicPortfolioController::class, 'profile'])
+    ->name('portfolio.profile');
 
 Route::middleware('auth')->group(function () {
 
