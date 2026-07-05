@@ -114,13 +114,22 @@ class PortfolioController extends Controller
     }
 
    public function printView(): View
-    {
-        $user       = Auth::user();
-        $portfolios = Portfolio::with('category')
-            ->where('user_id', $user->id)
-            ->latest()
-            ->get();
+{
+    $user = Auth::user();
+    
+    // Ambil semua portofolio user
+    $portfolios = Portfolio::with('category')
+        ->where('user_id', $user->id)
+        ->latest()
+        ->get();
 
-        return view('siswa.portfolio.print', compact('portfolios', 'user'));
-    }
+    // Hitung statistik untuk dikirim ke view
+    $totalKarya = $portfolios->count();
+    $byKat      = $portfolios->groupBy(fn ($p) => $p->category?->name ?? 'Umum');
+    $totalKat   = $byKat->count();
+    $totalPdf   = $portfolios->whereNotNull('file_pdf_path')->count();
+
+    // Kirim semua variabel ke view
+    return view('siswa.portfolio.print', compact('portfolios', 'user', 'totalKarya', 'totalKat', 'totalPdf', 'byKat'));
+}
 }

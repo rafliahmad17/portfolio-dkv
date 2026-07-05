@@ -1,1034 +1,817 @@
-{{--
-============================================================
-📄 resources/views/siswa/portfolio/print.blade.php
-============================================================
-PORTFOLIO DIGITAL DKV — Premium Editorial Print View
-Versi   : 3.0 Final Professional Edition
-Target  : Browser Print → Chrome/Edge → A4 PDF
-Standar : Portfolio Book Profesional / Creative Agency
-
-ROUTE yang dibutuhkan (tambahkan di routes/web.php):
-────────────────────────────────────────────────────
-Route::get('/portfolio/print', [\App\Http\Controllers\PortfolioController::class, 'printView'])->name('portfolio.print');
-
-CONTROLLER METHOD yang dibutuhkan (di PortfolioController.php):
-────────────────────────────────────────────────────────────────
-public function printView(): \Illuminate\View\View {
-    $user = Auth::user();
-    $portfolios = Portfolio::with('category')
-        ->where('user_id', $user->id)
-        ->latest()->get();
-    return view('siswa.portfolio.print', compact('portfolios', 'user'));
-}
-============================================================
---}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio — {{ $user->name }}</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Portfolio — {{ $user->name }}</title>
 
-    {{-- [CDN] Tailwind CSS --}}
-    <script src="https://cdn.tailwindcss.com"></script>
+{{-- ============================================================
+     FONTS — Söhne-style display pairing untuk editorial book
+     Fraunces  → display serif, karakter kuat untuk judul besar
+     Inter     → body & UI, netral dan sangat terbaca di cetak kecil
+     JetBrains Mono → angka indeks & metadata teknis (nomor halaman, tanggal)
+============================================================ --}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-    {{-- [FONT] Inter — Professional sans-serif, optimal untuk cetak --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;0,14..32,800;0,14..32,900;1,14..32,400&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          display: ['Fraunces', 'Georgia', 'serif'],
+          sans: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'monospace'],
+        },
+        colors: {
+          ink:   '#171310',
+          paper: '#FAF7F2',
+          clay:  '#B5462F',
+          sand:  '#D8CFC0',
+        },
+      },
+    },
+  };
+</script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'Helvetica Neue', 'Arial', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
+<style>
+  /* ============================================================
+     §00 — DESIGN TOKENS
+     Palet "Studio Cetak" — kertas hangat, tinta hampir-hitam,
+     dan satu aksen terracotta gelap (bukan oranye generik AI)
+     yang direferensikan dari sampul buku desain klasik era 60-an.
+  ============================================================ */
+  :root{
+    --ink:      #171310;
+    --ink-soft: #4A4038;
+    --paper:    #FAF7F2;
+    --paper-2:  #F1EBE1;
+    --clay:     #B5462F;
+    --clay-dim: #8C3823;
+    --sand:     #D8CFC0;
+    --line:     #E4DCCC;
+    --line-2:   #29241E;
+  }
 
-    <style>
-      
-        @media print {
-            @page {
-                size: A4 portrait;
-                margin: 15mm 14mm 14mm 14mm;
-            }
+  *,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
 
+  html{ -webkit-text-size-adjust:100%; }
 
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
+  body{
+    font-family:'Inter',Helvetica,Arial,sans-serif;
+    font-size:9.5pt;
+    line-height:1.65;
+    color:var(--ink);
+    background:#DCD5C8;
+  }
 
-            body {
-                background: #ffffff !important;
-                counter-reset: portfolio-page;
-            }
+  /* ============================================================
+     §01 — SCREEN CHROME (mobile-first control bar + book shadow)
+     Di layar HP: sembunyikan hint cetak, tampilkan CTA unduh besar.
+     Di layar desktop: tampilkan buku dengan bayangan halaman nyata.
+  ============================================================ */
+  .toolbar{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:10px 14px;
+    background:rgba(23,19,16,0.92);
+    backdrop-filter:blur(10px);
+    color:var(--paper);
+  }
+  .toolbar-brand{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    color:rgba(250,247,242,0.5);
+  }
+  .toolbar-actions{ display:flex; gap:8px; align-items:center; }
+  .btn{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Inter',sans-serif; font-size:12px; font-weight:600;
+    padding:8px 14px; border-radius:7px; border:none; cursor:pointer;
+    text-decoration:none; white-space:nowrap;
+  }
+  .btn-ghost{ background:rgba(250,247,242,0.08); color:var(--paper); }
+  .btn-clay{ background:var(--clay); color:#fff; box-shadow:0 6px 16px rgba(181,70,47,0.35); }
 
-            /* Elemen layar tersembunyi saat cetak */
-            .screen-only { display: none !important; }
+  .mobile-banner{ display:none; }
 
-            /* Counter halaman untuk elemen .page-num */
-            .page-num::before {
-                counter-increment: portfolio-page;
-                content: counter(portfolio-page);
-            }
-        }
+  @media (max-width: 640px){
+    .toolbar-brand span:last-child{ display:none; }
+    .btn-ghost{ display:none; }
+    .mobile-banner{
+      display:flex; flex-direction:column; gap:10px;
+      margin:14px; padding:16px;
+      background:var(--ink); color:var(--paper);
+      border-radius:14px;
+    }
+    .mobile-banner .btn-clay{ justify-content:center; width:100%; padding:12px; font-size:14px; }
+  }
 
-        /* ============================================================
-           §02 — GLOBAL BASE STYLES
-           Alasan: Reset bersih + font system konsisten di seluruh dokumen
-        ============================================================ */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  .stage{ padding:28px 0 60px; }
+  @media (max-width:640px){ .stage{ padding:0 0 40px; } }
 
-        body {
-            font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-            font-size: 10pt;
-            line-height: 1.6;
-            color: #0a0a0a;
-            background: #e8e8e8;
-        }
+  /* ============================================================
+     §02 — PAGE / SHEET SYSTEM
+  ============================================================ */
+  .sheet{
+    width:210mm;
+    height:297mm;
+    margin:0 auto 10mm;
+    background:var(--paper);
+    position:relative;
+    overflow:hidden;
+  }
+  @media screen{
+    .sheet{
+      box-shadow:
+        0 1px 1px rgba(23,19,16,0.06),
+        0 8px 24px rgba(23,19,16,0.10),
+        0 30px 70px rgba(23,19,16,0.14);
+    }
+  }
+  @media screen and (max-width:900px){
+    .sheet{ width:100%; height:auto; min-height:0; margin-bottom:14px; border-radius:10px; }
+  }
+  @media print{
+    .sheet{ width:100%; height:297mm; margin:0; box-shadow:none; border-radius:0; }
+  }
 
-        @media print { body { background: white; } }
+  .sheet-pad{ padding:18mm 16mm; }
+  @media screen and (max-width:900px){ .sheet-pad{ padding:8mm 7mm 10mm; } }
 
-       
-        .wm {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-28deg);
-            font-size: 52pt;
-            font-weight: 900;
-            letter-spacing: 0.18em;
-            color: #000000;
-            opacity: 0.022;
-            pointer-events: none;
-            z-index: 9999;
-            white-space: nowrap;
-            user-select: none;
-        }
+  /* Watermark — halus, terpasang di setiap sheet */
+  .wm{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none; user-select:none; z-index:0;
+    overflow:hidden;
+  }
+  .wm span{
+    font-family:'Fraunces',serif; font-weight:600; font-style:italic;
+    font-size:64pt; letter-spacing:.02em;
+    color:var(--ink); opacity:0.025;
+    transform:rotate(-6deg);
+    white-space:nowrap;
+  }
+  @media screen and (max-width:900px){ .wm span{ font-size:34pt; } }
 
-        
-        .a4 {
-            width: 210mm;
-            margin: 0 auto;
-            background: #ffffff;
-            position: relative;
-        }
+  .z1{ position:relative; z-index:1; }
 
-        @media screen {
-            .a4 {
-                box-shadow:
-                    0 0 0 0.5px rgba(0,0,0,0.05),
-                    0 4px 8px rgba(0,0,0,0.08),
-                    0 20px 60px rgba(0,0,0,0.12);
-                margin: 24px auto;
-                margin-bottom: 0;
-            }
-        }
+  /* ============================================================
+     §03 — TYPE SCALE
+  ============================================================ */
+  .idx{
+    font-family:'JetBrains Mono',monospace;
+    font-size:8.5px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .eyebrow{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:8.5px; font-weight:500; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--clay);
+    margin-bottom:9mm;
+  }
+  .eyebrow::before{ content:''; width:20px; height:1px; background:var(--clay); flex-shrink:0; }
 
-        @media print {
-            .a4 {
-                width: 100%;
-                margin: 0;
-                box-shadow: none;
-            }
-        }
+  .h-display{
+    font-family:'Fraunces',serif; font-weight:600; font-style:normal;
+    letter-spacing:-.01em; line-height:0.96; color:var(--ink);
+  }
+  .h-cover{ font-size:58pt; }
+  @media screen and (max-width:900px){ .h-cover{ font-size:15vw; } }
+  .h-section{ font-size:27pt; }
+  @media screen and (max-width:900px){ .h-section{ font-size:26px; } }
+  .h-work{ font-size:19pt; letter-spacing:-.008em; }
+  @media screen and (max-width:900px){ .h-work{ font-size:19px; } }
 
-       
-        .pb-before { break-before: page; }
-        .pb-avoid  { break-inside: avoid; }
+  .body-copy{ font-size:9pt; line-height:1.85; color:var(--ink-soft); }
+  @media screen and (max-width:900px){ .body-copy{ font-size:13px; } }
 
-    
-        .cover {
-            background-color: #0a0a0a;
-            min-height: 297mm;
-            position: relative;
-            overflow: hidden;
-        }
+  .cap{
+    font-family:'JetBrains Mono',monospace;
+    font-size:7.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+    color:#8B8175;
+  }
 
-       
-        .cover-panel {
-            position: absolute;
-            top: 0; right: 0; bottom: 0;
-            width: 38%;
-            background-color: #111111;
-        }
+  /* ============================================================
+     §04 — RULES & GRID DEVICES
+  ============================================================ */
+  .rule{ width:100%; height:1px; background:var(--line); }
+  .rule-strong{ width:100%; height:1px; background:var(--line-2); }
+  .rule-clay{ width:26px; height:2px; background:var(--clay); }
 
-   
-        .cover-diagonal {
-            position: absolute;
-            top: 0; bottom: 0;
-            left: 58%;
-            width: 4mm;
-            background-color: #dc2626;
-            transform: skewX(-1.5deg);
-        }
+  .kv{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; padding:6px 0; border-bottom:1px solid var(--line); }
+  .kv .k{ font-family:'JetBrains Mono',monospace; font-size:7.5px; letter-spacing:.1em; text-transform:uppercase; color:#8B8175; }
+  .kv .v{ font-size:9pt; font-weight:600; color:var(--ink); text-align:right; }
 
-      
-        .cover-foot-red {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 5mm;
-            background-color: #dc2626;
-        }
+  /* ============================================================
+     §05 — TABLE OF CONTENTS (dot leaders, real print technique)
+     Menggunakan flex + overflow text daripada border-dotted agar
+     titik-titik tetap presisi baik di layar maupun saat dicetak.
+  ============================================================ */
+  .toc-row{ display:flex; align-items:baseline; gap:6px; padding:7px 0; }
+  .toc-no{ font-family:'JetBrains Mono',monospace; font-size:8.5px; color:var(--clay); font-weight:600; flex-shrink:0; width:20px; }
+  .toc-title{ font-size:9.5pt; font-weight:600; color:var(--ink); white-space:nowrap; flex-shrink:0; }
+  .toc-leader{ flex:1; min-width:8px; border-bottom:1px dotted #C7BCA8; transform:translateY(-3px); }
+  .toc-cat{ font-family:'JetBrains Mono',monospace; font-size:7.5px; letter-spacing:.06em; color:#8B8175; flex-shrink:0; text-align:right; }
 
-        
-        .t-cover {
-            font-size: 64pt;
-            font-weight: 900;
-            letter-spacing: -4px;
-            line-height: 0.88;
-            color: #ffffff;
-        }
+  /* ============================================================
+     §06 — IMAGE FRAME (object-fit: contain — karya tidak terpotong)
+     Dipakai di halaman biodata / elemen lain yang butuh bingkai bebas tinggi.
+  ============================================================ */
+  .frame{
+    width:100%; background:#F1EDE4; border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; min-height:70mm; max-height:148mm;
+  }
+  @media screen and (max-width:900px){ .frame{ max-height:none; min-height:0; } }
+  .frame img{ display:block; width:100%; max-height:148mm; object-fit:contain; }
+  @media screen and (max-width:900px){ .frame img{ max-height:none; } }
 
+  /* ============================================================
+     §06b — GRID KARYA (4 per halaman)
+     Bingkai FIXED aspect-ratio 4:3 — seragam untuk semua karya,
+     apapun orientasi aslinya, sehingga grid selalu rapi dan rata.
+     object-fit:contain tetap dipakai di dalamnya agar tidak crop.
+  ============================================================ */
+  .work-card{
+    border:1px solid var(--line);
+    padding:5mm;
+    background:#fff;
+  }
 
-        .t-section {
-            font-size: 28pt;
-            font-weight: 800;
-            letter-spacing: -1px;
-            line-height: 1.1;
-            color: #0a0a0a;
-        }
+  .frame-fixed{
+    position:relative;
+    width:100%;
+    aspect-ratio:4/3;
+    background:#F1EDE4;
+    border:1px solid var(--line);
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .frame-fixed img{
+    width:100%; height:100%;
+    object-fit:contain;
+    display:block;
+  }
+  .frame-fallback{
+    display:none;
+    position:absolute; inset:0;
+    align-items:center; justify-content:center;
+    flex-direction:column; gap:5px;
+    color:#C7BCA8;
+    background:#F1EDE4;
+  }
+  .frame-tag{
+    position:absolute; top:4px; left:4px; z-index:2;
+  }
 
-       
-        .t-portfolio {
-            font-size: 20pt;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            line-height: 1.15;
-            color: #0a0a0a;
-        }
+  .card-desc{
+    font-size:7.8pt;
+    line-height:1.55;
+    color:var(--ink-soft);
+    text-align:left;
+  }
+  @media screen and (max-width:900px){ .card-desc{ font-size:12.5px; } }
 
-      
-        .t-body {
-            font-size: 8.5pt;
-            font-weight: 400;
-            line-height: 1.8;
-            color: #374151;
-        }
+  .page-qr-footer{
+    display:flex; align-items:center; gap:6mm;
+    margin-top:7mm; padding-top:6mm;
+    border-top:1px solid var(--line);
+  }
+  .page-qr-footer img{ width:56px; height:56px; flex-shrink:0; border:1px solid var(--line); background:#fff; }
+  .qr-link-text{
+    font-family:'JetBrains Mono',monospace; font-size:7px; color:var(--clay);
+    text-decoration:none; word-break:break-all; display:block;
+  }
+  @media screen and (max-width:900px){
+    .work-card{ break-inside:avoid; }
+  }
 
-      
-        .t-label {
-            font-size: 6pt;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: #9ca3af;
-        }
+  /* ============================================================
+     §07 — QR MODULES
+     QR per-karya: kecil, sudut kanan-bawah sidebar, dof link jelas.
+     Master QR: besar, panel dedicated di halaman biodata.
+  ============================================================ */
+  .qr-chip{
+    display:flex; align-items:center; gap:8px;
+    border:1px solid var(--line); background:#fff; padding:6px;
+  }
+  .qr-chip img{ width:44px; height:44px; display:block; flex-shrink:0; }
+  .qr-chip .qr-text{ min-width:0; }
+  .qr-chip .qr-text .cap{ margin-bottom:2px; }
+  .qr-chip .qr-link{
+    font-family:'JetBrains Mono',monospace; font-size:6.8px; color:var(--clay);
+    word-break:break-all; text-decoration:none; line-height:1.4; display:block;
+  }
 
-       
-        .t-micro {
-            font-size: 6.5pt;
-            font-weight: 500;
-            color: #9ca3af;
-        }
+  .qr-master{
+    display:flex; gap:9mm; align-items:center;
+    border:1px solid var(--line); border-top:2px solid var(--ink); padding:8mm;
+    background:var(--paper-2);
+  }
+  @media screen and (max-width:900px){ .qr-master{ flex-direction:column; text-align:center; } }
+  .qr-master img{ width:96px; height:96px; display:block; border:1px solid var(--line); background:#fff; padding:6px; flex-shrink:0; }
 
-        
-        .section-marker {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12mm;
-        }
+  /* ============================================================
+     §08 — BADGES
+  ============================================================ */
+  .tag{
+    display:inline-flex; align-items:center; gap:5px;
+    font-family:'JetBrains Mono',monospace; font-size:7px; font-weight:600;
+    letter-spacing:.1em; text-transform:uppercase;
+    padding:4px 9px; border:1px solid var(--line-2); color:var(--ink);
+  }
+  .tag-fill{ background:var(--clay); border-color:var(--clay); color:#fff; }
 
-        .section-marker::before {
-            content: '';
-            display: block;
-            width: 18px;
-            height: 2px;
-            background-color: #dc2626;
-            flex-shrink: 0;
-        }
+  /* ============================================================
+     §09 — DROP CAP (karya pertama — teknik editorial klasik)
+  ============================================================ */
+  .drop::first-letter{
+    float:left; font-family:'Fraunces',serif; font-weight:600;
+    font-size:4em; line-height:.72; padding-right:6px; color:var(--clay);
+  }
 
-        /* ============================================================
-           §09 — BADGES & PILLS
-        ============================================================ */
-        .badge-red {
-            display: inline-block;
-            background-color: #dc2626;
-            color: #ffffff;
-            font-size: 6pt;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            padding: 3px 10px;
-        }
+  /* ============================================================
+     §10 — BACKGROUND INDEX NUMBER
+  ============================================================ */
+  .bignum{
+    position:absolute; top:14mm; right:16mm;
+    font-family:'Fraunces',serif; font-style:italic; font-weight:500;
+    font-size:70pt; color:rgba(23,19,16,0.05); line-height:1; z-index:0;
+  }
+  @media screen and (max-width:900px){ .bignum{ display:none; } }
 
-        .badge-outline {
-            display: inline-block;
-            border: 1px solid #e5e7eb;
-            color: #6b7280;
-            font-size: 6pt;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            padding: 3px 10px;
-        }
+  /* ============================================================
+     §11 — DARK BOOKENDS (cover + closing — simetri editorial)
+  ============================================================ */
+  .dark{ background:var(--ink); color:var(--paper); }
+  .dark .idx, .dark .cap{ color:rgba(250,247,242,0.35); }
 
-        /* ============================================================
-           §10 — RULES & DIVIDERS
-           Alasan: Garis tipis elegan memisahkan konten tanpa dominan
-        ============================================================ */
-        .rule      { width: 100%; height: 0.5px; background: #e5e7eb; margin: 6mm 0; }
-        .rule-bold { width: 100%; height: 2px;   background: #0a0a0a; margin: 0 0 6mm; }
-        .rule-red  { width: 28px; height: 2px;   background: #dc2626; margin: 4mm 0; }
+  /* ============================================================
+     §12 — PRINT PRECISION LAYER
+  ============================================================ */
+  .brk{ break-after:page; }
+  .avoid{ break-inside:avoid; }
 
-        /* ============================================================
-           §11 — PORTFOLIO IMAGE CONTAINER
-           Alasan: object-contain memastikan SELURUH karya tampil
-           tanpa terpotong. Background gray netral untuk konteks.
-           max-height terkontrol agar tidak overflow ke halaman berikut.
-        ============================================================ */
-        .img-frame {
-            width: 100%;
-            background-color: #f8f8f8;
-            border: 0.5px solid #e5e7eb;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            max-height: 150mm;
-            min-height: 80mm;
-        }
+  @media print{
+    @page{ size:A4 portrait; margin:14mm 13mm; }
+    html,body{ background:#fff !important; }
+    *{ -webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important; }
+    .no-print{ display:none !important; }
+    .stage{ padding:0 !important; }
+    .toolbar{ display:none !important; }
+    a{ color:inherit; text-decoration:none; }
+    .toc-leader{ transform:none; position:relative; top:-3px; }
+  }
 
-        .img-frame img {
-            display: block;
-            max-width: 100%;
-            max-height: 150mm;
-            object-fit: contain;
-            width: 100%;
-        }
-
-        /* ============================================================
-           §12 — PROFILE AVATAR
-        ============================================================ */
-        .avatar {
-            width: 70px;
-            height: 70px;
-            background-color: #0a0a0a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        /* ============================================================
-           §13 — TOC (TABLE OF CONTENTS)
-           Alasan: Dot leader dari CSS menciptakan tampilan daftar isi
-           buku profesional yang rapi dan konsisten
-        ============================================================ */
-        .toc-item {
-            display: flex;
-            align-items: baseline;
-            padding: 5px 0;
-            border-bottom: 0.5px solid #f5f5f5;
-        }
-
-        .toc-num {
-            font-size: 6.5pt;
-            font-weight: 700;
-            color: #dc2626;
-            min-width: 22px;
-            flex-shrink: 0;
-        }
-
-        .toc-name {
-            flex: 1;
-            font-size: 8.5pt;
-            font-weight: 600;
-            color: #0a0a0a;
-            padding-right: 6mm;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        .toc-cat {
-            font-size: 6.5pt;
-            font-weight: 700;
-            color: #9ca3af;
-            text-align: right;
-            flex-shrink: 0;
-            padding-left: 4mm;
-        }
-
-        /* ============================================================
-           §14 — STATISTICS BAR
-           Alasan: Progress bar sebagai infografis sederhana dan efektif
-        ============================================================ */
-        .stat-bar-bg {
-            width: 100%;
-            height: 3px;
-            background-color: #f3f4f6;
-        }
-
-        .stat-bar-fill {
-            height: 100%;
-            background-color: #0a0a0a;
-        }
-
-        /* ============================================================
-           §15 — DROP CAP (untuk karya pertama)
-           Alasan: Drop cap adalah teknik tipografi editorial klasik
-           yang membedakan portfolio book dari laporan biasa
-        ============================================================ */
-        .drop-cap::first-letter {
-            float: left;
-            font-size: 4.2em;
-            font-weight: 900;
-            line-height: 0.7;
-            padding-right: 5px;
-            padding-top: 3px;
-            color: #dc2626;
-        }
-
-        /* ============================================================
-           §16 — DECORATIVE BIG NUMBER (Background)
-           Alasan: Angka besar transparan sebagai elemen desain
-           yang memberikan kedalaman visual tanpa mengganggu konten
-        ============================================================ */
-        .bg-number {
-            position: absolute;
-            top: 12mm;
-            right: 14mm;
-            font-size: 80pt;
-            font-weight: 900;
-            color: rgba(0, 0, 0, 0.04);
-            letter-spacing: -5px;
-            line-height: 1;
-            pointer-events: none;
-            user-select: none;
-        }
-    </style>
+  /* Reduced motion respected — no ambient animation used anywhere
+     in this document by design; body of the piece is print-first. */
+</style>
 </head>
 <body>
 
-{{-- ================================================================
-     WATERMARK — Sangat halus, tercetak di semua halaman
-================================================================ --}}
-<div class="wm" aria-hidden="true">SMKN 2 PADANG PANJANG</div>
+@php
+  /**
+   * qrImg — generator URL QR code (service eksternal, tanpa dependency baru).
+   * fg/bg diberikan tanpa '#' sesuai format qrserver.
+   */
+  $qrImg = function (string $data, int $size = 200, string $fg = '171310', string $bg = 'FAF7F2') {
+      return 'https://api.qrserver.com/v1/create-qr-code/?size=' . $size . 'x' . $size
+          . '&color=' . $fg . '&bgcolor=' . $bg
+          . '&qzone=1&data=' . urlencode($data);
+  };
+
+  /**
+   * qrTargetFor — fallback aman: pakai slug bila tersedia,
+   * jika tidak, gunakan ID agar link tetap valid (tidak pernah 404 karena null).
+   */
+  $qrTargetFor = function ($portfolio) {
+      $slug = $portfolio->slug ?? $portfolio->id;
+      return route('portfolio.public', $slug);
+  };
+
+  $totalKarya = $portfolios->count();
+  $byKat      = $portfolios->groupBy(fn ($p) => $p->category?->name ?? 'Umum');
+  $totalKat   = $byKat->count();
+  $totalPdf   = $portfolios->whereNotNull('file_pdf_path')->count();
+
+  $galleryUrl = \Illuminate\Support\Facades\Route::has('portfolio.gallery')
+      ? route('portfolio.gallery', $user->username ?? $user->id)
+      : route('siswa.dashboard');
+@endphp
 
 {{-- ================================================================
-     SCREEN-ONLY NAVIGATION
-     Alasan: Tombol navigasi hanya di layar, tidak ikut tercetak
+     TOOLBAR — screen only, mobile-first
 ================================================================ --}}
-<div class="screen-only" style="position: fixed; top: 16px; right: 16px; z-index: 9999; display: flex; gap: 8px; align-items: center;">
-    <a href="{{ route('siswa.dashboard') }}"
-       style="display: inline-flex; align-items: center; gap: 7px; background: white; border: 1px solid #d1d5db; color: #374151; font-size: 11px; font-weight: 700; padding: 9px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-decoration: none; font-family: Inter, sans-serif;">
-        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
-        </svg>
-        Kembali
-    </a>
-    <button onclick="window.print()"
-            style="display: inline-flex; align-items: center; gap: 7px; background: #dc2626; color: white; font-size: 11px; font-weight: 700; padding: 9px 18px; border-radius: 8px; box-shadow: 0 4px 14px rgba(220,38,38,0.4); border: none; cursor: pointer; font-family: Inter, sans-serif;">
-        <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-        </svg>
-        Cetak / Simpan PDF
-    </button>
+<div class="toolbar no-print">
+  <div class="toolbar-brand">
+    <span>DKV/SMEKDA</span>
+    <span>— Portfolio Print View</span>
+  </div>
+  <div class="toolbar-actions">
+    <a href="{{ route('siswa.dashboard') }}" class="btn btn-ghost">← Kembali</a>
+    <button onclick="window.print()" class="btn btn-clay">Cetak / Simpan PDF</button>
+  </div>
 </div>
 
 {{-- ================================================================
-     A4 PAPER CONTAINER
+     MOBILE BANNER — tampil hanya di layar kecil (no-print)
+     Alasan: di HP, dialog print browser kurang nyaman untuk buku
+     multi-halaman. Arahkan pengguna ke unduhan langsung.
 ================================================================ --}}
-<div class="a4">
-
-{{-- ============================================================
-     HALAMAN 1 — COVER
-     Alasan desain: Cover hitam total dengan tipografi putih raksasa
-     adalah standar visual portfolio agensi desain internasional.
-     Asimetri geometris merah memberi energi tanpa kehilangan
-     keeleganan. White text on black = high impact, zero noise.
-============================================================ --}}
-<div class="cover pb-avoid" style="break-after: page; position: relative; overflow: hidden; background-color: #0a0a0a; min-height: 297mm;">
-
-    {{-- Panel geometris kanan --}}
-    <div class="cover-panel" style="position: absolute; top: 0; right: 0; bottom: 0; width: 38%; background-color: #111111;"></div>
-
-    {{-- Garis diagonal merah --}}
-    <div class="cover-diagonal" style="position: absolute; top: 0; bottom: 0; left: 58.5%; width: 3mm; background-color: #dc2626; transform: skewX(-1deg);"></div>
-
-    {{-- Strip merah bawah --}}
-    <div class="cover-foot-red" style="position: absolute; bottom: 0; left: 0; right: 0; height: 5mm; background-color: #dc2626;"></div>
-
-    {{-- Content layer --}}
-    <div style="position: relative; z-index: 10; padding: 16mm 14mm 20mm;">
-
-        {{-- Top bar --}}
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.07); padding-bottom: 6mm; margin-bottom: 18mm;">
-            <div>
-                <div class="t-label" style="color: rgba(255,255,255,0.4); margin-bottom: 2mm;">SMK Negeri 2 Padang Panjang</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.18);">Desain Komunikasi Visual &bull; {{ now()->format('Y') }}</div>
-            </div>
-            <div style="display: flex; gap: 3px;">
-                <div style="width: 7mm; height: 7mm; background-color: #dc2626;"></div>
-                <div style="width: 7mm; height: 7mm; background-color: rgba(255,255,255,0.06);"></div>
-            </div>
-        </div>
-
-        {{-- Eyebrow --}}
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6mm;">
-            <div style="width: 16px; height: 1.5px; background-color: #dc2626;"></div>
-            <div class="t-label" style="color: rgba(255,255,255,0.35);">Portfolio Design Book</div>
-        </div>
-
-        {{-- Giant Title --}}
-        <div class="t-cover" style="margin-bottom: 4mm;">CREATIVE</div>
-        <div class="t-cover" style="color: #dc2626; margin-bottom: 8mm;">PORTFOLIO</div>
-
-        {{-- Bold rule --}}
-        <div style="width: 100%; height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 10mm;"></div>
-
-        {{-- Student Name --}}
-        <div class="t-label" style="color: rgba(255,255,255,0.3); margin-bottom: 4mm;">Dipresentasikan oleh</div>
-        <div style="font-size: 24pt; font-weight: 800; color: #ffffff; letter-spacing: -0.8px; line-height: 1.15; margin-bottom: 3mm;">
-            {{ $user->name }}
-        </div>
-        <div class="t-label" style="color: rgba(255,255,255,0.3);">
-            NIS / NIP: {{ $user->nis_nip ?? '—' }}
-            &nbsp;&bull;&nbsp;
-            Kompetensi Keahlian Desain Komunikasi Visual
-        </div>
-
-        {{-- Stats --}}
-        @php
-            $totalKarya = $portfolios->count();
-            $byKat      = $portfolios->groupBy(fn($p) => $p->category?->name ?? 'Umum');
-            $totalKat   = $byKat->count();
-            $totalPdf   = $portfolios->whereNotNull('file_pdf_path')->count();
-        @endphp
-
-        <div style="margin-top: 16mm; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 8mm; display: flex; gap: 0;">
-            <div style="flex: 1; padding-right: 8mm; border-right: 1px solid rgba(255,255,255,0.06);">
-                <div style="font-size: 32pt; font-weight: 900; color: #ffffff; letter-spacing: -2px; line-height: 1;">{{ $totalKarya }}</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.28); margin-top: 2mm;">Karya</div>
-            </div>
-            <div style="flex: 1; padding: 0 8mm; border-right: 1px solid rgba(255,255,255,0.06);">
-                <div style="font-size: 32pt; font-weight: 900; color: #dc2626; letter-spacing: -2px; line-height: 1;">{{ $totalKat }}</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.28); margin-top: 2mm;">Kategori</div>
-            </div>
-            <div style="flex: 1; padding-left: 8mm;">
-                <div style="font-size: 32pt; font-weight: 900; color: rgba(255,255,255,0.5); letter-spacing: -2px; line-height: 1;">{{ $totalPdf }}</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.28); margin-top: 2mm;">Dokumen PDF</div>
-            </div>
-        </div>
-
-    </div>
+<div class="mobile-banner no-print">
+  <div class="cap" style="color:rgba(250,247,242,.5);">Tampilan Layar Kecil Terdeteksi</div>
+  <div style="font-family:'Fraunces',serif; font-weight:600; font-size:17px; line-height:1.3;">
+    Untuk hasil terbaik, unduh sebagai PDF
+  </div>
+  <div style="font-size:12.5px; line-height:1.6; color:rgba(250,247,242,.7);">
+    Buku portofolio ini dirancang untuk kertas A4. Layar HP tetap bisa menampilkannya,
+    tapi tombol di bawah akan membuka dialog simpan/cetak agar kamu mendapat file PDF utuh.
+  </div>
+  <button onclick="window.print()" class="btn btn-clay">Unduh PDF Sekarang</button>
 </div>
 
-{{-- ============================================================
-     HALAMAN 2 — PROFIL DESAINER
-     Alasan: Memperkenalkan persona desainer sebelum karya tampil.
-     Grid 2-kolom: avatar besar kiri, info kanan — standar CV kreatif.
-============================================================ --}}
-<div class="pb-avoid" style="break-after: page; padding: 16mm 14mm; min-height: 267mm; position: relative;">
-
-    <div class="bg-number" aria-hidden="true">01</div>
-
-    <div class="section-marker">
-        <span class="t-label" style="color: #dc2626;">01 — Profil Desainer</span>
-    </div>
-
-    {{-- Profile header --}}
-    <div style="display: flex; gap: 8mm; align-items: flex-start; margin-bottom: 8mm;">
-
-        <div class="avatar" style="background-color: #0a0a0a;">
-            <span style="font-size: 28pt; font-weight: 900; color: #dc2626; line-height: 1;">
-                {{ strtoupper(substr($user->name, 0, 1)) }}
-            </span>
-        </div>
-
-        <div style="flex: 1;">
-            <div class="t-section" style="margin-bottom: 2mm;">{{ $user->name }}</div>
-            <div class="t-label" style="margin-bottom: 5mm;">
-                Siswa Kompetensi Keahlian Desain Komunikasi Visual
-            </div>
-            <div style="display: flex; gap: 4px;">
-                <span class="badge-red">DKV SMEKDA</span>
-                <span class="badge-outline">{{ now()->format('Y') }}</span>
-                @if($portfolios->count() > 0)
-                <span class="badge-outline">{{ $totalKarya }} Karya</span>
-                @endif
-            </div>
-        </div>
-    </div>
-
-    <div class="rule"></div>
-
-    {{-- Info grid --}}
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6mm 10mm; margin-bottom: 8mm;">
-
-        <div>
-            <div class="t-label" style="margin-bottom: 2mm;">NIS / NIP</div>
-            <div style="font-size: 11pt; font-weight: 700; color: #0a0a0a;">{{ $user->nis_nip ?? '—' }}</div>
-        </div>
-
-        <div>
-            <div class="t-label" style="margin-bottom: 2mm;">Email</div>
-            <div style="font-size: 9pt; font-weight: 500; color: #0a0a0a; word-break: break-all;">{{ $user->email }}</div>
-        </div>
-
-        <div>
-            <div class="t-label" style="margin-bottom: 2mm;">Nomor WhatsApp</div>
-            <div style="font-size: 9pt; font-weight: 500; color: #0a0a0a;">{{ $user->phone ?? '—' }}</div>
-        </div>
-
-        <div>
-            <div class="t-label" style="margin-bottom: 2mm;">Institusi</div>
-            <div style="font-size: 9pt; font-weight: 500; color: #0a0a0a;">SMK Negeri 2 Padang Panjang</div>
-        </div>
-
-        <div>
-            <div class="t-label" style="margin-bottom: 2mm;">Total Karya</div>
-            <div style="font-size: 24pt; font-weight: 900; color: #dc2626; letter-spacing: -1px; line-height: 1;">{{ $totalKarya }}</div>
-        </div>
-
-        <div>
-            <div class="t-label" style="margin-bottom: 2mm;">Bidang Keahlian</div>
-            <div style="font-size: 9pt; font-weight: 500; color: #0a0a0a;">Desain Komunikasi Visual</div>
-        </div>
-    </div>
-
-    <div class="rule"></div>
-
-    {{-- Bio --}}
-    <div style="margin-top: 6mm;">
-        <div class="t-label" style="margin-bottom: 4mm;">Tentang Saya</div>
-        <div class="t-body" style="text-align: justify; max-width: 140mm; line-height: 1.85;">
-            Saya adalah siswa Kompetensi Keahlian Desain Komunikasi Visual di SMK Negeri 2 Padang Panjang.
-            Dokumen ini merupakan kompilasi karya desain yang telah dikerjakan sebagai bagian dari proses
-            pembelajaran dan pengembangan kompetensi di bidang desain komunikasi visual. Setiap karya
-            mencerminkan eksplorasi kreatif dan penerapan prinsip desain yang telah dipelajari selama
-            masa studi.
-        </div>
-    </div>
-
-    {{-- Category list --}}
-    @if($totalKat > 0)
-    <div style="margin-top: 8mm;">
-        <div class="t-label" style="margin-bottom: 4mm;">Bidang Karya</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 4px;">
-            @foreach($byKat as $katName => $items)
-            <span class="badge-outline">{{ $katName }} ({{ $items->count() }})</span>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-</div>
+<div class="stage">
 
 {{-- ============================================================
-     HALAMAN 3 — DAFTAR ISI
-     Alasan: Daftar isi profesional membantu pembaca (guru, juri,
-     rekruter) menavigasi buku portofolio dengan efisien.
+     01 — COVER
+     Konsep: sampul buku cetak fisik, bukan slide. Tipografi serif
+     display raksasa dengan italic aksen mengambil bahasa visual
+     katalog pameran seni (Behance Book / Issuu editorial cover).
 ============================================================ --}}
-<div class="pb-avoid" style="break-after: page; padding: 16mm 14mm; min-height: 267mm; position: relative;">
+<div class="sheet brk dark">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="sheet-pad z1" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
 
-    <div class="bg-number" aria-hidden="true">02</div>
-
-    <div class="section-marker">
-        <span class="t-label" style="color: #dc2626;">02 — Daftar Isi</span>
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+      <div class="idx">SMK Negeri 2 Padang Panjang<br><span style="opacity:.5;">Kompetensi Keahlian DKV — {{ now()->format('Y') }}</span></div>
+      <div class="rule-clay" style="width:20px;"></div>
     </div>
 
-    <div class="t-section" style="margin-bottom: 10mm;">
-        Katalog<br>Karya Portofolio
-    </div>
-
-    {{-- TOC entries --}}
     <div>
-        @forelse($portfolios as $i => $p)
-        <div class="toc-item pb-avoid">
-            <div class="toc-num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
-            <div class="toc-name">{{ $p->title }}</div>
-            <div class="toc-cat">{{ $p->category?->name ?? 'Umum' }}</div>
+      <div class="eyebrow" style="color:var(--clay);">Portfolio Design Book</div>
+      <div class="h-display h-cover">Creative</div>
+      <div class="h-display h-cover" style="font-style:italic; color:var(--clay);">Portfolio.</div>
+
+      <div style="margin-top:14mm; display:flex; align-items:flex-end; justify-content:space-between; flex-wrap:wrap; gap:8mm;">
+        <div>
+          <div class="idx" style="margin-bottom:3mm;">Dipresentasikan oleh</div>
+          <div style="font-family:'Fraunces',serif; font-weight:500; font-size:19pt; color:var(--paper);">{{ $user->name }}</div>
+          <div class="idx" style="margin-top:2mm;">NIS/NIP {{ $user->nis_nip ?? '—' }} &nbsp;·&nbsp; Desain Komunikasi Visual</div>
         </div>
-        @empty
-        <div style="padding: 10mm 0; text-align: center; color: #9ca3af;" class="t-body">
-            Belum ada karya.
+        <div style="display:flex; gap:8mm;">
+          <div>
+            <div style="font-family:'Fraunces',serif; font-size:26pt; font-weight:600; color:var(--paper);">{{ $totalKarya }}</div>
+            <div class="idx">Karya</div>
+          </div>
+          <div>
+            <div style="font-family:'Fraunces',serif; font-size:26pt; font-weight:600; color:var(--clay);">{{ $totalKat }}</div>
+            <div class="idx">Kategori</div>
+          </div>
         </div>
-        @endforelse
+      </div>
     </div>
 
-    {{-- Summary box --}}
-    @if($portfolios->count() > 0)
-    <div style="margin-top: 10mm; padding: 6mm; border: 0.5px solid #e5e7eb; border-left: 3px solid #dc2626; background-color: #fafafa;">
-        <div class="t-label" style="margin-bottom: 5mm;">Ringkasan Koleksi</div>
-        <div style="display: flex; gap: 10mm;">
-            <div>
-                <div style="font-size: 20pt; font-weight: 900; color: #0a0a0a; letter-spacing: -1px; line-height: 1;">{{ $totalKarya }}</div>
-                <div class="t-label">Total Karya</div>
-            </div>
-            <div style="width: 0.5px; background: #e5e7eb;"></div>
-            @foreach($byKat as $katName => $items)
-            <div>
-                <div style="font-size: 20pt; font-weight: 900; color: #0a0a0a; letter-spacing: -1px; line-height: 1;">{{ $items->count() }}</div>
-                <div class="t-label">{{ $katName }}</div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
+  </div>
 </div>
 
 {{-- ============================================================
-     HALAMAN 4+ — PORTFOLIO ITEMS
-     Alasan: Satu karya per halaman memaksimalkan fokus visual
-     dan memberi ruang napas pada setiap karya desain.
-     break-inside: avoid mencegah gambar terpotong antar halaman.
+     02 — PROFIL DESAINER
 ============================================================ --}}
-@forelse($portfolios as $index => $portfolio)
+<div class="sheet brk">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="bignum z1">01</div>
+  <div class="sheet-pad z1">
 
-<div class="pb-avoid" style="break-after: page; padding: 14mm 14mm 8mm; min-height: 267mm; position: relative;">
+    <div class="eyebrow">01 — Profil Desainer</div>
 
-    {{-- Decorative background number --}}
-    <div class="bg-number" aria-hidden="true">{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</div>
-
-    {{-- Item meta header --}}
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5mm;">
-        <div style="display: flex; align-items: center; gap: 4mm;">
-            <span class="badge-red">{{ $portfolio->category?->name ?? 'Umum' }}</span>
-            @if($portfolio->file_pdf_path)
-            <span class="badge-outline" style="border-color: #fca5a5; color: #dc2626;">&#128196; PDF</span>
-            @endif
+    <div style="display:flex; gap:8mm; align-items:flex-start; margin-bottom:10mm; flex-wrap:wrap;">
+      <div style="width:64px; height:64px; background:var(--ink); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+        <span style="font-family:'Fraunces',serif; font-size:24pt; font-weight:600; color:var(--clay);">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+      </div>
+      <div style="flex:1; min-width:200px;">
+        <div class="h-display h-section" style="margin-bottom:3mm;">{{ $user->name }}</div>
+        <div class="idx" style="margin-bottom:5mm;">Siswa Kompetensi Keahlian Desain Komunikasi Visual</div>
+        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+          <span class="tag tag-fill">DKV SMEKDA</span>
+          <span class="tag">{{ now()->format('Y') }}</span>
+          <span class="tag">{{ $totalKarya }} Karya</span>
         </div>
-        <div class="t-micro">
-            {{ $portfolio->created_at->format('d F Y') }}
-        </div>
+      </div>
     </div>
 
-    {{-- IMAGE — Full width, primary focus --}}
-    <div class="img-frame pb-avoid" style="margin-bottom: 6mm;">
-        <img
-            src="{{ asset('storage/' . $portfolio->image_path) }}"
-            alt="{{ $portfolio->title }}"
-            loading="eager"
-            onerror="
-                this.style.display='none';
-                this.nextElementSibling.style.display='flex';
-            "
-        >
-        <div style="display: none; width: 100%; height: 80mm; align-items: center; justify-content: center; color: #d1d5db; font-size: 7pt; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; flex-direction: column; gap: 4px;">
-            <div style="font-size: 20pt; opacity: 0.3;">&#9651;</div>
-            Gambar Tidak Tersedia
-        </div>
+    <div class="rule" style="margin-bottom:8mm;"></div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 10mm; margin-bottom:9mm;">
+      <div class="kv"><span class="k">NIS/NIP</span><span class="v">{{ $user->nis_nip ?? '—' }}</span></div>
+      <div class="kv"><span class="k">Email</span><span class="v" style="word-break:break-all;">{{ $user->email }}</span></div>
+      <div class="kv"><span class="k">WhatsApp</span><span class="v">{{ $user->phone ?? '—' }}</span></div>
+      <div class="kv"><span class="k">Institusi</span><span class="v">SMKN 2 Padang Panjang</span></div>
     </div>
 
-    {{-- Content area — 2-column grid --}}
-    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8mm; align-items: start;">
+    <div style="margin-bottom:9mm;">
+      <div class="idx" style="margin-bottom:4mm;">Tentang Saya</div>
+      <p class="body-copy" style="text-align:justify; max-width:135mm;">
+        Saya adalah siswa Kompetensi Keahlian Desain Komunikasi Visual di SMK Negeri 2 Padang Panjang.
+        Dokumen ini merupakan kompilasi karya desain yang dikerjakan sebagai bagian dari proses pembelajaran
+        dan pengembangan kompetensi di bidang desain komunikasi visual. Setiap karya mencerminkan eksplorasi
+        kreatif dan penerapan prinsip desain yang dipelajari selama masa studi.
+      </p>
+    </div>
 
-        {{-- LEFT: Title + Description --}}
+    @if($totalKat > 0)
+    <div style="margin-bottom:9mm;">
+      <div class="idx" style="margin-bottom:4mm;">Bidang Karya</div>
+      <div style="display:flex; flex-wrap:wrap; gap:5px;">
+        @foreach($byKat as $katName => $items)
+          <span class="tag">{{ $katName }} ({{ $items->count() }})</span>
+        @endforeach
+      </div>
+    </div>
+    @endif
+
+    {{-- MASTER QR CODE — mengarah ke galeri profil online utama --}}
+    <div class="rule" style="margin-bottom:8mm;"></div>
+    <div class="qr-master avoid">
+      <img src="{{ $qrImg($galleryUrl, 240) }}" alt="Master QR Code Galeri {{ $user->name }}"
+           onerror="this.closest('.qr-master').querySelector('.qr-fallback').style.display='flex'; this.remove();">
+      <div class="qr-fallback" style="display:none; width:96px; height:96px; border:2px solid var(--ink); align-items:center; justify-content:center; flex-direction:column; gap:3px; flex-shrink:0;">
+        <div class="cap" style="color:var(--ink);">QR CODE</div>
+        <div class="cap">Scan online</div>
+      </div>
+      <div style="flex:1; min-width:180px;">
+        <div class="idx" style="margin-bottom:3mm; color:var(--clay);">Master Access — Galeri Profil</div>
+        <div style="font-family:'Fraunces',serif; font-weight:600; font-size:13pt; margin-bottom:3mm;">Kunjungi Galeri Digital Lengkap</div>
+        <p class="body-copy" style="margin-bottom:4mm;">
+          Pindai kode ini untuk membuka seluruh koleksi karya {{ $user->name }} secara online,
+          lengkap dengan versi resolusi penuh dan pembaruan terbaru.
+        </p>
+        <a href="{{ $galleryUrl }}" style="font-family:'JetBrains Mono',monospace; font-size:7.5px; color:var(--clay); word-break:break-all; text-decoration:none;">{{ $galleryUrl }}</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{{-- ============================================================
+     03 — DAFTAR ISI (dot leaders presisi)
+============================================================ --}}
+<div class="sheet brk">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="bignum z1">02</div>
+  <div class="sheet-pad z1">
+
+    <div class="eyebrow">02 — Daftar Isi</div>
+    <div class="h-display h-section" style="margin-bottom:11mm;">Katalog<br>Karya Portofolio</div>
+
+    <div>
+      @forelse($portfolios as $i => $p)
+        <div class="toc-row avoid">
+          <div class="toc-no">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
+          <div class="toc-title">{{ $p->title }}</div>
+          <div class="toc-leader"></div>
+          <div class="toc-cat">{{ $p->category?->name ?? 'Umum' }}</div>
+        </div>
+      @empty
+        <p class="body-copy" style="text-align:center; padding:12mm 0;">Belum ada karya.</p>
+      @endforelse
+    </div>
+
+    @if($portfolios->count() > 0)
+    <div class="avoid" style="margin-top:11mm; padding:7mm; border:1px solid var(--line); border-left:3px solid var(--clay); background:var(--paper-2);">
+      <div class="idx" style="margin-bottom:5mm;">Ringkasan Koleksi</div>
+      <div style="display:flex; gap:11mm; flex-wrap:wrap;">
         <div>
-            {{-- Portfolio title --}}
-            <div class="t-portfolio" style="margin-bottom: 3mm;">{{ $portfolio->title }}</div>
-
-            {{-- Red rule --}}
-            <div class="rule-red"></div>
-
-            {{-- Description --}}
-            <div class="{{ $index === 0 ? 'drop-cap' : '' }} t-body" style="text-align: justify;">
-                {{ $portfolio->description }}
-            </div>
+          <div style="font-family:'Fraunces',serif; font-size:20pt; font-weight:600;">{{ $totalKarya }}</div>
+          <div class="idx">Total Karya</div>
         </div>
-
-        {{-- RIGHT: Metadata sidebar --}}
-        <div style="border-left: 0.5px solid #e5e7eb; padding-left: 7mm;">
-
-            <div style="margin-bottom: 5mm;">
-                <div class="t-label" style="margin-bottom: 2mm;">Kategori</div>
-                <div style="font-size: 8.5pt; font-weight: 700; color: #0a0a0a;">{{ $portfolio->category?->name ?? 'Umum' }}</div>
-            </div>
-
-            <div class="rule"></div>
-
-            <div style="margin-bottom: 5mm;">
-                <div class="t-label" style="margin-bottom: 2mm;">Tanggal Upload</div>
-                <div style="font-size: 8.5pt; font-weight: 700; color: #0a0a0a;">{{ $portfolio->created_at->format('d F Y') }}</div>
-                <div class="t-micro" style="margin-top: 1mm;">{{ $portfolio->created_at->format('H:i') }} WIB</div>
-            </div>
-
-            <div class="rule"></div>
-
-            <div style="margin-bottom: 5mm;">
-                <div class="t-label" style="margin-bottom: 2mm;">File Pendukung</div>
-                @if($portfolio->file_pdf_path)
-                    <span style="display: inline-block; background-color: #fee2e2; border: 1px solid #fca5a5; color: #dc2626; font-size: 6pt; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; padding: 3px 8px;">
-                        &#10003; PDF Tersedia
-                    </span>
-                @else
-                    <div style="font-size: 8pt; color: #d1d5db; font-weight: 500;">Tidak tersedia</div>
-                @endif
-            </div>
-
-            <div class="rule"></div>
-
-            <div>
-                <div class="t-label" style="margin-bottom: 2mm;">Pemilik Karya</div>
-                <div style="font-size: 8pt; font-weight: 700; color: #0a0a0a; line-height: 1.4;">{{ $user->name }}</div>
-                <div class="t-micro" style="margin-top: 1mm;">NIS: {{ $user->nis_nip ?? '—' }}</div>
-            </div>
-
-            {{-- Watermark DKV (dekoratif, sangat transparan) --}}
-            <div style="margin-top: 10mm; text-align: center; opacity: 0.05;" aria-hidden="true">
-                <div style="font-size: 20pt; font-weight: 900; color: #0a0a0a; letter-spacing: -1px; line-height: 1;">DKV</div>
-                <div style="font-size: 5pt; font-weight: 700; letter-spacing: 0.3em; color: #0a0a0a;">SMEKDA</div>
-            </div>
-
+        @foreach($byKat as $katName => $items)
+        <div>
+          <div style="font-family:'Fraunces',serif; font-size:20pt; font-weight:600;">{{ $items->count() }}</div>
+          <div class="idx">{{ $katName }}</div>
         </div>
+        @endforeach
+      </div>
     </div>
+    @endif
 
+  </div>
 </div>
 
+{{-- ============================================================
+     04+ — HALAMAN KARYA — GRID 4 KARYA PER HALAMAN
+     Alasan perubahan: 1-karya-per-halaman menyebabkan konten
+     terpotong dan boros halaman. Grid 2×2 dengan bingkai gambar
+     ukuran seragam (aspect-ratio tetap, object-fit:contain) jauh
+     lebih rapi dan standar untuk portfolio book multi-karya.
+     Deskripsi dipangkas jadi ringkasan pendek per kartu — detail
+     lengkap cukup lewat QR "Lihat Galeri Online" di footer halaman,
+     bukan QR per-karya yang membuat tiap kartu sempit.
+============================================================ --}}
+@php $chunks = $portfolios->chunk(4); @endphp
+
+@forelse($chunks as $pageIndex => $chunk)
+<div class="sheet brk">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="bignum z1">{{ str_pad($pageIndex + 1, 2, '0', STR_PAD_LEFT) }}</div>
+
+  <div class="sheet-pad z1" style="display:flex; flex-direction:column; height:100%;">
+
+    <div class="eyebrow" style="margin-bottom:7mm;">Katalog Karya — Halaman {{ $pageIndex + 1 }} dari {{ $chunks->count() }}</div>
+
+    {{-- GRID 2×2 — bingkai seragam, tidak pernah terpotong --}}
+    <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:7mm 8mm;">
+      @foreach($chunk as $portfolio)
+      <div class="work-card avoid" style="display:flex; flex-direction:column;">
+
+        <div class="frame-fixed avoid">
+          <img src="{{ asset('storage/' . $portfolio->image_path) }}" alt="{{ $portfolio->title }}" loading="eager"
+               onerror="this.style.display='none'; this.closest('.frame-fixed').querySelector('.frame-fallback').style.display='flex';">
+          <div class="frame-fallback">
+            <div style="font-size:15pt; opacity:.4;">△</div>
+            <div class="cap">Gambar Tidak Tersedia</div>
+          </div>
+          <div class="frame-tag">
+            <span class="tag tag-fill" style="font-size:6px; padding:3px 7px;">{{ $portfolio->category?->name ?? 'Umum' }}</span>
+          </div>
+        </div>
+
+        <div style="padding-top:3mm; flex:1; display:flex; flex-direction:column;">
+          <div style="font-family:'Fraunces',serif; font-weight:600; font-size:11pt; letter-spacing:-.005em; line-height:1.2; margin-bottom:2mm;">
+            {{ $portfolio->title }}
+          </div>
+          <p class="card-desc">
+            {{ \Illuminate\Support\Str::limit($portfolio->description, 105) }}
+          </p>
+          <div style="margin-top:auto; padding-top:2mm; display:flex; justify-content:space-between; align-items:baseline;">
+            <span class="cap">{{ $portfolio->created_at->format('d/m/Y') }}</span>
+            @if($portfolio->file_pdf_path)
+              <span class="cap" style="color:var(--clay);">PDF ↗</span>
+            @endif
+          </div>
+        </div>
+
+      </div>
+      @endforeach
+
+      {{-- Isi slot kosong bila karya di halaman terakhir < 4, agar grid tetap simetris --}}
+      @if($chunk->count() < 4)
+        @for($e = 0; $e < 4 - $chunk->count(); $e++)
+          <div></div>
+        @endfor
+      @endif
+    </div>
+
+    {{-- FOOTER HALAMAN — satu QR galeri online, bukan per-karya --}}
+    <div class="page-qr-footer avoid">
+      <img src="{{ $qrImg($galleryUrl, 120) }}" alt="QR Galeri Online {{ $user->name }}"
+           onerror="this.style.display='none';">
+      <div style="flex:1; min-width:0;">
+        <div class="cap" style="color:var(--clay); margin-bottom:1.5mm;">Karya lebih lengkap? Scan untuk galeri online</div>
+        <div style="font-size:8pt; font-weight:600; color:var(--ink); margin-bottom:1mm;">
+          Detail resolusi penuh, proses desain, dan karya terbaru tersedia live di galeri digital.
+        </div>
+        <a href="{{ $galleryUrl }}" class="qr-link-text">{{ \Illuminate\Support\Str::limit($galleryUrl, 60) }}</a>
+      </div>
+    </div>
+
+  </div>
+</div>
 @empty
-
-<div class="pb-avoid" style="break-after: page; padding: 14mm; display: flex; align-items: center; justify-content: center; min-height: 267mm;">
-    <div style="text-align: center; color: #9ca3af;">
-        <div style="font-size: 24pt; opacity: 0.2; margin-bottom: 6mm;">&#9651;</div>
-        <div class="t-label">Belum ada karya yang tersedia</div>
+<div class="sheet brk">
+  <div class="sheet-pad z1" style="height:100%; display:flex; align-items:center; justify-content:center;">
+    <div style="text-align:center; color:#C7BCA8;">
+      <div style="font-size:24pt; opacity:.3; margin-bottom:6mm;">△</div>
+      <div class="idx">Belum ada karya yang tersedia</div>
     </div>
+  </div>
 </div>
-
 @endforelse
 
 {{-- ============================================================
-     HALAMAN REKAP — STATISTIK PORTOFOLIO
-     Alasan: Statistik visual memberi gambaran cepat kepada
-     pembaca (rekruter/guru) tentang breadth & depth karya siswa.
+     05 — REKAP STATISTIK
 ============================================================ --}}
 @if($portfolios->count() > 0)
+<div class="sheet brk">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="sheet-pad z1">
 
-<div class="pb-avoid" style="break-after: page; padding: 16mm 14mm; min-height: 267mm; position: relative;">
+    <div class="eyebrow">Rekap — Statistik Portofolio</div>
+    <div class="h-display h-section" style="margin-bottom:12mm;">Statistik &<br>Rekap Karya</div>
 
-    <div class="bg-number" aria-hidden="true">&#x221E;</div>
-
-    <div class="section-marker">
-        <span class="t-label" style="color: #dc2626;">Rekap — Statistik Portofolio</span>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8mm; margin-bottom:11mm;">
+      <div style="border-top:2px solid var(--ink); padding-top:5mm;">
+        <div style="font-family:'Fraunces',serif; font-size:38pt; font-weight:600;">{{ $totalKarya }}</div>
+        <div class="idx" style="margin-top:2mm;">Total Karya</div>
+      </div>
+      <div style="border-top:2px solid var(--clay); padding-top:5mm;">
+        <div style="font-family:'Fraunces',serif; font-size:38pt; font-weight:600; color:var(--clay);">{{ $totalKat }}</div>
+        <div class="idx" style="margin-top:2mm;">Kategori</div>
+      </div>
+      <div style="border-top:2px solid var(--line); padding-top:5mm;">
+        <div style="font-family:'Fraunces',serif; font-size:38pt; font-weight:600; color:#8B8175;">{{ $totalPdf }}</div>
+        <div class="idx" style="margin-top:2mm;">Dokumen PDF</div>
+      </div>
     </div>
 
-    <div class="t-section" style="margin-bottom: 12mm;">
-        Statistik &<br>Rekap Karya
-    </div>
+    <div class="rule" style="margin-bottom:8mm;"></div>
 
-    {{-- Big 3 stats --}}
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); margin-bottom: 12mm;">
-
-        <div style="border-top: 3px solid #0a0a0a; padding-top: 5mm; padding-right: 8mm;">
-            <div style="font-size: 48pt; font-weight: 900; color: #0a0a0a; letter-spacing: -3px; line-height: 0.88;">{{ $totalKarya }}</div>
-            <div class="t-label" style="margin-top: 3mm;">Total Karya</div>
-        </div>
-
-        <div style="border-top: 3px solid #dc2626; padding-top: 5mm; padding: 0 8mm; padding-top: 5mm;">
-            <div style="font-size: 48pt; font-weight: 900; color: #dc2626; letter-spacing: -3px; line-height: 0.88;">{{ $totalKat }}</div>
-            <div class="t-label" style="margin-top: 3mm;">Kategori</div>
-        </div>
-
-        <div style="border-top: 3px solid #e5e7eb; padding-top: 5mm; padding-left: 8mm;">
-            <div style="font-size: 48pt; font-weight: 900; color: #9ca3af; letter-spacing: -3px; line-height: 0.88;">{{ $totalPdf }}</div>
-            <div class="t-label" style="margin-top: 3mm;">Dokumen PDF</div>
-        </div>
-
-    </div>
-
-    <div class="rule"></div>
-
-    {{-- Category breakdown bars --}}
-    <div style="margin-top: 8mm; margin-bottom: 10mm;">
-        <div class="t-label" style="margin-bottom: 6mm; border-bottom: 0.5px solid #f3f4f6; padding-bottom: 3mm;">
-            Distribusi Per Kategori
-        </div>
-
-        @foreach($byKat as $katName => $items)
+    <div style="margin-bottom:9mm;">
+      <div class="idx" style="margin-bottom:6mm;">Distribusi per Kategori</div>
+      @foreach($byKat as $katName => $items)
         @php $pct = $totalKarya > 0 ? round(($items->count() / $totalKarya) * 100) : 0; @endphp
-        <div style="margin-bottom: 5mm;" class="pb-avoid">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2mm;">
-                <div style="font-size: 8.5pt; font-weight: 700; color: #0a0a0a;">{{ $katName }}</div>
-                <div style="font-size: 8pt; font-weight: 600; color: #6b7280;">{{ $items->count() }} karya &bull; {{ $pct }}%</div>
-            </div>
-            <div class="stat-bar-bg">
-                <div class="stat-bar-fill" style="width: {{ $pct }}%;"></div>
-            </div>
+        <div class="avoid" style="margin-bottom:5mm;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:2mm;">
+            <span style="font-size:9pt; font-weight:700;">{{ $katName }}</span>
+            <span class="cap">{{ $items->count() }} karya · {{ $pct }}%</span>
+          </div>
+          <div style="width:100%; height:3px; background:var(--paper-2);">
+            <div style="height:100%; width:{{ $pct }}%; background:var(--ink);"></div>
+          </div>
         </div>
-        @endforeach
+      @endforeach
     </div>
 
-    <div class="rule"></div>
-
-    {{-- QR Code section --}}
-    <div style="margin-top: 8mm; border: 0.5px solid #e5e7eb; border-top: 2px solid #0a0a0a; padding: 7mm;">
-        <div style="display: flex; gap: 8mm; align-items: center;">
-
-            {{-- QR Code --}}
-            <div style="flex-shrink: 0;">
-                <img
-                    src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&color=0a0a0a&bgcolor=ffffff&data={{ urlencode(route('siswa.dashboard')) }}"
-                    alt="QR Code Portfolio Online"
-                    style="width: 90px; height: 90px; display: block; border: 0.5px solid #e5e7eb;"
-                    onerror="
-                        this.style.display='none';
-                        document.getElementById('qr-fallback').style.display='flex';
-                    "
-                >
-                <div id="qr-fallback" style="display: none; width: 90px; height: 90px; border: 2px solid #0a0a0a; align-items: center; justify-content: center; flex-direction: column; gap: 3px;">
-                    <div style="font-size: 6pt; font-weight: 900; color: #0a0a0a; letter-spacing: 0.2em;">QR CODE</div>
-                    <div style="font-size: 5pt; color: #9ca3af; text-align: center;">Scan untuk<br>akses online</div>
-                </div>
-            </div>
-
-            {{-- QR Info --}}
-            <div style="flex: 1;">
-                <div class="t-label" style="margin-bottom: 3mm;">Akses Portfolio Online</div>
-                <div style="font-size: 11pt; font-weight: 800; color: #0a0a0a; margin-bottom: 2mm; line-height: 1.3;">
-                    Portofolio Digital Interaktif
-                </div>
-                <div class="t-body" style="margin-bottom: 4mm;">
-                    Scan QR code untuk mengakses portofolio digital secara online melalui Sistem Manajemen Portfolio DKV SMEKDA.
-                </div>
-                <div class="t-label">
-                    Dikembangkan oleh Rafli Ahmad Zulkarnain &mdash; Skripsi 2026
-                </div>
-            </div>
-        </div>
-    </div>
-
+  </div>
 </div>
-
 @endif
 
 {{-- ============================================================
-     HALAMAN TERAKHIR — PENUTUP
-     Alasan: Closing page hitam yang kuat menciptakan "bookend"
-     visual yang simetris dengan cover — standar editorial design.
-     Terima kasih + ringkasan = closure yang profesional.
+     06 — PENUTUP (bookend gelap simetris dengan cover)
 ============================================================ --}}
-<div class="pb-avoid" style="background-color: #0a0a0a; min-height: 267mm; padding: 16mm 14mm; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;">
+<div class="sheet dark" style="border-top:3px solid var(--clay);">
+  <div class="sheet-pad z1" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
 
-    {{-- Geometric accent kiri --}}
-    <div style="position: absolute; top: 0; left: 0; width: 3mm; height: 100%; background-color: #dc2626;"></div>
-
-    {{-- Top: Thank you --}}
-    <div style="padding-left: 6mm;">
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 14mm;">
-            <div style="width: 16px; height: 1.5px; background-color: #dc2626;"></div>
-            <div class="t-label" style="color: rgba(255,255,255,0.28);">Penutup</div>
-        </div>
-
-        <div style="font-size: 56pt; font-weight: 900; color: #ffffff; letter-spacing: -3px; line-height: 0.88; margin-bottom: 3mm;">
-            TERIMA
-        </div>
-        <div style="font-size: 56pt; font-weight: 900; color: #dc2626; letter-spacing: -3px; line-height: 0.88; margin-bottom: 8mm;">
-            KASIH.
-        </div>
-
-        <div style="width: 50px; height: 2px; background-color: #dc2626; margin-bottom: 8mm;"></div>
-
-        <div class="t-body" style="color: rgba(255,255,255,0.38); max-width: 120mm; line-height: 1.85;">
-            Dokumen portofolio ini merupakan representasi karya dan kompetensi yang
-            telah dikembangkan selama masa pembelajaran di Kompetensi Keahlian
-            Desain Komunikasi Visual, SMK Negeri 2 Padang Panjang.
-            Semua karya dalam buku ini adalah hasil dari eksplorasi,
-            dedikasi, dan proses kreatif yang berkelanjutan.
-        </div>
+    <div>
+      <div class="eyebrow" style="color:rgba(250,247,242,.4);">Penutup</div>
+      <div class="h-display h-cover" style="font-size:44pt;">Terima</div>
+      <div class="h-display h-cover" style="font-size:44pt; font-style:italic; color:var(--clay);">Kasih.</div>
+      <div class="rule-clay" style="margin:7mm 0 8mm;"></div>
+      <p class="body-copy" style="color:rgba(250,247,242,.55); max-width:120mm;">
+        Dokumen portofolio ini merupakan representasi karya dan kompetensi yang telah dikembangkan
+        selama masa pembelajaran di Kompetensi Keahlian Desain Komunikasi Visual, SMK Negeri 2
+        Padang Panjang. Setiap karya adalah hasil eksplorasi dan proses kreatif berkelanjutan.
+      </p>
     </div>
 
-    {{-- Middle: Stats summary --}}
-    <div style="padding-left: 6mm; border-top: 1px solid rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.06); padding-top: 8mm; padding-bottom: 8mm; margin: 10mm 0;">
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;">
-            <div style="padding-right: 8mm; border-right: 1px solid rgba(255,255,255,0.06);">
-                <div style="font-size: 26pt; font-weight: 900; color: #ffffff; letter-spacing: -1.5px; line-height: 1;">{{ $totalKarya }}</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.25); margin-top: 2mm;">Karya Terdokumentasi</div>
-            </div>
-            <div style="padding: 0 8mm; border-right: 1px solid rgba(255,255,255,0.06);">
-                <div style="font-size: 26pt; font-weight: 900; color: #dc2626; letter-spacing: -1.5px; line-height: 1;">{{ $totalKat }}</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.25); margin-top: 2mm;">Bidang Kategori</div>
-            </div>
-            <div style="padding-left: 8mm;">
-                <div style="font-size: 26pt; font-weight: 900; color: rgba(255,255,255,0.4); letter-spacing: -1.5px; line-height: 1;">{{ now()->format('Y') }}</div>
-                <div class="t-label" style="color: rgba(255,255,255,0.25); margin-top: 2mm;">Tahun Akademik</div>
-            </div>
-        </div>
+    <div style="border-top:1px solid rgba(250,247,242,.08); border-bottom:1px solid rgba(250,247,242,.08); padding:8mm 0; display:grid; grid-template-columns:repeat(3,1fr); gap:6mm;">
+      <div><div style="font-family:'Fraunces',serif; font-size:22pt; font-weight:600;">{{ $totalKarya }}</div><div class="idx">Karya Terdokumentasi</div></div>
+      <div><div style="font-family:'Fraunces',serif; font-size:22pt; font-weight:600; color:var(--clay);">{{ $totalKat }}</div><div class="idx">Bidang Kategori</div></div>
+      <div><div style="font-family:'Fraunces',serif; font-size:22pt; font-weight:600; opacity:.5;">{{ now()->format('Y') }}</div><div class="idx">Tahun Akademik</div></div>
     </div>
 
-    {{-- Bottom: Identity + copyright --}}
-    <div style="padding-left: 6mm;">
-        <div style="margin-bottom: 6mm;">
-            <div style="font-size: 14pt; font-weight: 800; color: #ffffff; letter-spacing: -0.3px; line-height: 1.3; margin-bottom: 2mm;">
-                {{ $user->name }}
-            </div>
-            <div class="t-label" style="color: rgba(255,255,255,0.28);">
-                {{ $user->nis_nip ?? '—' }} &bull; DKV &bull; SMKN 2 Padang Panjang &bull; {{ now()->format('Y') }}
-            </div>
-        </div>
-
-        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 5mm;">
-            <div class="t-label" style="color: rgba(255,255,255,0.14); margin-bottom: 2mm;">
-                SISTEM MANAJEMEN PORTFOLIO DIGITAL — DKV SMEKDA
-            </div>
-            <div class="t-label" style="color: rgba(255,255,255,0.1);">
-                Developed by Rafli Ahmad Zulkarnain &mdash; 2026
-                &bull; Skripsi Teknik Informatika / RPL
-            </div>
-        </div>
+    <div>
+      <div style="font-family:'Fraunces',serif; font-weight:600; font-size:13pt; margin-bottom:2mm;">{{ $user->name }}</div>
+      <div class="idx" style="margin-bottom:6mm;">{{ $user->nis_nip ?? '—' }} · DKV · SMKN 2 Padang Panjang · {{ now()->format('Y') }}</div>
+      <div class="idx" style="opacity:.5;">SISTEM MANAJEMEN PORTFOLIO DIGITAL — DKV SMEKDA</div>
+      <div class="idx" style="opacity:.3;">Developed by Rafli Ahmad Zulkarnain — {{ now()->format('Y') }}</div>
     </div>
 
+  </div>
 </div>
 
-</div>{{-- end .a4 --}}
-
-{{-- Screen spacer --}}
-<div class="screen-only" style="height: 40px;"></div>
+</div>{{-- /.stage --}}
 
 {{-- ================================================================
-     AUTO-PRINT SCRIPT
-     Alasan: Delay 1200ms memastikan font + gambar loaded sebelum
-     dialog cetak terbuka — mencegah layout kosong saat print
+     AUTO-PRINT — menunggu gambar & font selesai dimuat
 ================================================================ --}}
 <script>
-    /**
-     * Auto Print Handler
-     * Menunggu semua gambar dan font selesai dimuat sebelum membuka
-     * dialog cetak browser. Fallback timeout jika ada gambar gagal load.
-     */
-    (function() {
-        var printed = false;
+(function () {
+  var fired = false;
+  function go() {
+    if (fired) return;
+    fired = true;
+    setTimeout(function () { window.print(); }, 350);
+  }
 
-        function doPrint() {
-            if (printed) return;
-            printed = true;
-            setTimeout(function() { window.print(); }, 400);
-        }
+  var imgs = Array.prototype.slice.call(document.querySelectorAll('img'));
+  var done = 0;
 
-        // Tunggu semua gambar
-        var images = document.querySelectorAll('img');
-        var loaded = 0;
-        var total  = images.length;
+  function tick() { done++; if (done >= imgs.length) go(); }
 
-        if (total === 0) {
-            setTimeout(doPrint, 1000);
-            return;
-        }
+  if (imgs.length === 0) { setTimeout(go, 900); return; }
 
-        function onImgDone() {
-            loaded++;
-            if (loaded >= total) doPrint();
-        }
+  imgs.forEach(function (img) {
+    if (img.complete) tick();
+    else {
+      img.addEventListener('load', tick);
+      img.addEventListener('error', tick);
+    }
+  });
 
-        images.forEach(function(img) {
-            if (img.complete) {
-                onImgDone();
-            } else {
-                img.addEventListener('load',  onImgDone);
-                img.addEventListener('error', onImgDone);
-            }
-        });
+  // Pastikan font kustom (Fraunces/Inter/Mono) sudah ter-render
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { /* no-op: gate tetap di gambar */ });
+  }
 
-        // Fallback timeout 5 detik
-        setTimeout(doPrint, 5000);
-    })();
+  setTimeout(go, 4500); // fallback keras jika ada aset gagal
+})();
 </script>
 
 </body>

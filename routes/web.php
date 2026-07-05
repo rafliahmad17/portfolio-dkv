@@ -29,7 +29,7 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout');
 
 
-Route::get('/p/{slug}', [PublicPortfolioController::class, 'show'])
+Route::get('/p/{slug}', [PortfolioController::class, 'publicShow'])
     ->name('portfolio.public');
 
 Route::middleware('auth')->group(function () {
