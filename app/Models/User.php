@@ -40,4 +40,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Portfolio::class);
     }
+
+    /**
+     * Alias 'avatar' -> kolom 'photo'.
+     * View guru/profile.blade.php memakai auth()->user()->avatar,
+     * padahal kolom di database bernama 'photo'. Accessor ini
+     * menjembatani keduanya tanpa perlu ubah view atau migrasi.
+     */
+    public function getAvatarAttribute()
+    {
+        return $this->photo;
+    }
 }

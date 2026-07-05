@@ -749,8 +749,12 @@
     {{-- Profile --}}
     <div class="sidebar-profile">
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-            <div class="profile-avatar">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            <div class="profile-avatar" style="overflow: hidden;">
+                @if(auth()->user()->photo)
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @endif
             </div>
             <div style="flex:1; min-width:0;">
                 <div class="profile-name">{{ auth()->user()->name }}</div>

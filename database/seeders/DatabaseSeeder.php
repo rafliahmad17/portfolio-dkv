@@ -11,6 +11,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(CategorySeeder::class);
+
         User::create([
             'name'     => 'Ibu Uskha Melisa Ahmad, S.Pd.',
             'email'    => 'guru@smkn2.sch.id',
