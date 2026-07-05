@@ -10,19 +10,19 @@ class PublicPortfolioController extends Controller
 {
     public function show($slug)
     {
-        // 1. Ganti firstOrFail() dengan first() agar tidak langsung error 404
-        $user = User::where('portfolio_slug', $slug)->first();
+        // Cari portfolio by slug, eager load relasi user & category
+        $portfolio = Portfolio::with(['user', 'category'])
+            ->where('slug', $slug)
+            ->firstOrFail(); // Auto 404 jika tidak ditemukan
 
-        // 2. Jika user kosong, tampilkan pesan agar kita tahu apa masalahnya
-        if (!$user) {
-            return "Debug: Siswa dengan slug '" . $slug . "' TIDAK DITEMUKAN di database. Tolong cek tabel users Anda.";
-        }
 
-        // 3. Jika ketemu, baru jalankan kodenya
-        $portfolios = Portfolio::where('user_id', $user->id)
-                                ->latest()
-                                ->get();
-
-        return view('public.portfolio.show', compact('user', 'portfolios'));
+        // Ambil karya lain dari siswa yang sama (related works)
+        $relatedPortfolios = Portfolio::with('category')
+            ->where('user_id', $portfolio->user_id)
+            ->where('id', '!=', $portfolio->id)
+            ->latest()
+            ->limit(4)
+            ->get();
+        return view('public.portfolio.show', compact('portfolio', 'relatedPortfolios'));
     }
 }
