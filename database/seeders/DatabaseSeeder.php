@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             'name'     => 'Rafli Ahmad',
             'email'    => 'Rafli@siswa.smkn2.sch.id',
             'password' => Hash::make('password123'),
-            'role'     => 'siswa',
+            'role' 
+                => 'siswa',
             'nis_nip'  => '2201100011',
         ]);
     }

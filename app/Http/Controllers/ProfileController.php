@@ -46,9 +46,8 @@ class ProfileController extends Controller
         $user->photo   = $photoPath;
 
         if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
-
+                $user->password = $validated['password'];
+            }
         $user->save();
 
         return redirect()->route('siswa.profile.edit')

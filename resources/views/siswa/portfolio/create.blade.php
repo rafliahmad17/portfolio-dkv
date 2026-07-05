@@ -70,13 +70,11 @@
         ::-webkit-scrollbar-track { background: #080808; }
         ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
 
-        /* ── SIDEBAR ── */
         .sidebar {
             position: fixed; top: 0; left: 0;
             width: 260px; height: 100vh;
             background: rgba(8,8,8,0.9);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
+            backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
             border-right: 1px solid var(--border);
             display: flex; flex-direction: column;
             z-index: 50; overflow-y: auto;
@@ -205,7 +203,6 @@
 
         .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
 
-        /* ── MAIN ── */
         .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
 
         .topbar {
@@ -234,7 +231,6 @@
 
         .page-inner { padding: 40px 36px 60px; }
 
-        /* ── FORM HEADER ── */
         .btn-back {
             display: inline-flex; align-items: center; gap: 8px;
             color: rgba(255,255,255,0.3); font-size: 0.78rem; font-weight: 700;
@@ -267,7 +263,7 @@
             font-weight: 400; margin-bottom: 36px;
         }
 
-        /* ── INPUT STYLES ── */
+        /* ── INPUT ── */
         .field-label {
             display: block; font-size: 0.7rem; font-weight: 700;
             letter-spacing: 1px; text-transform: uppercase;
@@ -299,8 +295,6 @@
             transition: all 0.25s ease;
         }
 
-        .form-input.no-icon { padding-left: 14px; }
-
         .form-input::placeholder { color: rgba(255,255,255,0.18); }
 
         .form-input:focus {
@@ -311,11 +305,8 @@
 
         .input-wrap:focus-within .input-icon { color: var(--red); }
 
-        .form-input.is-error {
-            border-color: var(--red-bright);
-            background: rgba(239,68,68,0.06);
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14);
-        }
+        .form-input.is-error,
+        .form-select.is-error { border-color: var(--red-bright) !important; background: rgba(239,68,68,0.06) !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.14) !important; }
 
         .form-textarea {
             width: 100%; resize: none;
@@ -339,10 +330,7 @@
             box-shadow: 0 0 0 3px rgba(220,38,38,0.15), 0 0 18px rgba(220,38,38,0.08);
         }
 
-        .form-textarea.is-error {
-            border-color: var(--red-bright);
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14);
-        }
+        .form-textarea.is-error { border-color: var(--red-bright) !important; box-shadow: 0 0 0 3px rgba(239,68,68,0.14) !important; }
 
         .form-select {
             width: 100%; appearance: none; -webkit-appearance: none;
@@ -353,8 +341,7 @@
             font-size: 0.85rem; font-weight: 500;
             font-family: 'Inter', sans-serif;
             color: rgba(255,255,255,0.7); outline: none;
-            cursor: pointer;
-            transition: all 0.25s ease;
+            cursor: pointer; transition: all 0.25s ease;
         }
 
         .form-select:focus {
@@ -374,8 +361,7 @@
         }
 
         .field-error {
-            margin-top: 7px; font-size: 0.73rem; font-weight: 600;
-            color: #f87171;
+            margin-top: 7px; font-size: 0.73rem; font-weight: 600; color: #f87171;
             display: flex; align-items: center; gap: 6px;
         }
 
@@ -383,7 +369,53 @@
 
         .field-wrap { margin-bottom: 20px; }
 
-        /* ── CARD PANEL ── */
+        /* ── ERROR ALERT ── */
+        .error-alert {
+            background: rgba(220,38,38,0.08);
+            border: 1px solid rgba(220,38,38,0.3);
+            border-left: 3px solid var(--red);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-bottom: 28px;
+        }
+
+        .error-alert-title {
+            font-size: 0.8rem; font-weight: 800; color: #fca5a5;
+            display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+        }
+
+        .error-alert-title svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+        .error-alert-list { list-style: none; }
+
+        .error-alert-list li {
+            font-size: 0.75rem; color: rgba(252,165,165,0.8);
+            padding: 3px 0;
+            display: flex; align-items: flex-start; gap: 7px;
+        }
+
+        .error-alert-list li::before {
+            content: '✕';
+            color: var(--red); font-weight: 900;
+            font-size: 0.65rem; margin-top: 1px; flex-shrink: 0;
+        }
+
+        /* ── EMPTY CATEGORY ALERT ── */
+        .warning-alert {
+            background: rgba(234,179,8,0.08);
+            border: 1px solid rgba(234,179,8,0.25);
+            border-left: 3px solid #eab308;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: flex; align-items: flex-start; gap: 10px;
+        }
+
+        .warning-alert svg { width: 16px; height: 16px; color: #eab308; flex-shrink: 0; margin-top: 1px; }
+
+        .warning-alert-text { font-size: 0.75rem; color: rgba(234,179,8,0.8); line-height: 1.6; font-weight: 600; }
+
+        /* ── CARD ── */
         .form-card {
             background: rgba(255,255,255,0.025);
             border: 1px solid var(--border);
@@ -406,19 +438,13 @@
         .card-header-icon {
             width: 36px; height: 36px; border-radius: 10px;
             background: var(--red-soft); border: 1px solid rgba(220,38,38,0.18);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
 
         .card-header-icon svg { width: 16px; height: 16px; color: var(--red); }
 
-        .card-header-title {
-            font-size: 0.85rem; font-weight: 800; color: #f5f5f5;
-        }
-
-        .card-header-sub {
-            font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-top: 1px;
-        }
+        .card-header-title { font-size: 0.85rem; font-weight: 800; color: #f5f5f5; }
+        .card-header-sub   { font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-top: 1px; }
 
         .form-card-body { padding: 24px; }
 
@@ -427,7 +453,7 @@
             position: relative;
             border: 2px dashed rgba(255,255,255,0.1);
             border-radius: 16px;
-            min-height: 340px;
+            min-height: 300px;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             cursor: pointer; overflow: hidden;
@@ -435,17 +461,13 @@
             background: rgba(255,255,255,0.02);
         }
 
-        .drop-zone:hover,
-        .drop-zone.drag-over {
+        .drop-zone:hover, .drop-zone.drag-over {
             border-color: var(--red);
             background: rgba(220,38,38,0.04);
             box-shadow: 0 0 0 3px rgba(220,38,38,0.1), inset 0 0 40px rgba(220,38,38,0.04);
         }
 
-        .drop-zone.has-preview {
-            border-color: rgba(220,38,38,0.4);
-            border-style: solid;
-        }
+        .drop-zone.has-preview { border-color: rgba(220,38,38,0.4); border-style: solid; }
 
         @keyframes borderPulse {
             0%,100% { border-color: var(--red); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
@@ -454,109 +476,81 @@
 
         .drop-zone.drag-over { animation: borderPulse 1s ease-in-out infinite; }
 
+        /* Error state untuk drop zone */
+        .drop-zone.zone-error {
+            border-color: rgba(239,68,68,0.5) !important;
+            background: rgba(239,68,68,0.05) !important;
+        }
+
         .drop-zone-prompt {
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            gap: 14px; padding: 40px 24px; text-align: center;
+            gap: 14px; padding: 36px 24px; text-align: center;
         }
 
         .drop-icon-wrap {
-            width: 72px; height: 72px; border-radius: 20px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
+            width: 68px; height: 68px; border-radius: 18px;
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center;
             transition: all 0.3s ease;
         }
 
-        .drop-zone:hover .drop-icon-wrap,
-        .drop-zone.drag-over .drop-icon-wrap {
-            background: var(--red-soft);
-            border-color: rgba(220,38,38,0.25);
+        .drop-zone:hover .drop-icon-wrap, .drop-zone.drag-over .drop-icon-wrap {
+            background: var(--red-soft); border-color: rgba(220,38,38,0.25);
             box-shadow: 0 0 24px rgba(220,38,38,0.15);
         }
 
-        .drop-icon-wrap svg {
-            width: 32px; height: 32px;
-            color: rgba(255,255,255,0.18);
-            transition: color 0.3s ease;
-        }
+        .drop-icon-wrap svg { width: 30px; height: 30px; color: rgba(255,255,255,0.18); transition: color 0.3s ease; }
+        .drop-zone:hover .drop-icon-wrap svg, .drop-zone.drag-over .drop-icon-wrap svg { color: var(--red); }
 
-        .drop-zone:hover .drop-icon-wrap svg,
-        .drop-zone.drag-over .drop-icon-wrap svg { color: var(--red); }
-
-        .drop-title {
-            font-size: 0.88rem; font-weight: 800; color: rgba(255,255,255,0.5);
-            transition: color 0.3s ease;
-        }
-
-        .drop-zone:hover .drop-title,
-        .drop-zone.drag-over .drop-title { color: rgba(255,255,255,0.75); }
+        .drop-title { font-size: 0.88rem; font-weight: 800; color: rgba(255,255,255,0.5); transition: color 0.3s ease; }
+        .drop-zone:hover .drop-title, .drop-zone.drag-over .drop-title { color: rgba(255,255,255,0.75); }
 
         .drop-sub { font-size: 0.72rem; color: rgba(255,255,255,0.2); line-height: 1.6; }
 
-        .drop-types {
-            display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-        }
+        .drop-types { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
 
         .drop-type-pill {
-            font-size: 0.62rem; font-weight: 800;
-            letter-spacing: 1px; text-transform: uppercase;
+            font-size: 0.62rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
             padding: 3px 9px; border-radius: 20px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
             color: rgba(255,255,255,0.25);
         }
 
-        /* Image Preview */
-        .preview-wrap {
-            position: absolute; inset: 0;
-            display: none;
-        }
-
-        .preview-img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
+        .preview-wrap { position: absolute; inset: 0; display: none; }
+        .preview-img  { width: 100%; height: 100%; object-fit: cover; }
 
         .preview-overlay {
             position: absolute; inset: 0;
             background: rgba(0,0,0,0.55);
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            gap: 10px; opacity: 0;
-            transition: opacity 0.3s ease;
+            gap: 10px; opacity: 0; transition: opacity 0.3s ease;
         }
 
         .drop-zone:hover .preview-overlay { opacity: 1; }
 
         .preview-change-btn {
             display: inline-flex; align-items: center; gap: 7px;
-            background: rgba(220,38,38,0.85);
-            color: white; padding: 9px 18px; border-radius: 10px;
-            font-size: 0.78rem; font-weight: 800;
-            cursor: pointer; border: none;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 4px 20px rgba(220,38,38,0.4);
+            background: rgba(220,38,38,0.85); color: white; padding: 9px 18px; border-radius: 10px;
+            font-size: 0.78rem; font-weight: 800; cursor: pointer; border: none;
+            font-family: 'Inter', sans-serif; box-shadow: 0 4px 20px rgba(220,38,38,0.4);
         }
 
         .preview-change-btn svg { width: 14px; height: 14px; }
 
-        .preview-name {
-            font-size: 0.72rem; color: rgba(255,255,255,0.6);
-            font-weight: 600;
-        }
+        .preview-name { font-size: 0.72rem; color: rgba(255,255,255,0.6); font-weight: 600; }
 
         .preview-badge {
             position: absolute; top: 12px; left: 12px;
             background: rgba(8,8,8,0.75); backdrop-filter: blur(8px);
-            border: 1px solid rgba(220,38,38,0.3);
-            color: #fca5a5; padding: 4px 10px; border-radius: 20px;
-            font-size: 0.65rem; font-weight: 800;
-            letter-spacing: 0.8px; text-transform: uppercase;
+            border: 1px solid rgba(34,197,94,0.4); color: #86efac;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 0.65rem; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;
             display: none;
         }
 
-        /* ── PDF Upload ── */
+        /* ── PDF ── */
         .pdf-upload-area {
             border: 1.5px dashed rgba(255,255,255,0.08);
             border-radius: 12px; padding: 16px;
@@ -565,84 +559,59 @@
             background: rgba(255,255,255,0.02);
         }
 
-        .pdf-upload-area:hover {
-            border-color: rgba(220,38,38,0.3);
-            background: rgba(220,38,38,0.04);
-        }
-
-        .pdf-upload-area.has-file {
-            border-color: rgba(220,38,38,0.35);
-            border-style: solid;
-            background: rgba(220,38,38,0.05);
-        }
+        .pdf-upload-area:hover { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.04); }
+        .pdf-upload-area.has-file { border-color: rgba(220,38,38,0.35); border-style: solid; background: rgba(220,38,38,0.05); }
 
         .pdf-icon-box {
             width: 42px; height: 42px; border-radius: 10px;
             background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            transition: all 0.25s ease;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.25s ease;
         }
 
-        .pdf-upload-area:hover .pdf-icon-box,
-        .pdf-upload-area.has-file .pdf-icon-box {
+        .pdf-upload-area:hover .pdf-icon-box, .pdf-upload-area.has-file .pdf-icon-box {
             background: var(--red-soft); border-color: rgba(220,38,38,0.25);
         }
 
         .pdf-icon-box svg { width: 18px; height: 18px; color: rgba(255,255,255,0.2); transition: color 0.25s ease; }
-        .pdf-upload-area:hover .pdf-icon-box svg,
-        .pdf-upload-area.has-file .pdf-icon-box svg { color: var(--red); }
+        .pdf-upload-area:hover .pdf-icon-box svg, .pdf-upload-area.has-file .pdf-icon-box svg { color: var(--red); }
 
-        .pdf-text-main {
-            font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.4);
-            transition: color 0.25s ease;
-        }
-
+        .pdf-text-main { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.4); transition: color 0.25s ease; }
         .pdf-upload-area:hover .pdf-text-main { color: rgba(255,255,255,0.65); }
         .pdf-upload-area.has-file .pdf-text-main { color: #fca5a5; }
-
         .pdf-text-sub { font-size: 0.68rem; color: rgba(255,255,255,0.18); margin-top: 2px; }
 
-        /* ── SUBMIT BUTTON ── */
+        /* ── SUBMIT ── */
         .btn-submit {
             width: 100%;
             background: var(--red); color: white; border: none;
             border-radius: 12px; padding: 15px 24px;
-            font-size: 0.9rem; font-weight: 800;
-            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem; font-weight: 800; font-family: 'Inter', sans-serif;
             letter-spacing: 0.3px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            position: relative; overflow: hidden;
-            transition: all 0.3s ease;
+            position: relative; overflow: hidden; transition: all 0.3s ease;
             box-shadow: 0 4px 20px rgba(220,38,38,0.3);
         }
 
         .btn-submit::before {
-            content: '';
-            position: absolute; inset: 0;
+            content: ''; position: absolute; inset: 0;
             background: linear-gradient(135deg, #b91c1c, #ef4444);
             opacity: 0; transition: opacity 0.3s ease;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px var(--red-glow), 0 0 0 4px rgba(220,38,38,0.15);
-        }
-
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px var(--red-glow), 0 0 0 4px rgba(220,38,38,0.15); }
         .btn-submit:hover::before { opacity: 1; }
+        .btn-submit:active { transform: translateY(0); }
         .btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
         .btn-submit svg { width: 18px; height: 18px; }
-        .btn-submit:active { transform: translateY(0); }
 
-        /* ── TIPS CARD ── */
-        .tips-card {
-            background: rgba(220,38,38,0.05);
-            border: 1px solid rgba(220,38,38,0.15);
-            border-radius: 14px; padding: 18px;
-        }
+        /* Disabled saat submit */
+        .btn-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        /* ── TIPS ── */
+        .tips-card { background: rgba(220,38,38,0.05); border: 1px solid rgba(220,38,38,0.15); border-radius: 14px; padding: 18px; }
 
         .tips-title {
-            font-size: 0.7rem; font-weight: 800;
-            letter-spacing: 1.5px; text-transform: uppercase;
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
             color: rgba(220,38,38,0.7); margin-bottom: 12px;
             display: flex; align-items: center; gap: 7px;
         }
@@ -651,17 +620,12 @@
 
         .tips-item {
             display: flex; align-items: flex-start; gap: 8px;
-            font-size: 0.75rem; color: rgba(255,255,255,0.3);
-            line-height: 1.6; margin-bottom: 8px; font-weight: 500;
+            font-size: 0.75rem; color: rgba(255,255,255,0.3); line-height: 1.6; margin-bottom: 8px; font-weight: 500;
         }
 
         .tips-item:last-child { margin-bottom: 0; }
 
-        .tips-bullet {
-            width: 4px; height: 4px; border-radius: 50%;
-            background: var(--red); margin-top: 7px; flex-shrink: 0;
-            box-shadow: 0 0 6px var(--red-glow);
-        }
+        .tips-bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--red); margin-top: 7px; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -670,11 +634,8 @@
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
-{{-- ================================================================
-     SIDEBAR
-================================================================ --}}
+{{-- SIDEBAR --}}
 <aside class="sidebar">
-
     <div class="sidebar-logo">
         <div class="logo-wordmark">
             <div class="logo-icon">
@@ -719,8 +680,7 @@
 
         <a href="{{ route('siswa.portfolio.create') }}" class="nav-item active">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 4v16m8-8H4"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
             </svg>
             Tambah Karya
         </a>
@@ -730,7 +690,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            Export PDF
+            Cetak Portfolio
         </a>
 
         <div class="nav-label" style="margin-top:20px;">Akun</div>
@@ -758,9 +718,7 @@
     </div>
 </aside>
 
-{{-- ================================================================
-     MAIN CONTENT
-================================================================ --}}
+{{-- MAIN --}}
 <div class="main-content">
 
     <div class="topbar">
@@ -775,7 +733,6 @@
 
     <div class="page-inner">
 
-        {{-- Back Button --}}
         <a href="{{ route('siswa.dashboard') }}" class="btn-back">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
@@ -783,8 +740,7 @@
             Kembali ke Dashboard
         </a>
 
-        {{-- Form Header --}}
-        <div style="margin-bottom:36px;">
+        <div style="margin-bottom:28px;">
             <div style="font-size:0.68rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(220,38,38,0.65); margin-bottom:10px;">
                 &#9654; Upload Karya Terbaru
             </div>
@@ -794,18 +750,60 @@
             <p class="form-sub">Tampilkan mahakarya terbarumu ke dalam portofolio digital.</p>
         </div>
 
-        {{-- ── FORM ── --}}
+        {{-- ============================================================
+             FIX #1 — GLOBAL ERROR ALERT
+             Menampilkan SEMUA error sekaligus di atas form, sangat jelas.
+             Ini yang hilang di kode sebelumnya — user tidak tahu kenapa gagal.
+        ============================================================ --}}
+        @if ($errors->any())
+            <div class="error-alert" id="errorAlert">
+                <div class="error-alert-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    Form gagal disimpan — ada {{ $errors->count() }} kesalahan yang harus diperbaiki:
+                </div>
+                <ul class="error-alert-list">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- ============================================================
+             FIX #2 — PERINGATAN KATEGORI KOSONG
+             Jika CategorySeeder belum dijalankan, tampilkan warning
+             agar user tahu kenapa dropdown kosong.
+        ============================================================ --}}
+        @if(isset($categories) && $categories->isEmpty())
+            <div class="warning-alert">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                <div class="warning-alert-text">
+                    <strong style="color:#eab308;">Kategori belum tersedia.</strong>
+                    Minta admin untuk menjalankan:
+                    <code style="background:rgba(255,255,255,0.08); padding:1px 6px; border-radius:4px; font-size:0.7rem;">php artisan db:seed --class=CategorySeeder</code>
+                </div>
+            </div>
+        @endif
+
+        {{-- FORM --}}
         <form
             method="POST"
             action="{{ route('siswa.portfolio.store') }}"
             enctype="multipart/form-data"
             id="uploadForm"
+            novalidate
         >
             @csrf
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
 
-                {{-- ============ LEFT: IMAGE UPLOAD ============ --}}
+                {{-- LEFT: IMAGE --}}
                 <div>
                     <div class="form-card">
                         <div class="form-card-header">
@@ -822,13 +820,11 @@
                         </div>
                         <div class="form-card-body">
 
-                            {{-- Drop Zone --}}
                             <div
-                                class="drop-zone {{ $errors->has('image') ? 'is-error' : '' }}"
+                                class="drop-zone {{ $errors->has('image') ? 'zone-error' : '' }}"
                                 id="imageDropZone"
                                 onclick="document.getElementById('imageInput').click()"
                             >
-                                {{-- Prompt --}}
                                 <div class="drop-zone-prompt" id="imagePrompt">
                                     <div class="drop-icon-wrap">
                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -837,25 +833,25 @@
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="drop-title">Pilih atau letakkan gambar karya di sini</div>
+                                        <div class="drop-title">Pilih atau letakkan gambar di sini</div>
                                         <div class="drop-sub" style="margin-top:5px;">
-                                            Klik area ini atau seret file gambar<br>
-                                            untuk mulai mengunggah.
+                                            Klik area ini atau seret file gambar untuk mengunggah.
                                         </div>
                                     </div>
+                                    {{-- FIX #3 — Hapus WEBP dari pill karena validator tidak terima WEBP --}}
                                     <div class="drop-types">
                                         <span class="drop-type-pill">JPG</span>
+                                        <span class="drop-type-pill">JPEG</span>
                                         <span class="drop-type-pill">PNG</span>
-                                        <span class="drop-type-pill">WEBP</span>
                                         <span class="drop-type-pill">Max 2MB</span>
                                     </div>
                                 </div>
 
-                                {{-- Preview --}}
                                 <div class="preview-wrap" id="imagePreviewWrap">
                                     <img src="#" alt="Preview" class="preview-img" id="imagePreviewImg">
                                     <div class="preview-overlay">
-                                        <button type="button" class="preview-change-btn" onclick="event.stopPropagation(); document.getElementById('imageInput').click()">
+                                        <button type="button" class="preview-change-btn"
+                                                onclick="event.stopPropagation(); document.getElementById('imageInput').click()">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
@@ -868,11 +864,12 @@
                                 </div>
                             </div>
 
+                            {{-- FIX #3 — Accept hanya jpg,jpeg,png sesuai validator --}}
                             <input
                                 type="file"
                                 id="imageInput"
                                 name="image"
-                                accept=".jpg,.jpeg,.png,.webp"
+                                accept=".jpg,.jpeg,.png"
                                 style="display:none;"
                             >
 
@@ -888,7 +885,6 @@
                         </div>
                     </div>
 
-                    {{-- Tips --}}
                     <div class="tips-card" style="margin-top:16px;">
                         <div class="tips-title">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -899,20 +895,20 @@
                         </div>
                         <div class="tips-item">
                             <div class="tips-bullet"></div>
-                            Gunakan resolusi minimal <strong style="color:rgba(255,255,255,0.45);">800×600px</strong> untuk tampilan terbaik di grid portofolio.
+                            Gunakan resolusi minimal <strong style="color:rgba(255,255,255,0.45);">800×600px</strong> untuk tampilan terbaik.
                         </div>
                         <div class="tips-item">
                             <div class="tips-bullet"></div>
-                            Rasio <strong style="color:rgba(255,255,255,0.45);">4:3</strong> atau <strong style="color:rgba(255,255,255,0.45);">16:9</strong> sangat disarankan agar kartu terlihat proporsional.
+                            Format yang diterima: <strong style="color:rgba(255,255,255,0.45);">JPG, JPEG, PNG</strong> — maksimal 2MB.
                         </div>
                         <div class="tips-item">
                             <div class="tips-bullet"></div>
-                            Pastikan gambar menampilkan karya utama yang paling representatif.
+                            Isi semua field yang bertanda <span style="color:var(--red);">*</span> agar karya berhasil disimpan.
                         </div>
                     </div>
                 </div>
 
-                {{-- ============ RIGHT: METADATA ============ --}}
+                {{-- RIGHT: METADATA --}}
                 <div>
                     <div class="form-card">
                         <div class="form-card-header">
@@ -944,8 +940,9 @@
                                         id="title"
                                         name="title"
                                         value="{{ old('title') }}"
-                                        placeholder="Contoh: Tugas 1 – Desain Poster – Nama Siswa"
+                                        placeholder="Contoh: Poster Hari Kemerdekaan 2025"
                                         class="form-input {{ $errors->has('title') ? 'is-error' : '' }}"
+                                        autofocus
                                     >
                                 </div>
                                 @error('title')
@@ -973,13 +970,24 @@
                                         name="category_id"
                                         class="form-select {{ $errors->has('category_id') ? 'is-error' : '' }}"
                                     >
-                                        <option value="" disabled selected>— Pilih Kategori Karya —</option>
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id }}"
-                                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->name }}
-                                            </option>
-                                        @endforeach
+                                        <option value="" disabled {{ old('category_id') ? '' : 'selected' }}>
+                                            {{-- FIX #2 — Feedback jika kategori kosong --}}
+                                            @if(isset($categories) && $categories->isEmpty())
+                                                ⚠ Belum ada kategori — hubungi admin
+                                            @else
+                                                — Pilih Kategori Karya —
+                                            @endif
+                                        </option>
+                                        @if(isset($categories))
+                                            @foreach($categories as $category)
+                                                <option
+                                                    value="{{ $category->id }}"
+                                                    {{ old('category_id') == $category->id ? 'selected' : '' }}
+                                                >
+                                                    {{ $category->name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                     <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
@@ -1017,7 +1025,7 @@
                                 @enderror
                             </div>
 
-                            {{-- PDF Upload --}}
+                            {{-- PDF --}}
                             <div class="field-wrap">
                                 <label class="field-label">
                                     File Dokumen PDF
@@ -1038,21 +1046,13 @@
                                         <div class="pdf-text-main" id="pdfTextMain">Klik untuk memilih file PDF</div>
                                         <div class="pdf-text-sub">Format PDF &bull; Maksimal 5MB</div>
                                     </div>
-                                    <div style="flex-shrink:0;">
-                                        <span style="font-size:0.65rem; font-weight:800; color:rgba(255,255,255,0.18); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:3px 9px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase;">
-                                            Browse
-                                        </span>
-                                    </div>
+                                    <span style="font-size:0.65rem; font-weight:800; color:rgba(255,255,255,0.18); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:3px 9px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase; flex-shrink:0;">
+                                        Browse
+                                    </span>
                                 </div>
-                                <input
-                                    type="file"
-                                    id="pdfInput"
-                                    name="file_pdf"
-                                    accept=".pdf"
-                                    style="display:none;"
-                                >
+                                <input type="file" id="pdfInput" name="file_pdf" accept=".pdf" style="display:none;">
                                 @error('file_pdf')
-                                    <div class="field-error">
+                                    <div class="field-error" style="margin-top:8px;">
                                         <svg fill="currentColor" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
@@ -1063,12 +1063,12 @@
 
                             {{-- Submit --}}
                             <div style="padding-top:8px; border-top:1px solid var(--border); margin-top:4px;">
-                                <button type="submit" class="btn-submit">
+                                <button type="submit" class="btn-submit" id="submitBtn">
                                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                               d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                     </svg>
-                                    <span>Simpan &amp; Publikasikan</span>
+                                    <span id="submitText">Simpan &amp; Publikasikan</span>
                                 </button>
 
                                 <a href="{{ route('siswa.dashboard') }}"
@@ -1086,7 +1086,6 @@
             </div>
         </form>
 
-        {{-- Footer --}}
         <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
             <span style="font-size:0.7rem; color:rgba(255,255,255,0.14);">
                 &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.26);">DKV SMEKDA</strong>
@@ -1100,29 +1099,27 @@
     </div>
 </div>
 
-{{-- ================================================================
-     JAVASCRIPT
-================================================================ --}}
 <script>
     /* ── IMAGE LIVE PREVIEW ── */
-    const imageInput      = document.getElementById('imageInput');
-    const imageDropZone   = document.getElementById('imageDropZone');
-    const imagePrompt     = document.getElementById('imagePrompt');
+    const imageInput       = document.getElementById('imageInput');
+    const imageDropZone    = document.getElementById('imageDropZone');
+    const imagePrompt      = document.getElementById('imagePrompt');
     const imagePreviewWrap = document.getElementById('imagePreviewWrap');
-    const imagePreviewImg = document.getElementById('imagePreviewImg');
-    const imageFileName   = document.getElementById('imageFileName');
-    const previewBadge    = document.getElementById('previewBadge');
+    const imagePreviewImg  = document.getElementById('imagePreviewImg');
+    const imageFileName    = document.getElementById('imageFileName');
+    const previewBadge     = document.getElementById('previewBadge');
 
     function showImagePreview(file) {
         if (!file || !file.type.startsWith('image/')) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            imagePreviewImg.src = e.target.result;
+            imagePreviewImg.src            = e.target.result;
             imagePrompt.style.display      = 'none';
             imagePreviewWrap.style.display = 'block';
             previewBadge.style.display     = 'block';
             imageFileName.textContent      = file.name;
             imageDropZone.classList.add('has-preview');
+            imageDropZone.classList.remove('zone-error');
         };
         reader.readAsDataURL(file);
     }
@@ -1132,17 +1129,14 @@
     });
 
     /* ── DRAG & DROP ── */
-    imageDropZone.addEventListener('dragenter', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        imageDropZone.classList.add('drag-over');
+    ['dragenter','dragover'].forEach(evt => {
+        imageDropZone.addEventListener(evt, (e) => {
+            e.preventDefault(); e.stopPropagation();
+            imageDropZone.classList.add('drag-over');
+        });
     });
 
-    imageDropZone.addEventListener('dragover', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        imageDropZone.classList.add('drag-over');
-    });
-
-    ['dragleave', 'dragend'].forEach(evt => {
+    ['dragleave','dragend'].forEach(evt => {
         imageDropZone.addEventListener(evt, (e) => {
             e.preventDefault(); e.stopPropagation();
             imageDropZone.classList.remove('drag-over');
@@ -1174,13 +1168,38 @@
         }
     });
 
-    /* ── INPUT ICON FOCUS COLOR ── */
+    /* ── INPUT ICON FOCUS ── */
     document.querySelectorAll('.form-input, .form-select').forEach(el => {
         const wrap = el.closest('.input-wrap');
         const icon = wrap?.querySelector('.input-icon');
         if (!icon) return;
-        el.addEventListener('focus',  () => icon.style.color = 'var(--red)');
-        el.addEventListener('blur',   () => icon.style.color = 'rgba(255,255,255,0.2)');
+        el.addEventListener('focus', () => { icon.style.color = 'var(--red)'; });
+        el.addEventListener('blur',  () => { icon.style.color = 'rgba(255,255,255,0.2)'; });
+    });
+
+    /* ── FIX #4 — SCROLL KE ERROR SAAT HALAMAN LOAD ── */
+    window.addEventListener('load', () => {
+        const alert = document.getElementById('errorAlert');
+        if (alert) {
+            alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
+
+    /* ── FIX #5 — LOADING STATE SAAT SUBMIT ── */
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        const btn  = document.getElementById('submitBtn');
+        const text = document.getElementById('submitText');
+
+        // Validasi manual: cek gambar dipilih
+        if (!imageInput.files || imageInput.files.length === 0) {
+            e.preventDefault();
+            imageDropZone.classList.add('zone-error');
+            imageDropZone.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        btn.disabled  = true;
+        text.textContent = 'Menyimpan...';
     });
 </script>
 
