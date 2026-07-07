@@ -9,14 +9,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use App\Models\User;
 
 class ProfileController extends Controller
 {
     public function edit(): View
     {
         $user = Auth::user();
+        $skillOptions = User::SKILL_OPTIONS;
 
-        return view('siswa.profile.edit', compact('user'));
+        return view('siswa.profile.edit', compact('user', 'skillOptions'));
     }
 
     public function update(Request $request): RedirectResponse
@@ -30,6 +32,13 @@ class ProfileController extends Controller
             'contact'          => ['nullable', 'string', 'max:255'],
             'photo'            => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'password'         => ['nullable', 'string', 'min:8', 'confirmed'],
+            'skills_active'    => ['nullable', 'array'],
+            'skills_active.*'  => ['string', 'max:100'],
+            'skills_level'     => ['nullable', 'array'],
+            'custom_skill_name'  => ['nullable', 'array'],
+            'custom_skill_name.*' => ['nullable', 'string', 'max:100'],
+            'custom_skill_level' => ['nullable', 'array'],
+            'custom_skill_level.*' => ['nullable', 'integer', 'min:0', 'max:100'],
         ]);
 
         $photoPath = $user->photo;
@@ -40,11 +49,38 @@ class ProfileController extends Controller
             $photoPath = $request->file('photo')->store('profiles/photos', 'public');
         }
 
+        // Susun ulang data skill dari daftar baku + skill custom siswa
+        $skills = [];
+        foreach (User::SKILL_OPTIONS as $group => $options) {
+            foreach ($options as $skillName) {
+                if (in_array($skillName, $validated['skills_active'] ?? [], true)) {
+                    $level = (int) ($request->input("skills_level.$skillName") ?? 50);
+                    $skills[] = [
+                        'name'  => $skillName,
+                        'level' => max(0, min(100, $level)),
+                        'type'  => $group,
+                    ];
+                }
+            }
+        }
+        $customNames  = $validated['custom_skill_name'] ?? [];
+        $customLevels = $validated['custom_skill_level'] ?? [];
+        foreach ($customNames as $i => $customName) {
+            if (!empty(trim((string) $customName))) {
+                $skills[] = [
+                    'name'  => trim($customName),
+                    'level' => max(0, min(100, (int) ($customLevels[$i] ?? 50))),
+                    'type'  => 'Custom',
+                ];
+            }
+        }
+
         $user->name    = $validated['name'];
         $user->nis_nip = $validated['nis_nip'] ?? null;
         $user->bio     = $validated['bio'] ?? null;
         $user->contact = $validated['contact'] ?? null;
         $user->photo   = $photoPath;
+        $user->skills  = $skills;
 
         if (!empty($validated['password'])) {
             $user->password = Hash::make($validated['password']);

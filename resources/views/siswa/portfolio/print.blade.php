@@ -401,9 +401,9 @@
   $totalKat   = $byKat->count();
   $totalPdf   = $portfolios->whereNotNull('file_pdf_path')->count();
 
-  $galleryUrl = \Illuminate\Support\Facades\Route::has('portfolio.gallery')
-      ? route('portfolio.gallery', $user->username ?? $user->id)
-      : route('siswa.dashboard');
+  $galleryUrl = $user->portfolio_slug
+      ? route('portfolio.profile', $user->portfolio_slug)
+      : url('/');
 @endphp
 
 {{-- ================================================================
@@ -560,14 +560,52 @@
 </div>
 
 {{-- ============================================================
-     03 — DAFTAR ISI (dot leaders presisi)
+     02 — SKILL & KOMPETENSI
+     Software desain + kompetensi inti, ditampilkan sebagai
+     progress bar tipis senada dengan gaya index/mono dokumen ini.
 ============================================================ --}}
+@php $userSkills = collect($user->skills ?? []); @endphp
+@if($userSkills->isNotEmpty())
 <div class="sheet brk">
   <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
   <div class="bignum z1">02</div>
   <div class="sheet-pad z1">
 
-    <div class="eyebrow">02 — Daftar Isi</div>
+    <div class="eyebrow">02 — Skill & Kompetensi</div>
+    <div class="h-display h-section" style="margin-bottom:11mm;">Kemampuan &<br>Penguasaan Alat</div>
+
+    @foreach($userSkills->groupBy('type') as $groupName => $groupSkills)
+      <div style="margin-bottom:10mm;">
+        <div class="idx" style="margin-bottom:5mm; color:var(--clay);">{{ $groupName }}</div>
+        <div style="display:flex; flex-direction:column; gap:6mm;">
+          @foreach($groupSkills as $skill)
+            <div class="avoid">
+              <div style="display:flex; justify-content:space-between; margin-bottom:2mm;">
+                <span style="font-family:'Fraunces',serif; font-weight:600; font-size:10pt;">{{ $skill['name'] }}</span>
+                <span class="cap" style="font-family:'JetBrains Mono',monospace;">{{ $skill['level'] }}%</span>
+              </div>
+              <div style="width:100%; height:3px; background:var(--paper-2);">
+                <div style="height:100%; width:{{ $skill['level'] }}%; background:var(--clay);"></div>
+              </div>
+            </div>
+          @endforeach
+        </div>
+      </div>
+    @endforeach
+
+  </div>
+</div>
+@endif
+
+{{-- ============================================================
+     03 — DAFTAR ISI (dot leaders presisi)
+============================================================ --}}
+<div class="sheet brk">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="bignum z1">03</div>
+  <div class="sheet-pad z1">
+
+    <div class="eyebrow">03 — Daftar Isi</div>
     <div class="h-display h-section" style="margin-bottom:11mm;">Katalog<br>Karya Portofolio</div>
 
     <div>

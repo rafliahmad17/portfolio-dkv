@@ -20,6 +20,7 @@ class User extends Authenticatable
         'photo',
         'bio',
         'contact',
+        'skills',
     ];
 
     protected $hidden = [
@@ -33,20 +34,40 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password'          => 'hashed',
             'role'              => 'string',
+            'skills'            => 'array',
         ];
     }
+
+    /**
+     * Daftar skill baku yang ditawarkan sistem ke siswa DKV,
+     * dikelompokkan menjadi Software Desain dan Kompetensi Inti.
+     * Siswa tetap bisa menambah skill custom di luar daftar ini.
+     */
+    public const SKILL_OPTIONS = [
+        'Software Desain' => [
+            'Adobe Illustrator',
+            'Adobe Photoshop',
+            'Adobe InDesign',
+            'CorelDraw',
+            'Figma',
+            'Canva',
+        ],
+        'Kompetensi Inti' => [
+            'Tipografi',
+            'Nirmana (Garis, Bentuk, Warna)',
+            'Ilustrasi Digital',
+            'Layouting',
+            'Fotografi',
+            'Videografi',
+        ],
+    ];
 
     public function portfolios(): HasMany
     {
         return $this->hasMany(Portfolio::class);
     }
 
-    /**
-     * Alias 'avatar' -> kolom 'photo'.
-     * View guru/profile.blade.php memakai auth()->user()->avatar,
-     * padahal kolom di database bernama 'photo'. Accessor ini
-     * menjembatani keduanya tanpa perlu ubah view atau migrasi.
-     */
+    
     public function getAvatarAttribute()
     {
         return $this->photo;
