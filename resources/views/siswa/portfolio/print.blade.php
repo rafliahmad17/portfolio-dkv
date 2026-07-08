@@ -271,6 +271,24 @@
     position:absolute; top:4px; left:4px; z-index:2;
   }
 
+  /* Crop-mark corners — bingkai ala tanda potong percetakan/portofolio
+     fotografi, tren editorial-print yang populer saat ini. Murni dekoratif,
+     tidak mengganggu object-fit gambar di dalamnya. */
+  .frame-fixed::after{
+    content:'';
+    position:absolute; inset:5px; z-index:2; pointer-events:none;
+    background:
+      linear-gradient(var(--clay),var(--clay)) top left / 9px 2px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) top left / 2px 9px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) top right / 9px 2px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) top right / 2px 9px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) bottom left / 9px 2px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) bottom left / 2px 9px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) bottom right / 9px 2px no-repeat,
+      linear-gradient(var(--clay),var(--clay)) bottom right / 2px 9px no-repeat;
+    opacity:.6;
+  }
+
   .card-desc{
     font-size:7.8pt;
     line-height:1.55;
@@ -317,6 +335,42 @@
   }
   @media screen and (max-width:900px){ .qr-master{ flex-direction:column; text-align:center; } }
   .qr-master img{ width:96px; height:96px; display:block; border:1px solid var(--line); background:#fff; padding:6px; flex-shrink:0; }
+
+  /* ============================================================
+     §07b — QR TICKET (arsip QR per karya)
+     Gaya "kartu katalog perpustakaan / tiket arsip" — garis putus
+     sebagai perforasi, nomor indeks vertikal ala label museum.
+     Ini adalah "tempat menyimpan" QR tiap karya di akhir dokumen.
+  ============================================================ */
+  .qr-ticket{
+    display:flex; align-items:stretch;
+    border:1px solid var(--line); background:#fff;
+  }
+  .qr-ticket-no{
+    writing-mode:vertical-rl; transform:rotate(180deg);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-size:7.5px; font-weight:600;
+    letter-spacing:.12em; color:var(--clay);
+    padding:3mm 1.5mm; border-right:1px dashed var(--sand); flex-shrink:0;
+  }
+  .qr-ticket-qr{
+    display:flex; align-items:center; justify-content:center; flex-shrink:0;
+    padding:4mm; border-right:1px dashed var(--sand);
+  }
+  .qr-ticket-qr img{ width:58px; height:58px; display:block; border:1px solid var(--line); }
+  .qr-ticket-qr .qr-ticket-fallback{
+    display:none; width:58px; height:58px; align-items:center; justify-content:center;
+    border:1px solid var(--line); color:#C7BCA8; font-size:14pt; background:#F1EDE4;
+  }
+  .qr-ticket-info{
+    flex:1; min-width:0; padding:4mm 5mm;
+    display:flex; flex-direction:column; justify-content:center; gap:1mm;
+  }
+  .qr-ticket-title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:9.5pt;
+    line-height:1.22; color:var(--ink);
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
 
   /* ============================================================
      §08 — BADGES
@@ -642,19 +696,7 @@
   </div>
 </div>
 
-{{-- ============================================================
-     04+ — HALAMAN KARYA — GRID 4 KARYA PER HALAMAN
-     Alasan perubahan: 1-karya-per-halaman menyebabkan konten
-     terpotong dan boros halaman. Grid 2×2 dengan bingkai gambar
-     ukuran seragam (aspect-ratio tetap, object-fit:contain) jauh
-     lebih rapi dan standar untuk portfolio book multi-karya.
-     Deskripsi dipangkas jadi ringkasan pendek per kartu — detail
-     lengkap cukup lewat QR "Lihat Galeri Online" di footer halaman,
-     bukan QR per-karya yang membuat tiap kartu sempit.
-============================================================ --}}
-@php $chunks = $portfolios->chunk(4); @endphp
 
-@forelse($chunks as $pageIndex => $chunk)
 <div class="sheet brk">
   <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
   <div class="bignum z1">{{ str_pad($pageIndex + 1, 2, '0', STR_PAD_LEFT) }}</div>
@@ -740,7 +782,7 @@
   <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
   <div class="sheet-pad z1">
 
-    <div class="eyebrow">Rekap — Statistik Portofolio</div>
+    <div class="eyebrow">05 — Rekap Statistik Portofolio</div>
     <div class="h-display h-section" style="margin-bottom:12mm;">Statistik &<br>Rekap Karya</div>
 
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8mm; margin-bottom:11mm;">
@@ -781,13 +823,73 @@
 @endif
 
 {{-- ============================================================
-     06 — PENUTUP (bookend gelap simetris dengan cover)
+     06 — ARSIP KODE QR PER KARYA
+     "Tempat menyimpan" QR — bukan tautan galeri umum di footer
+     halaman, melainkan kode akses individual per karya menuju
+     halaman publiknya masing-masing (qrTargetFor). Disusun seperti
+     kartu katalog/tiket arsip agar tetap presisi & rapi dicetak,
+     dipecah 6 karya per halaman supaya tidak pernah terpotong.
+============================================================ --}}
+@if($portfolios->count() > 0)
+@php $qrChunks = $portfolios->chunk(6); @endphp
+@foreach($qrChunks as $qi => $qChunk)
+<div class="sheet brk">
+  <div class="wm" aria-hidden="true"><span>SMKN 2 PADANG PANJANG</span></div>
+  <div class="sheet-pad z1">
+
+    @if($qi === 0)
+      <div class="eyebrow">06 — Arsip Kode QR</div>
+      <div class="h-display h-section" style="margin-bottom:5mm;">Indeks QR<br>Setiap Karya</div>
+      <p class="body-copy" style="max-width:135mm; margin-bottom:9mm;">
+        Setiap karya pada portofolio ini memiliki kode QR tersendiri yang mengarah langsung ke
+        halaman detailnya secara online — pindai satu per satu untuk membuka versi digital,
+        resolusi penuh, dan tautan berbagi masing-masing karya.
+      </p>
+    @else
+      <div class="eyebrow">06 — Arsip Kode QR (lanjutan)</div>
+      <div class="h-display h-section" style="margin-bottom:8mm; font-size:19pt;">Indeks QR — Halaman {{ $qi + 1 }}</div>
+    @endif
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:5mm 6mm;">
+      @foreach($qChunk as $ci => $portfolio)
+        @php
+          $globalIndex = $qi * 6 + $ci + 1;
+          $qrTarget = $qrTargetFor($portfolio);
+        @endphp
+        <div class="qr-ticket avoid">
+          <div class="qr-ticket-no">{{ str_pad($globalIndex, 2, '0', STR_PAD_LEFT) }}</div>
+          <div class="qr-ticket-qr">
+            <img src="{{ $qrImg($qrTarget, 160) }}" alt="QR {{ $portfolio->title }}"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="qr-ticket-fallback">△</div>
+          </div>
+          <div class="qr-ticket-info">
+            <div class="qr-ticket-title">{{ $portfolio->title }}</div>
+            <span class="tag" style="align-self:flex-start; margin:1mm 0;">{{ $portfolio->category?->name ?? 'Umum' }}</span>
+            <a href="{{ $qrTarget }}" class="qr-link-text">{{ \Illuminate\Support\Str::limit($qrTarget, 46) }}</a>
+          </div>
+        </div>
+      @endforeach
+
+      {{-- Slot kosong bila karya di halaman terakhir < 6, grid tetap simetris --}}
+      @if($qChunk->count() < 6 && $qChunk->count() % 2 !== 0)
+        <div></div>
+      @endif
+    </div>
+
+  </div>
+</div>
+@endforeach
+@endif
+
+{{-- ============================================================
+     07 — PENUTUP (bookend gelap simetris dengan cover)
 ============================================================ --}}
 <div class="sheet dark" style="border-top:3px solid var(--clay);">
   <div class="sheet-pad z1" style="height:100%; display:flex; flex-direction:column; justify-content:space-between;">
 
     <div>
-      <div class="eyebrow" style="color:rgba(250,247,242,.4);">Penutup</div>
+      <div class="eyebrow" style="color:rgba(250,247,242,.4);">07 — Penutup</div>
       <div class="h-display h-cover" style="font-size:44pt;">Terima</div>
       <div class="h-display h-cover" style="font-size:44pt; font-style:italic; color:var(--clay);">Kasih.</div>
       <div class="rule-clay" style="margin:7mm 0 8mm;"></div>
