@@ -86,7 +86,6 @@ class PortfolioController extends Controller
 
         $portfolio->update([
             'title'         => $validated['title'],
-            'slug'          => Str::slug($validated['title']) . '-' . Str::random(6),
             'description'   => $validated['description'],
             'category_id'   => $validated['category_id'],
             'image_path'    => $imagePath,

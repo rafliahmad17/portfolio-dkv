@@ -565,7 +565,7 @@
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 10mm; margin-bottom:9mm;">
       <div class="kv"><span class="k">NIS/NIP</span><span class="v">{{ $user->nis_nip ?? '—' }}</span></div>
       <div class="kv"><span class="k">Email</span><span class="v" style="word-break:break-all;">{{ $user->email }}</span></div>
-      <div class="kv"><span class="k">WhatsApp</span><span class="v">{{ $user->phone ?? '—' }}</span></div>
+      <div class="kv"><span class="k">WhatsApp</span><span class="v">{{ $user->contact ?? '—' }}</span></div>
       <div class="kv"><span class="k">Institusi</span><span class="v">SMKN 2 Padang Panjang</span></div>
     </div>
 
