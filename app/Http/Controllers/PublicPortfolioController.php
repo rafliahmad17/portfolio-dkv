@@ -47,4 +47,21 @@ class PublicPortfolioController extends Controller
         // 3. Penambahan 'achievements' ke dalam compact
         return view('public.portfolio.profile', compact('user', 'portfolios', 'totalKarya', 'totalKategori', 'achievements'));
     }
+
+    // Tampilkan PDF ringkas (1-2 halaman) milik siswa secara publik lewat slug,
+    // tanpa perlu login. Memakai template yang sama dengan rute privat
+    // siswa.portfolio.print agar hasil cetak selalu konsisten.
+    public function print($slug)
+    {
+        $user = User::where('portfolio_slug', $slug)
+            ->where('role', 'siswa')
+            ->firstOrFail();
+
+        $portfolios = Portfolio::with('category')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
+
+        return view('portfolio.print-ringkas', compact('user', 'portfolios'));
+    }
 }

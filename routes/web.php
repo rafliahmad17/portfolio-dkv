@@ -37,6 +37,10 @@ Route::get('/p/{slug}', [PublicPortfolioController::class, 'show'])
 Route::get('/u/{slug}', [PublicPortfolioController::class, 'profile'])
     ->name('portfolio.profile');
 
+// PDF ringkas publik — bisa dipindai/diakses tanpa login lewat slug siswa
+Route::get('/u/{slug}/print', [PublicPortfolioController::class, 'print'])
+    ->name('portfolio.public.print');
+
 Route::middleware('auth')->group(function () {
 
     // KELOMPOK GURU

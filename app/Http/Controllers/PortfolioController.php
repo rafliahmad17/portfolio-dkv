@@ -112,23 +112,19 @@ class PortfolioController extends Controller
                          ->with('success', 'Karya berhasil dihapus.');
     }
 
-   public function printView(): View
-{
-    $user = Auth::user();
-    
-    // Ambil semua portofolio user
-    $portfolios = Portfolio::with('category')
-        ->where('user_id', $user->id)
-        ->latest()
-        ->get();
+    // Tampilkan PDF ringkas (1-2 halaman) milik siswa yang sedang login.
+    // Menggunakan template baru print-ringkas.blade.php (bukan print.blade.php lama,
+    // file lama tetap dibiarkan ada namun tidak dipakai lagi di sini).
+    public function printView(): View
+    {
+        $user = Auth::user();
 
-    // Hitung statistik untuk dikirim ke view
-    $totalKarya = $portfolios->count();
-    $byKat      = $portfolios->groupBy(fn ($p) => $p->category?->name ?? 'Umum');
-    $totalKat   = $byKat->count();
-    $totalPdf   = $portfolios->whereNotNull('file_pdf_path')->count();
+        // Ambil semua portofolio user, terbaru dahulu
+        $portfolios = Portfolio::with('category')
+            ->where('user_id', $user->id)
+            ->latest()
+            ->get();
 
-    // Kirim semua variabel ke view
-    return view('siswa.portfolio.print', compact('portfolios', 'user', 'totalKarya', 'totalKat', 'totalPdf', 'byKat'));
-}
+        return view('portfolio.print-ringkas', compact('user', 'portfolios'));
+    }
 }
