@@ -5,6 +5,7 @@ use App\Http\Controllers\PublicPortfolioController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController; 
 use App\Http\Controllers\PortfolioController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -51,6 +52,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/profile', [ProfileController::class, 'guruShow'])->name('profile');
         Route::put('/profile-update', [ProfileController::class, 'guruUpdate'])->name('profile.update');
         Route::put('/password-update', [ProfileController::class, 'updatePassword'])->name('profile.password');
+
+        // Kelola Kategori — hanya index, store, update, destroy (create/edit pakai modal, bukan halaman terpisah)
+        Route::resource('kategori', CategoryController::class)
+            ->except(['create', 'edit', 'show'])
+            ->names('kategori')
+            ->parameters(['kategori' => 'category']);
     });
 
     // KELOMPOK SISWA
