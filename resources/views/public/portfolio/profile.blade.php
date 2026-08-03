@@ -322,8 +322,54 @@
             border: 1px dashed var(--border); border-radius: 16px; font-size: 0.85rem;
         }
 
+        /* ══════════════════════ PRESTASI & SERTIFIKAT (publik) ══════════════════════ */
+        .achv-pub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+        .achv-pub-card {
+            background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden; transition: all 0.3s ease;
+        }
+        .achv-pub-card:hover {
+            transform: translateY(-4px); border-color: rgba(220,38,38,0.22);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 40px rgba(220,38,38,0.05);
+        }
+        .achv-pub-thumb-wrap { position: relative; overflow: hidden; height: 150px; background: #111; }
+        .achv-pub-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+        .achv-pub-card:hover .achv-pub-thumb { transform: scale(1.06); }
+        .achv-pub-thumb-placeholder {
+            width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.02);
+        }
+        .achv-pub-thumb-placeholder svg { width: 36px; height: 36px; color: rgba(255,255,255,0.1); }
+        .achv-pub-body { padding: 16px; }
+        .achv-pub-type {
+            display: inline-flex; align-items: center; gap: 5px;
+            background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.2);
+            color: #fca5a5; font-size: 0.6rem; font-weight: 800; letter-spacing: 1.5px;
+            text-transform: uppercase; padding: 2px 9px; border-radius: 20px; margin-bottom: 9px;
+        }
+        .achv-pub-type svg { width: 10px; height: 10px; }
+        .achv-pub-title { font-size: 0.88rem; font-weight: 700; color: #f5f5f5; line-height: 1.35; margin-bottom: 6px; }
+        .achv-pub-issuer {
+            display: flex; align-items: center; gap: 5px; font-size: 0.74rem;
+            color: rgba(255,255,255,0.32); margin-bottom: 8px; font-weight: 500;
+        }
+        .achv-pub-issuer svg { width: 12px; height: 12px; flex-shrink: 0; }
+        .achv-pub-meta {
+            display: flex; align-items: center; gap: 5px; font-size: 0.67rem;
+            color: rgba(255,255,255,0.2); margin-bottom: 10px;
+        }
+        .achv-pub-meta svg { width: 11px; height: 11px; }
+        .achv-pub-link {
+            display: inline-flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 700;
+            color: #fca5a5; text-decoration: none; padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.05); width: 100%;
+        }
+        .achv-pub-link:hover { color: #f87171; }
+        .achv-pub-link svg { width: 12px; height: 12px; }
+
         @media (max-width: 640px) {
             .works-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .achv-pub-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .work-thumb { height: 128px; }
             .hero { padding: 48px 0 34px; }
         }
@@ -386,6 +432,9 @@
             <a href="#keahlian" class="nav-link" data-section="keahlian">Keahlian</a>
             @endif
             <a href="#karya" class="nav-link" data-section="karya">Karya</a>
+            @if($achievements->isNotEmpty())
+            <a href="#prestasi" class="nav-link" data-section="prestasi">Prestasi</a>
+            @endif
             <a href="#kontak" class="nav-link" data-section="kontak">Kontak</a>
         </div>
 
@@ -558,6 +607,92 @@
         <div class="empty-state">Siswa ini belum mengunggah karya.</div>
         @endif
     </section>
+
+    {{-- ══════════════ PRESTASI & SERTIFIKAT ══════════════ --}}
+    @if($achievements->isNotEmpty())
+    <section id="prestasi" class="section-block">
+        <div class="section-header"><span class="section-label">Prestasi &amp; Sertifikat</span></div>
+
+        <div class="achv-pub-grid">
+            @foreach($achievements as $achievement)
+            <div class="achv-pub-card">
+                <div class="achv-pub-thumb-wrap">
+                    @if($achievement->image_path)
+                        <img
+                            src="{{ asset('storage/' . $achievement->image_path) }}"
+                            alt="{{ $achievement->title }}"
+                            class="achv-pub-thumb"
+                            onerror="this.style.background='#1a1a1a'"
+                        >
+                    @else
+                        <div class="achv-pub-thumb-placeholder">
+                            @if($achievement->type === 'prestasi')
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M9 17a3 3 0 013-3h0a3 3 0 013 3v3H9v-3zM6 6h12v2a6 6 0 01-12 0V6zm0 0H4a2 2 0 000 4h2M18 6h2a2 2 0 010 4h-2"/>
+                                </svg>
+                            @else
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+                <div class="achv-pub-body">
+                    <div class="achv-pub-type">
+                        @if($achievement->type === 'prestasi')
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 17a3 3 0 013-3h0a3 3 0 013 3v3H9v-3zM6 6h12v2a6 6 0 01-12 0V6zm0 0H4a2 2 0 000 4h2M18 6h2a2 2 0 010 4h-2"/>
+                            </svg>
+                            Prestasi
+                        @else
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Sertifikat
+                        @endif
+                    </div>
+                    <div class="achv-pub-title">{{ $achievement->title }}</div>
+
+                    @if($achievement->issuer)
+                        <div class="achv-pub-issuer">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2M5 21H3m4-14h6m-6 4h6m-6 4h6M9 21v-4a1 1 0 011-1h4a1 1 0 011 1v4"/>
+                            </svg>
+                            {{ $achievement->issuer }}
+                        </div>
+                    @endif
+
+                    @if($achievement->achieved_at)
+                        <div class="achv-pub-meta">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ $achievement->achieved_at->translatedFormat('d M Y') }}
+                        </div>
+                    @endif
+
+                    @if($achievement->file_path)
+                        <a href="{{ asset('storage/' . $achievement->file_path) }}" target="_blank" rel="noopener" class="achv-pub-link">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Lihat Dokumen
+                        </a>
+                    @endif
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </section>
+    @endif
 
 </div>
 

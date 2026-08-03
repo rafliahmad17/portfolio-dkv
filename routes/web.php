@@ -7,6 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PortfolioController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\AchievementController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -64,6 +65,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/portfolio/{portfolio}/edit', [PortfolioController::class, 'edit'])->name('portfolio.edit');
         Route::put('/portfolio/{portfolio}',      [PortfolioController::class, 'update'])->name('portfolio.update');
         Route::delete('/portfolio/{portfolio}',   [PortfolioController::class, 'destroy'])->name('portfolio.destroy');
+
+                // Prestasi & Sertifikat
+        Route::get('/achievement',               [AchievementController::class, 'index'])->name('achievement.index');
+        Route::post('/achievement',               [AchievementController::class, 'store'])->name('achievement.store');
+        Route::get('/achievement/{achievement}/edit', [AchievementController::class, 'edit'])->name('achievement.edit');
+        Route::put('/achievement/{achievement}',      [AchievementController::class, 'update'])->name('achievement.update');
+        Route::delete('/achievement/{achievement}',   [AchievementController::class, 'destroy'])->name('achievement.destroy');
 
         Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
