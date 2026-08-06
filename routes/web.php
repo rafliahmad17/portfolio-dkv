@@ -9,6 +9,7 @@ use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AchievementController;
+use App\Http\Controllers\StudentController;
 
 Route::get('/', function () {
     if (Auth::check()) {
@@ -59,6 +60,21 @@ Route::middleware('auth')->group(function () {
             ->except(['create', 'edit', 'show'])
             ->names('kategori')
             ->parameters(['kategori' => 'category']);
+
+        // Data Siswa — guru mendaftarkan & mengelola akun siswa (create/edit pakai modal)
+        Route::resource('siswa', StudentController::class)
+            ->except(['create', 'edit', 'show'])
+            ->names('siswa')
+            ->parameters(['siswa' => 'siswa']);
+
+        // withTrashed() wajib ada di kedua rute ini agar Laravel tetap bisa
+        // menemukan akun siswa yang statusnya sudah soft-deleted (arsip).
+        Route::put('siswa/{siswa}/restore', [StudentController::class, 'restore'])
+            ->name('siswa.restore')
+            ->withTrashed();
+        Route::delete('siswa/{siswa}/force', [StudentController::class, 'forceDelete'])
+            ->name('siswa.force-delete')
+            ->withTrashed();
     });
 
     // KELOMPOK SISWA

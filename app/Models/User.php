@@ -4,12 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    // SoftDeletes: akun yang "dihapus" hanya ditandai deleted_at, bukan
+    // dibuang dari database — supaya portofolio & prestasi siswa tidak
+    // ikut lenyap permanen akibat cascadeOnDelete() saat guru salah klik hapus.
+    use HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
