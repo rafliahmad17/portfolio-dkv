@@ -1,8 +1,4 @@
-<!-- resources/views/public/portfolio/profile.blade.php -->
-{{-- Halaman profil publik siswa — Live URL Portfolio, tidak perlu login --}}
-{{-- Didesain ulang: navbar sticky dengan scroll-spy, hero premium, section Tentang/Keahlian/Karya,
-     serta tautan ke PDF ringkas (lihat resources/views/portfolio/print-ringkas.blade.php) --}}
-<!DOCTYPE html>
+
 <html lang="id">
 <head>
     <meta charset="UTF-8">
