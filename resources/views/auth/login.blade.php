@@ -381,7 +381,21 @@
         }
 
         .forgot-link:hover { color: var(--red-bright); }
+/* Link nonaktif — fitur belum tersedia (persiapan sidang) */
+        .forgot-link-disabled {
+            display: inline-flex; align-items: center; gap: 6px;
+            opacity: 0.5; cursor: not-allowed;
+        }
+        .forgot-link.forgot-link-disabled:hover { color: rgba(255,255,255,0.3); }
 
+        .badge-soon {
+            font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3px;
+            color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.09);
+            padding: 1px 6px; border-radius: 20px;
+            white-space: nowrap;
+        }
         /* ── SUBMIT BUTTON ── */
         .btn-submit {
             width: 100%;
@@ -714,7 +728,10 @@
                         >
                         <span class="remember-text">Ingat Saya</span>
                     </label>
-                    <a href="#" class="forgot-link">Lupa Password?</a>
+                   <a href="javascript:void(0)" onclick="return false;" class="forgot-link forgot-link-disabled">
+                        Lupa Password?
+                        <span class="badge-soon">Segera Hadir</span>
+                    </a>
                 </div>
 
                 {{-- Submit --}}

@@ -203,6 +203,26 @@
         .nav-item.active svg { color: var(--red); }
         .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
 
+/* Menu nonaktif — fitur belum tersedia (persiapan sidang) */
+        .nav-item-disabled { opacity: 0.5; cursor: not-allowed; }
+        .nav-item.nav-item-disabled:hover {
+            color: rgba(255,255,255,0.35);
+            background: transparent;
+            border-color: transparent;
+        }
+        .nav-item-label {
+            display: flex; align-items: center; flex-wrap: wrap;
+            gap: 6px; row-gap: 2px;
+        }
+        .badge-soon {
+            font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3px;
+            color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.09);
+            padding: 1px 6px; border-radius: 20px;
+            white-space: nowrap;
+        }
+
         .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
 
         .btn-logout {
@@ -815,14 +835,16 @@
 
         <div class="nav-label" style="margin-top:20px;">Laporan</div>
 
-        {{-- Rekap & Statistik --}}
-        <a href="#"
-           class="nav-item {{ request()->routeIs('guru.rekap*') ? 'active' : '' }}">
+        <a href="javascript:void(0)" onclick="return false;"
+           class="nav-item nav-item-disabled {{ request()->routeIs('guru.rekap*') ? 'active' : '' }}">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
-            Rekap & Statistik
+            <span class="nav-item-label">
+                Rekap & Statistik
+                <span class="badge-soon">Segera Hadir</span>
+            </span>
         </a>
     </nav>
 
