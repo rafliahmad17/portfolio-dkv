@@ -782,7 +782,7 @@
         </a>
 
         {{-- Data Siswa --}}
-        <a href="#"
+        <a href="{{ route('guru.siswa.index') }}"
            class="nav-item {{ request()->routeIs('guru.siswa*') ? 'active' : '' }}">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
