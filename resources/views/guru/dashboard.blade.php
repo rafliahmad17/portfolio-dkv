@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Guru — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
+@extends('layouts.app')
+
+@section('title', 'Dashboard Guru — DKV SMEKDA Portal')
+
+{{-- Dashboard guru sudah punya sidebar sendiri sebagai navigasi + "footer
+     strip" kecil di dalam kontennya sendiri, jadi navbar/footer default
+     dari layout tidak dipakai di halaman ini. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
         :root {
             --red:        #dc2626;
             --red-bright: #ef4444;
@@ -738,8 +735,9 @@
             margin: 14px 10px;
         }
     </style>
-</head>
-<body>
+@endpush
+
+@section('content')
 
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
@@ -1227,6 +1225,4 @@
 
     </div>
 </div>
-
-</body>
-</html>
+@endsection
