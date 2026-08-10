@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Siswa — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
+@extends('layouts.app')
+
+@section('title', 'Data Siswa — DKV SMEKDA Portal')
+
+{{-- Halaman ini sudah punya sidebar sendiri sebagai navigasi + "footer
+     strip" kecil di dalam kontennya sendiri (pola sama dengan
+     guru/dashboard.blade.php), jadi navbar/footer default dari layout
+     tidak dipakai di halaman ini. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
         :root {
             --red:        #dc2626;
             --red-bright: #ef4444;
@@ -382,6 +380,40 @@
         .btn-icon-success:hover { background: rgba(34,197,94,0.16); border-color: rgba(34,197,94,0.35); }
         .btn-icon-success:focus-visible { outline: 2px solid #22c55e; outline-offset: 2px; }
 
+        /* ================================================================
+           KARTU SISWA — pengganti tabel di layar sempit (≤860px), supaya
+           data tidak terpotong ke samping dan tidak perlu scroll horizontal.
+        ================================================================ */
+        .table-responsive-wrap { overflow-x: auto; }
+        .siswa-cards { display: none; flex-direction: column; gap: 12px; padding: 14px; }
+        .siswa-card {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            border-radius: 14px; padding: 16px; animation: rowIn 0.4s ease both;
+        }
+        .siswa-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+        .siswa-card-info { display: flex; align-items: flex-start; gap: 12px; min-width: 0; flex: 1; }
+        .siswa-card-index {
+            font-size: 0.66rem; font-weight: 800; color: rgba(220,38,38,0.65);
+            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
+            border-radius: 20px; padding: 3px 9px; flex-shrink: 0; white-space: nowrap;
+        }
+        .siswa-card-meta {
+            font-size: 0.8rem; color: rgba(255,255,255,0.7); font-weight: 600;
+            margin-bottom: 14px; display: flex; flex-direction: column; gap: 4px;
+        }
+        .siswa-card-meta .cell-nis { margin-top: 0; }
+
+        /* Aksi kartu — dibuat flex-wrap supaya tombol dengan label panjang
+           ("Hapus Permanen") turun baris dengan rapi di layar paling sempit,
+           bukan meluber ke samping. Ukuran 44x44 diatur di @media 860px. */
+        .siswa-card-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 14px; border-top: 1px solid var(--border); }
+        .siswa-card-actions form { flex: 1 1 100px; display: flex; }
+        .card-action-btn {
+            flex: 1 1 100px; width: 100%; min-height: 44px; min-width: 44px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            white-space: normal; text-align: center; line-height: 1.25;
+        }
+
         /* ── EMPTY STATE ── */
         .table-empty { padding: 80px 40px; text-align: center; }
         .table-empty-icon {
@@ -449,7 +481,19 @@
             .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; box-shadow: 20px 0 60px rgba(0,0,0,0.5); }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
-            .mobile-menu-btn { display: flex; }
+            .mobile-menu-btn { display: flex; width: 44px; height: 44px; }
+
+            /* Tabel → kartu, supaya data siswa tidak butuh scroll horizontal */
+            .table-responsive-wrap { display: none; }
+            .siswa-cards { display: flex; }
+
+            /* Target sentuh tombol minimal 44x44px di layar mobile */
+            .nav-item, .btn-logout { min-height: 44px; }
+            .btn-primary, .btn-secondary { min-height: 44px; }
+            .modal-close { width: 44px; height: 44px; }
+            .flash-close { width: 44px; height: 44px; justify-content: center; }
+            .page-btn { width: 44px; height: 44px; }
+            .form-input { min-height: 44px; }
         }
         @media (max-width: 640px) {
             .page-inner { padding: 24px 16px 48px; }
@@ -466,8 +510,9 @@
             .content-card { flex-direction: column; align-items: stretch; }
         }
     </style>
-</head>
-<body>
+@endpush
+
+@section('content')
 
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
@@ -748,9 +793,9 @@
                 </div>
             </div>
 
-            @forelse($students as $index => $student)
-                @if($loop->first)
-                <div style="overflow-x:auto;">
+            @if($students->count() > 0)
+                {{-- ── TABEL (tampil di layar desktop, ≥861px) ── --}}
+                <div class="table-responsive-wrap">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -761,117 +806,218 @@
                             </tr>
                         </thead>
                         <tbody>
-                @endif
-
-                            <tr
-                                style="animation-delay: {{ $loop->index * 0.03 }}s;"
-                                data-id="{{ $student->id }}"
-                                data-name="{{ $student->name }}"
-                                data-email="{{ $student->email }}"
-                                data-nis="{{ $student->nis_nip }}"
-                            >
-                                <td>
-                                    <span style="font-size:0.72rem; font-weight:800; color:rgba(220,38,38,0.55);">
-                                        {{ $students->firstItem() + $index }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div class="name-cell">
-                                        <div class="avatar-mini">{{ strtoupper(substr($student->name, 0, 1)) }}</div>
-                                        <div>
-                                            <div class="cell-name">{{ $student->name }}</div>
-                                            <div class="cell-slug">
-                                                {{ $student->portfolios_count }} karya &bull; {{ $student->achievements_count }} prestasi
+                            @foreach($students as $index => $student)
+                                <tr
+                                    style="animation-delay: {{ $index * 0.03 }}s;"
+                                    data-id="{{ $student->id }}"
+                                    data-name="{{ $student->name }}"
+                                    data-email="{{ $student->email }}"
+                                    data-nis="{{ $student->nis_nip }}"
+                                >
+                                    <td>
+                                        <span style="font-size:0.72rem; font-weight:800; color:rgba(220,38,38,0.55);">
+                                            {{ $students->firstItem() + $index }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="name-cell">
+                                            <div class="avatar-mini">{{ strtoupper(substr($student->name, 0, 1)) }}</div>
+                                            <div>
+                                                <div class="cell-name">{{ $student->name }}</div>
+                                                <div class="cell-slug">
+                                                    {{ $student->portfolios_count }} karya &bull; {{ $student->achievements_count }} prestasi
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="cell-email">{{ $student->email }}</div>
-                                    <div class="cell-nis">NISN: {{ $student->nis_nip ?? '—' }}</div>
-                                </td>
-                                <td style="text-align:right;">
-                                    <div class="row-actions">
+                                    </td>
+                                    <td>
+                                        <div class="cell-email">{{ $student->email }}</div>
+                                        <div class="cell-nis">NISN: {{ $student->nis_nip ?? '—' }}</div>
+                                    </td>
+                                    <td style="text-align:right;">
+                                        <div class="row-actions">
 
-                                        {{-- Detail — read-only, data diambil dari attribute baris (tidak perlu route baru) --}}
-                                        <button
-                                            type="button"
-                                            class="btn-icon-info"
-                                            data-detail-btn
-                                            data-name="{{ $student->name }}"
-                                            data-email="{{ $student->email }}"
-                                            data-nis="{{ $student->nis_nip ?? '—' }}"
-                                            data-portfolios="{{ $student->portfolios_count }}"
-                                            data-achievements="{{ $student->achievements_count }}"
-                                            data-joined="{{ $student->created_at?->translatedFormat('d F Y') ?? '—' }}"
-                                        >
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            Detail
-                                        </button>
-
-                                        @if($showTrashed)
-                                            {{-- Pulihkan --}}
-                                            <form method="POST" action="{{ route('guru.siswa.restore', $student) }}">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit" class="btn-icon-success">
-                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                                    Pulihkan
-                                                </button>
-                                            </form>
-
-                                            {{-- Hapus Permanen --}}
-                                            <form
-                                                method="POST"
-                                                action="{{ route('guru.siswa.force-delete', $student) }}"
-                                                onsubmit="return confirm('Akun ini beserta SELURUH portofolio & prestasinya akan dihapus permanen dan tidak bisa dikembalikan. Lanjutkan?')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-icon-danger">
-                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                    Hapus Permanen
-                                                </button>
-                                            </form>
-                                        @else
-                                            {{-- Edit — membuka modal --}}
+                                            {{-- Detail — read-only, data diambil dari attribute baris (tidak perlu route baru) --}}
                                             <button
                                                 type="button"
-                                                class="btn-icon-warning"
-                                                data-edit-btn
-                                                data-id="{{ $student->id }}"
+                                                class="btn-icon-info"
+                                                data-detail-btn
                                                 data-name="{{ $student->name }}"
                                                 data-email="{{ $student->email }}"
-                                                data-nis="{{ $student->nis_nip }}"
+                                                data-nis="{{ $student->nis_nip ?? '—' }}"
+                                                data-portfolios="{{ $student->portfolios_count }}"
+                                                data-achievements="{{ $student->achievements_count }}"
+                                                data-joined="{{ $student->created_at?->translatedFormat('d F Y') ?? '—' }}"
                                             >
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                                Edit
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                Detail
                                             </button>
 
-                                            {{-- Hapus (soft-delete / arsipkan) --}}
-                                            <form
-                                                method="POST"
-                                                action="{{ route('guru.siswa.destroy', $student) }}"
-                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan.')"
-                                            >
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-icon-danger">
-                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                    Hapus
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
+                                            @if($showTrashed)
+                                                {{-- Pulihkan --}}
+                                                <form method="POST" action="{{ route('guru.siswa.restore', $student) }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit" class="btn-icon-success">
+                                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                                        Pulihkan
+                                                    </button>
+                                                </form>
 
-                @if($loop->last)
+                                                {{-- Hapus Permanen --}}
+                                                <form
+                                                    method="POST"
+                                                    action="{{ route('guru.siswa.force-delete', $student) }}"
+                                                    onsubmit="return confirm('Akun ini beserta SELURUH portofolio & prestasinya akan dihapus permanen dan tidak bisa dikembalikan. Lanjutkan?')"
+                                                >
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn-icon-danger">
+                                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                        Hapus Permanen
+                                                    </button>
+                                                </form>
+                                            @else
+                                                {{-- Edit — membuka modal --}}
+                                                <button
+                                                    type="button"
+                                                    class="btn-icon-warning"
+                                                    data-edit-btn
+                                                    data-id="{{ $student->id }}"
+                                                    data-name="{{ $student->name }}"
+                                                    data-email="{{ $student->email }}"
+                                                    data-nis="{{ $student->nis_nip }}"
+                                                >
+                                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                    Edit
+                                                </button>
+
+                                                {{-- Hapus (soft-delete / arsipkan) --}}
+                                                <form
+                                                    method="POST"
+                                                    action="{{ route('guru.siswa.destroy', $student) }}"
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan.')"
+                                                >
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn-icon-danger">
+                                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
-                @endif
-            @empty
+
+                {{-- ── KARTU (tampil di layar mobile/sempit ≤860px, gantikan tabel
+                     supaya tidak terpotong ke samping / tidak perlu scroll horizontal) ── --}}
+                <div class="siswa-cards">
+                    @foreach($students as $index => $student)
+                        <div
+                            class="siswa-card"
+                            data-id="{{ $student->id }}"
+                            data-name="{{ $student->name }}"
+                            data-email="{{ $student->email }}"
+                            data-nis="{{ $student->nis_nip }}"
+                        >
+                            <div class="siswa-card-top">
+                                <div class="siswa-card-info">
+                                    <div class="avatar-mini">{{ strtoupper(substr($student->name, 0, 1)) }}</div>
+                                    <div style="min-width:0;">
+                                        <div class="cell-name">{{ $student->name }}</div>
+                                        <div class="cell-slug">
+                                            {{ $student->portfolios_count }} karya &bull; {{ $student->achievements_count }} prestasi
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="siswa-card-index">#{{ $students->firstItem() + $index }}</span>
+                            </div>
+
+                            <div class="siswa-card-meta">
+                                <div class="cell-email">{{ $student->email }}</div>
+                                <div class="cell-nis">NISN: {{ $student->nis_nip ?? '—' }}</div>
+                            </div>
+
+                            <div class="siswa-card-actions">
+                                {{-- Detail — read-only, data diambil dari attribute kartu (tidak perlu route baru) --}}
+                                <button
+                                    type="button"
+                                    class="btn-icon-info card-action-btn"
+                                    data-detail-btn
+                                    data-name="{{ $student->name }}"
+                                    data-email="{{ $student->email }}"
+                                    data-nis="{{ $student->nis_nip ?? '—' }}"
+                                    data-portfolios="{{ $student->portfolios_count }}"
+                                    data-achievements="{{ $student->achievements_count }}"
+                                    data-joined="{{ $student->created_at?->translatedFormat('d F Y') ?? '—' }}"
+                                >
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    Detail
+                                </button>
+
+                                @if($showTrashed)
+                                    {{-- Pulihkan --}}
+                                    <form method="POST" action="{{ route('guru.siswa.restore', $student) }}">
+                                        @csrf
+                                        @method('PUT')
+                                        <button type="submit" class="btn-icon-success card-action-btn">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                            Pulihkan
+                                        </button>
+                                    </form>
+
+                                    {{-- Hapus Permanen --}}
+                                    <form
+                                        method="POST"
+                                        action="{{ route('guru.siswa.force-delete', $student) }}"
+                                        onsubmit="return confirm('Akun ini beserta SELURUH portofolio & prestasinya akan dihapus permanen dan tidak bisa dikembalikan. Lanjutkan?')"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-icon-danger card-action-btn">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            Hapus Permanen
+                                        </button>
+                                    </form>
+                                @else
+                                    {{-- Edit — membuka modal --}}
+                                    <button
+                                        type="button"
+                                        class="btn-icon-warning card-action-btn"
+                                        data-edit-btn
+                                        data-id="{{ $student->id }}"
+                                        data-name="{{ $student->name }}"
+                                        data-email="{{ $student->email }}"
+                                        data-nis="{{ $student->nis_nip }}"
+                                    >
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                        Edit
+                                    </button>
+
+                                    {{-- Hapus (soft-delete / arsipkan) --}}
+                                    <form
+                                        method="POST"
+                                        action="{{ route('guru.siswa.destroy', $student) }}"
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan.')"
+                                    >
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn-icon-danger card-action-btn">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                            Hapus
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @else
                 <div class="table-empty">
                     <div class="table-empty-icon">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -888,7 +1034,7 @@
                             : 'Klik tombol "Tambah Data Siswa" di atas untuk mendaftarkan akun siswa pertama Anda.' }}
                     </div>
                 </div>
-            @endforelse
+            @endif
 
             @if($students->hasPages())
                 <div class="pagination-wrap">
@@ -1148,6 +1294,9 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
 <script>
     // ── Toggle sidebar di layar sempit (<=860px) ──
     (function () {
@@ -1292,6 +1441,4 @@
         }, 4500);
     });
 </script>
-
-</body>
-</html>
+@endpush
