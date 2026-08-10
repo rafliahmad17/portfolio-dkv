@@ -1,18 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Kategori — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
+@extends('layouts.app')
+
+@section('title', 'Kelola Kategori — DKV SMEKDA Portal')
+
+{{-- Halaman guru sudah punya sidebar & topbar sendiri sebagai navigasi
+     utama, jadi navbar/footer bawaan layout tidak dipakai di sini (pola
+     sama seperti guru/dashboard.blade.php). Tailwind CDN + tailwind.config
+     kini datang dari layouts/app.blade.php — SATU-SATUNYA sumbernya —
+     jadi tidak diduplikasi lagi di sini. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
         :root {
             --red:        #dc2626;
             --red-bright: #ef4444;
@@ -642,6 +641,61 @@
         .table-empty-sub { font-size: 0.78rem; color: rgba(255,255,255,0.18); line-height: 1.6; max-width: 320px; margin: 0 auto; }
 
         /* ================================================================
+           TABEL (DESKTOP) vs KARTU (MOBILE)
+           Di layar ≥ 861px, tabel ditampilkan seperti biasa. Di layar
+           ≤ 860px (breakpoint sama dengan sidebar off-canvas), tabel
+           disembunyikan total dan diganti daftar kartu per-baris supaya
+           tidak pernah butuh scroll horizontal di mobile.
+        ================================================================ */
+        .table-desktop-wrap { overflow-x: auto; }
+
+        .kategori-cards { display: none; flex-direction: column; gap: 12px; padding: 16px; }
+
+        .kategori-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+            animation: rowIn 0.4s ease both;
+        }
+        .kategori-card::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+            background: var(--red); box-shadow: 0 0 8px var(--red-glow);
+            opacity: 0; transition: opacity 0.2s ease;
+        }
+        .kategori-card:active::before,
+        .kategori-card:focus-within::before { opacity: 1; }
+
+        .kategori-card-top {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 10px; margin-bottom: 12px;
+        }
+        .kategori-card-index {
+            font-size: 0.72rem; font-weight: 800; color: rgba(220,38,38,0.55);
+            letter-spacing: 0.3px;
+        }
+
+        .kategori-card-body {
+            margin-bottom: 16px; padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .kategori-card-body .cell-name { font-size: 0.95rem; }
+        .kategori-card-body .cell-slug { margin-top: 4px; }
+
+        .kategori-card-actions { display: flex; align-items: stretch; gap: 10px; }
+        .kategori-card-actions form { flex: 1; display: flex; }
+        .kategori-card-actions .btn-icon,
+        .kategori-card-actions .btn-icon-danger {
+            flex: 1; width: 100%;
+            justify-content: center;
+            min-height: 44px;
+            font-size: 0.8rem;
+        }
+
+        /* ================================================================
            MODAL EDIT KATEGORI
         ================================================================ */
         .modal-overlay {
@@ -686,10 +740,28 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 860px) {
+            /* Sidebar → off-canvas drawer */
             .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; box-shadow: 20px 0 60px rgba(0,0,0,0.5); }
             .sidebar.open { transform: translateX(0); }
             .main-content { margin-left: 0; }
             .mobile-menu-btn { display: flex; }
+
+            /* Tabel kategori → daftar kartu (tanpa scroll horizontal) */
+            .table-desktop-wrap { display: none; }
+            .kategori-cards { display: flex; }
+
+            /* ── TARGET SENTUH ≥ 44×44px UNTUK SEMUA TOMBOL AKSI DI MOBILE ── */
+            .mobile-menu-btn { width: 44px; height: 44px; }
+            .nav-item { min-height: 44px; }
+            .btn-logout { min-height: 44px; }
+            .btn-primary, .btn-secondary { min-height: 44px; }
+            .modal-close { width: 44px; height: 44px; }
+            .page-btn { min-width: 44px; height: 44px; }
+            .flash-close {
+                width: 44px; height: 44px; padding: 0;
+                display: flex; align-items: center; justify-content: center;
+                top: 4px; right: 4px;
+            }
         }
 
         @media (max-width: 640px) {
@@ -704,10 +776,13 @@
             .modal-footer { flex-direction: column-reverse; }
             .modal-footer .btn-primary, .modal-footer .btn-secondary { width: 100%; }
             .table-topbar { flex-direction: column; align-items: flex-start; }
+            .kategori-cards { padding: 12px; gap: 10px; }
+            .kategori-card-actions { flex-direction: column; }
         }
     </style>
-</head>
-<body>
+@endpush
+
+@section('content')
 
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
@@ -1000,7 +1075,8 @@
                     </div>
                 </div>
             @else
-                <div style="overflow-x:auto;">
+                {{-- ── TAMPILAN TABEL — HANYA DI DESKTOP (> 860px) ── --}}
+                <div class="table-desktop-wrap">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -1069,6 +1145,62 @@
                     </table>
                 </div>
 
+                {{-- ── TAMPILAN KARTU — HANYA DI MOBILE (≤ 860px) ──
+                     Satu kartu per kategori, tanpa scroll horizontal, dan
+                     tombol aksi berukuran ≥ 44×44px agar nyaman disentuh. --}}
+                <div class="kategori-cards">
+                    @foreach($categories as $index => $category)
+                    <div class="kategori-card" style="animation-delay: {{ $loop->index * 0.03 }}s;">
+                        <div class="kategori-card-top">
+                            <span class="kategori-card-index">#{{ $categories->firstItem() + $index }}</span>
+                            <span class="badge-count {{ $category->portfolios_count > 0 ? 'active' : 'zero' }}">
+                                {{ $category->portfolios_count }} karya
+                            </span>
+                        </div>
+
+                        <div class="kategori-card-body">
+                            <div class="cell-name">{{ $category->name }}</div>
+                            <div class="cell-slug">/{{ $category->slug }}</div>
+                        </div>
+
+                        <div class="kategori-card-actions">
+                            <button
+                                type="button"
+                                class="btn-icon"
+                                data-edit-btn
+                                data-id="{{ $category->id }}"
+                                data-name="{{ $category->name }}"
+                            >
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Edit
+                            </button>
+
+                            <form
+                                method="POST"
+                                action="{{ route('guru.kategori.destroy', $category) }}"
+                                class="form-delete-category"
+                                data-category-name="{{ $category->name }}"
+                            >
+                                @csrf
+                                @method('DELETE')
+                                <button
+                                    type="submit"
+                                    class="btn-icon-danger {{ $category->portfolios_count > 0 ? 'muted' : '' }}"
+                                    title="{{ $category->portfolios_count > 0 ? 'Masih dipakai '.$category->portfolios_count.' karya' : 'Hapus kategori ini' }}"
+                                >
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+
                 @if($categories->hasPages())
                     <div class="pagination-wrap">
                         <div class="pagination-info">
@@ -1076,7 +1208,7 @@
                             dari <strong>{{ $categories->lastPage() }}</strong>
                             &nbsp;&bull;&nbsp; Total <strong>{{ $categories->total() }}</strong> kategori
                         </div>
-                        <div style="display:flex; align-items:center; gap:5px;">
+                        <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
                             @if($categories->onFirstPage())
                                 <span class="page-btn disabled">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
@@ -1181,6 +1313,9 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
 <script>
     // ── Toggle sidebar di layar sempit (<=860px) ──
     (function () {
@@ -1285,6 +1420,4 @@
         }, 4500);
     });
 </script>
-
-</body>
-</html>
+@endpush
