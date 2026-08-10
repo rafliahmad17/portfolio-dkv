@@ -1,474 +1,640 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Saya — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Inter','sans-serif']}}}}</script>
-    <style>
-        :root {
-            --red:        #dc2626;
-            --red-bright: #ef4444;
-            --red-glow:   rgba(220,38,38,0.45);
-            --red-soft:   rgba(220,38,38,0.10);
-            --border:     rgba(255,255,255,0.07);
-            --green:      #22c55e;
-            --green-glow: rgba(34,197,94,0.35);
-        }
+@extends('layouts.app')
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@section('title', 'Profil Saya — DKV SMEKDA Portal')
 
-        html, body {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #f5f5f5;
-            overflow-x: hidden;
-        }
+{{-- Halaman guru punya sidebar & topbar sendiri (bukan navbar/footer
+     publik bawaan layout), sama seperti pola di auth/login.blade.php
+     dan guru/dashboard.blade.php. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
 
-        /* ── NOISE ── */
-        body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 0;
-        }
+@push('styles')
+<style>
+    :root {
+        --red:        #dc2626;
+        --red-bright: #ef4444;
+        --red-glow:   rgba(220,38,38,0.45);
+        --red-soft:   rgba(220,38,38,0.10);
+        --border:     rgba(255,255,255,0.07);
+        --green:      #22c55e;
+        --green-glow: rgba(34,197,94,0.35);
+    }
 
-        /* ── GRID ── */
-        .bg-grid {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none; z-index: 0;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* ── BLOBS ── */
-        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-        .blob-1 {
-            top: -180px; right: 100px; width: 580px; height: 580px;
-            background: radial-gradient(circle, rgba(220,38,38,0.08) 0%, transparent 65%);
-            animation: blobF 11s ease-in-out infinite alternate;
-        }
-        .blob-2 {
-            bottom: -120px; left: -80px; width: 480px; height: 480px;
-            background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
-            animation: blobF 14s ease-in-out infinite alternate-reverse;
-        }
-        @keyframes blobF {
-            0%   { transform: scale(1) translate(0,0); }
-            100% { transform: scale(1.14) translate(18px,14px); }
-        }
+    html, body {
+        height: 100%;
+        font-family: 'Inter', sans-serif;
+        background-color: #080808;
+        color: #f5f5f5;
+        overflow-x: hidden;
+    }
 
-        /* ── SCROLLBAR ── */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+    /* Mengunci scroll body saat drawer sidebar terbuka di mobile */
+    body.no-scroll { overflow: hidden; }
 
-        /* ================================================================
-           SIDEBAR
-        ================================================================ */
+    /* ── NOISE ── */
+    body::before {
+        content: '';
+        position: fixed; inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
+
+    /* ── GRID ── */
+    .bg-grid {
+        position: fixed; inset: 0;
+        background-image:
+            linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none; z-index: 0;
+    }
+
+    /* ── BLOBS ── */
+    .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
+    .blob-1 {
+        top: -180px; right: 100px; width: 580px; height: 580px;
+        background: radial-gradient(circle, rgba(220,38,38,0.08) 0%, transparent 65%);
+        animation: blobF 11s ease-in-out infinite alternate;
+    }
+    .blob-2 {
+        bottom: -120px; left: -80px; width: 480px; height: 480px;
+        background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
+        animation: blobF 14s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes blobF {
+        0%   { transform: scale(1) translate(0,0); }
+        100% { transform: scale(1.14) translate(18px,14px); }
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+
+    /* ── FOCUS RING (aksesibilitas keyboard) ── */
+    button:focus-visible,
+    a:focus-visible {
+        outline: 2px solid var(--red);
+        outline-offset: 3px;
+        border-radius: 8px;
+    }
+
+    /* ================================================================
+       SIDEBAR
+    ================================================================ */
+    .sidebar {
+        position: fixed; top: 0; left: 0;
+        width: 260px; height: 100vh;
+        background: rgba(8,8,8,0.9);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border-right: 1px solid var(--border);
+        display: flex; flex-direction: column;
+        z-index: 70; overflow-y: auto;
+        transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease;
+    }
+    .sidebar::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
+    }
+    .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .logo-wordmark {
+        font-size: 0.78rem; font-weight: 900; letter-spacing: 3px;
+        text-transform: uppercase; color: rgba(255,255,255,0.85);
+        display: flex; align-items: center; gap: 9px; min-width: 0;
+    }
+    .logo-icon {
+        width: 26px; height: 26px; background: var(--red); border-radius: 7px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0;
+    }
+    .logo-icon svg { width: 13px; height: 13px; }
+
+    /* Tombol tutup drawer — hanya tampil di mobile */
+    .sidebar-close-btn {
+        display: none;
+        width: 36px; height: 36px; flex-shrink: 0;
+        align-items: center; justify-content: center;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        border-radius: 9px;
+        color: rgba(255,255,255,0.45);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .sidebar-close-btn:hover { color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); }
+    .sidebar-close-btn svg { width: 16px; height: 16px; }
+
+    .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+    .profile-avatar {
+        width: 42px; height: 42px; border-radius: 12px;
+        background: linear-gradient(135deg, #dc2626, #7c3aed);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; font-weight: 900; color: white; flex-shrink: 0;
+        box-shadow: 0 0 18px rgba(220,38,38,0.3);
+    }
+    .profile-name {
+        font-size: 0.78rem; font-weight: 700; color: #f5f5f5;
+        line-height: 1.3; margin-bottom: 2px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .profile-nip { font-size: 0.68rem; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
+    .badge-role {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
+        color: #fca5a5; padding: 2px 9px; border-radius: 30px;
+        font-size: 0.63rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
+    }
+    .live-dot {
+        width: 5px; height: 5px; background: var(--red); border-radius: 50%;
+        box-shadow: 0 0 6px var(--red-glow);
+        animation: livePulse 1.5s ease-in-out infinite;
+    }
+    @keyframes livePulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.3; transform: scale(0.6); }
+    }
+    .sidebar-nav { flex: 1; padding: 20px 14px; }
+    .nav-label {
+        font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
+        text-transform: uppercase; color: rgba(255,255,255,0.18);
+        padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
+    }
+    .nav-item {
+        display: flex; align-items: center; gap: 11px;
+        padding: 10px 12px; border-radius: 10px;
+        font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.35);
+        text-decoration: none; transition: all 0.22s ease;
+        border: 1px solid transparent; margin-bottom: 3px; position: relative;
+    }
+    .nav-item:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); border-color: var(--border); }
+    .nav-item.active { color: #fca5a5; background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2); }
+    .nav-item.active::before {
+        content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+        width: 3px; height: 18px; background: var(--red);
+        border-radius: 0 3px 3px 0; box-shadow: 0 0 10px var(--red-glow);
+    }
+    .nav-item.active svg { color: var(--red); }
+    .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    /* Menu nonaktif — fitur belum tersedia (persiapan sidang) */
+    .nav-item-disabled { opacity: 0.5; cursor: not-allowed; }
+    .nav-item.nav-item-disabled:hover {
+        color: rgba(255,255,255,0.35);
+        background: transparent;
+        border-color: transparent;
+    }
+    .nav-item-label {
+        display: flex; align-items: center; flex-wrap: wrap;
+        gap: 6px; row-gap: 2px;
+    }
+    .badge-soon {
+        font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3px;
+        color: rgba(255,255,255,0.4);
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.09);
+        padding: 1px 6px; border-radius: 20px;
+        white-space: nowrap;
+    }
+    .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
+    .btn-logout {
+        width: 100%; display: flex; align-items: center; gap: 11px;
+        padding: 10px 12px; border-radius: 10px; background: none;
+        border: 1px solid transparent; color: rgba(255,255,255,0.28);
+        font-size: 0.82rem; font-weight: 600; font-family: 'Inter', sans-serif;
+        cursor: pointer; transition: all 0.22s ease;
+    }
+    .btn-logout:hover { color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.18); }
+    .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    /* ── Overlay drawer (mobile) ── */
+    .sidebar-overlay {
+        display: none;
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.6);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+        z-index: 65;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.is-visible { opacity: 1; pointer-events: auto; }
+
+    /* ── Hamburger toggle (topbar, mobile only) ── */
+    .hamburger-btn {
+        display: none;
+        width: 44px; height: 44px; flex-shrink: 0;
+        align-items: center; justify-content: center; flex-direction: column; gap: 5px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    .hamburger-btn:hover { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); }
+    .hamburger-bar {
+        display: block; width: 18px; height: 2px; border-radius: 2px;
+        background: rgba(255,255,255,0.75);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    .hamburger-btn.is-active .hamburger-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.is-active .hamburger-bar:nth-child(2) { opacity: 0; }
+    .hamburger-btn.is-active .hamburger-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ================================================================
+       MAIN
+    ================================================================ */
+    .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
+    .topbar {
+        position: sticky; top: 0; z-index: 30;
+        background: rgba(8,8,8,0.88); backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border);
+        padding: 16px 36px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+    }
+    .topbar-title { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.22); letter-spacing: 0.5px; min-width: 0; }
+    .topbar-title span { color: rgba(255,255,255,0.5); margin-left: 6px; }
+    .topbar-pill {
+        display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+        background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
+        border-radius: 30px; padding: 5px 13px;
+        font-size: 0.68rem; font-weight: 700; color: rgba(220,38,38,0.65); letter-spacing: 0.5px;
+    }
+    .page-inner { padding: 40px 36px 60px; }
+
+    /* ================================================================
+       PROFILE PAGE — Glass Card
+    ================================================================ */
+    .glass-card {
+        background: rgba(255,255,255,0.025);
+        border: 1px solid var(--border);
+        border-radius: 24px; position: relative; overflow: hidden;
+    }
+    .glass-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+    }
+    .profile-card-left  { padding: 30px 24px; }
+    .profile-card-right { padding: 32px; }
+
+    /* ── Profile grid (kartu kiri + kartu kanan) ── */
+    .profile-grid { display: grid; grid-template-columns: 300px 1fr; gap: 22px; align-items: start; }
+
+    /* ── Avatar ── */
+    .avatar-outer-ring {
+        width: 130px; height: 130px; border-radius: 50%;
+        padding: 3px;
+        background: linear-gradient(135deg, var(--red) 0%, #7c3aed 55%, var(--red) 100%);
+        box-shadow: 0 0 36px rgba(220,38,38,0.3), 0 0 70px rgba(124,58,237,0.15);
+        display: block; margin: 0 auto;
+        position: relative; cursor: pointer;
+        transition: box-shadow 0.3s ease;
+    }
+    .avatar-outer-ring:hover {
+        box-shadow: 0 0 50px rgba(220,38,38,0.5), 0 0 90px rgba(124,58,237,0.25);
+    }
+    .avatar-outer-ring:focus-visible {
+        outline: 2px solid var(--red); outline-offset: 4px;
+    }
+    .avatar-inner {
+        width: 100%; height: 100%; border-radius: 50%;
+        overflow: hidden; position: relative;
+        background: #111;
+    }
+    .avatar-img {
+        position: absolute; inset: 0;
+        width: 100%; height: 100%; object-fit: cover;
+    }
+    .avatar-initials-lg {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem; font-weight: 900; color: white;
+        background: linear-gradient(135deg, #dc2626, #7c3aed);
+        border-radius: 50%;
+        letter-spacing: -1px;
+    }
+    .avatar-overlay {
+        position: absolute; inset: 0; border-radius: 50%;
+        background: rgba(0,0,0,0.72);
+        display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+        opacity: 0; transition: opacity 0.25s ease;
+        backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    }
+    .avatar-outer-ring:hover .avatar-overlay,
+    .avatar-outer-ring:focus-visible .avatar-overlay { opacity: 1; }
+    .avatar-overlay svg { width: 22px; height: 22px; color: white; }
+    .avatar-overlay span {
+        font-size: 0.6rem; font-weight: 900; color: white;
+        letter-spacing: 1.2px; text-transform: uppercase;
+    }
+
+    /* ── Profile Card Info ── */
+    .pc-name {
+        font-size: 1.15rem; font-weight: 900; color: #f5f5f5;
+        letter-spacing: -0.5px; text-align: center;
+        margin-top: 18px; line-height: 1.2;
+    }
+    .pc-nip { font-size: 0.7rem; color: rgba(255,255,255,0.28); font-weight: 600; text-align: center; margin-top: 3px; }
+    .badge-guru {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
+        color: #fca5a5; padding: 5px 14px; border-radius: 30px;
+        font-size: 0.62rem; font-weight: 800; letter-spacing: 0.9px; text-transform: uppercase;
+    }
+    .green-dot {
+        width: 6px; height: 6px; background: var(--green); border-radius: 50%;
+        box-shadow: 0 0 8px var(--green-glow);
+        animation: livePulse 1.8s ease-in-out infinite;
+    }
+    .card-divider { height: 1px; background: var(--border); margin: 22px 0; }
+    .info-row {
+        display: flex; align-items: flex-start; gap: 12px;
+        padding: 9px 0;
+    }
+    .info-row + .info-row { border-top: 1px solid rgba(255,255,255,0.04); }
+    .info-row-icon {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: var(--red-soft); border: 1px solid rgba(220,38,38,0.15);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .info-row-icon svg { width: 13px; height: 13px; color: rgba(220,38,38,0.65); }
+    .info-row-lbl { font-size: 0.59rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .info-row-val { font-size: 0.74rem; font-weight: 600; color: rgba(255,255,255,0.5); word-break: break-all; }
+    .member-badge {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+        border-radius: 20px; padding: 5px 12px;
+        font-size: 0.62rem; font-weight: 700; color: rgba(255,255,255,0.22);
+    }
+    .member-badge svg { width: 10px; height: 10px; color: rgba(220,38,38,0.45); }
+
+    /* ================================================================
+       PROFILE PAGE — Tab System
+    ================================================================ */
+    .tab-nav {
+        display: flex; gap: 4px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 14px; padding: 5px;
+        margin-bottom: 28px;
+    }
+    .tab-btn {
+        flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+        padding: 10px 16px; border-radius: 10px;
+        font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.3);
+        background: none; border: 1px solid transparent;
+        cursor: pointer; font-family: 'Inter', sans-serif;
+        transition: all 0.22s ease; white-space: nowrap;
+    }
+    .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; transition: color 0.22s ease; }
+    .tab-btn:hover { color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.04); }
+    .tab-btn.active {
+        color: #fca5a5; background: rgba(220,38,38,0.12);
+        border-color: rgba(220,38,38,0.22);
+        box-shadow: 0 0 20px rgba(220,38,38,0.1);
+    }
+    .tab-btn.active svg { color: var(--red); }
+    .tab-panel { transition: opacity 0.2s ease; opacity: 1; }
+    .tab-panel.hidden { display: none; }
+
+    /* ── Panel Header ── */
+    .panel-eyebrow { font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: rgba(220,38,38,0.6); margin-bottom: 5px; }
+    .panel-title { font-size: 1rem; font-weight: 800; color: #f5f5f5; letter-spacing: -0.3px; }
+    .panel-sub { font-size: 0.75rem; color: rgba(255,255,255,0.2); margin-top: 4px; font-weight: 400; }
+
+    /* ================================================================
+       PROFILE PAGE — Form Elements
+    ================================================================ */
+    .field-group { margin-bottom: 18px; }
+    .field-label {
+        display: block; font-size: 0.68rem; font-weight: 700;
+        color: rgba(255,255,255,0.35); letter-spacing: 0.5px;
+        text-transform: uppercase; margin-bottom: 8px;
+    }
+    .input-wrap { position: relative; }
+    .input-icon {
+        position: absolute; top: 50%; left: 14px;
+        transform: translateY(-50%);
+        width: 15px; height: 15px; color: rgba(255,255,255,0.18);
+        pointer-events: none; transition: color 0.22s ease; flex-shrink: 0;
+    }
+    .form-input {
+        width: 100%;
+        background: rgba(255,255,255,0.04);
+        border: 1.5px solid rgba(255,255,255,0.08);
+        border-radius: 11px; padding: 12px 14px 12px 42px;
+        font-size: 0.82rem; font-weight: 500; font-family: 'Inter', sans-serif;
+        color: #f5f5f5; outline: none; caret-color: var(--red);
+        transition: all 0.25s ease;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.14); }
+    .form-input:focus {
+        border-color: var(--red);
+        background: rgba(220,38,38,0.05);
+        box-shadow: 0 0 0 3px rgba(220,38,38,0.14), 0 0 22px rgba(220,38,38,0.08);
+    }
+    .input-wrap:focus-within .input-icon { color: rgba(220,38,38,0.65); }
+    .form-input.with-toggle { padding-right: 46px; }
+    .pw-toggle {
+        position: absolute; top: 50%; right: 12px;
+        transform: translateY(-50%);
+        background: none; border: none; cursor: pointer;
+        color: rgba(255,255,255,0.2); padding: 4px;
+        display: flex; align-items: center; justify-content: center;
+        transition: color 0.22s ease, background 0.22s ease;
+        border-radius: 8px;
+    }
+    .pw-toggle:hover { color: rgba(255,255,255,0.5); }
+    .pw-toggle svg { width: 16px; height: 16px; }
+    .error-msg {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.68rem; color: #f87171; font-weight: 600; margin-top: 6px;
+    }
+    .error-msg::before {
+        content: '!'; width: 14px; height: 14px; flex-shrink: 0;
+        background: rgba(248,113,113,0.18); border-radius: 50%;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 0.6rem; font-weight: 900;
+    }
+
+    /* ── Password Strength ── */
+    .strength-wrap { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
+    .strength-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .strength-fill { height: 100%; width: 0; border-radius: 3px; transition: width 0.35s ease, background 0.35s ease, box-shadow 0.35s ease; }
+    .strength-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: rgba(255,255,255,0.2); min-width: 60px; transition: color 0.3s ease; }
+
+    /* ── Buttons ── */
+    .form-actions { display: flex; align-items: center; gap: 14px; padding-top: 6px; }
+    .btn-red {
+        display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        background: var(--red); color: white; border: none;
+        border-radius: 11px; padding: 13px 24px;
+        font-size: 0.82rem; font-weight: 800; font-family: 'Inter', sans-serif;
+        cursor: pointer; letter-spacing: 0.2px; transition: all 0.3s ease;
+    }
+    .btn-red:hover { background: #b91c1c; box-shadow: 0 8px 28px var(--red-glow); transform: translateY(-2px); }
+    .btn-red:active { transform: translateY(0); }
+    .btn-red svg { width: 15px; height: 15px; }
+    .btn-ghost {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: none; border: none; cursor: pointer;
+        font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.22);
+        font-family: 'Inter', sans-serif; padding: 6px 0;
+        text-decoration: none; transition: color 0.2s ease;
+    }
+    .btn-ghost:hover { color: rgba(255,255,255,0.5); }
+
+    /* ── Avatar Info Banner ── */
+    .avatar-info-banner {
+        background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.18);
+        border-radius: 10px; padding: 10px 14px; margin-bottom: 20px;
+        font-size: 0.72rem; color: rgba(134,239,172,0.85); font-weight: 600;
+        align-items: center; gap: 8px; /* display:flex diatur oleh JS */
+    }
+    .avatar-info-banner svg { flex-shrink: 0; }
+
+    /* ── Flash Messages ── */
+    .flash-success {
+        display: flex; align-items: flex-start; gap: 14px;
+        background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.2);
+        border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
+        position: relative;
+    }
+    .flash-error {
+        display: flex; align-items: flex-start; gap: 14px;
+        background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.2);
+        border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
+        position: relative;
+    }
+    .flash-icon {
+        width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .flash-icon.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); }
+    .flash-icon.error   { background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.2); }
+    .flash-close {
+        position: absolute; top: 12px; right: 14px; background: none; border: none;
+        color: rgba(255,255,255,0.2); cursor: pointer; padding: 4px;
+        display: flex; align-items: center; justify-content: center; transition: color 0.2s ease;
+        border-radius: 8px;
+    }
+    .flash-close:hover { color: rgba(255,255,255,0.5); }
+    .flash-close svg { width: 14px; height: 14px; }
+
+    /* ── Security Tips ── */
+    .tips-box {
+        background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+        border-radius: 11px; padding: 14px 16px; margin-bottom: 24px;
+    }
+    .tips-box-title { font-size: 0.6rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .tip-item { display: flex; align-items: center; gap: 8px; font-size: 0.71rem; color: rgba(255,255,255,0.22); }
+    .tip-item + .tip-item { margin-top: 6px; }
+    .tip-item svg { width: 11px; height: 11px; flex-shrink: 0; color: rgba(220,38,38,0.5); }
+
+    /* ── Card Glow Decor ── */
+    .card-glow { position: absolute; border-radius: 50%; pointer-events: none; }
+    .card-glow-tl { top: -60px; left: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(220,38,38,0.07) 0%, transparent 65%); }
+    .card-glow-tr { top: -50px; right: -50px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 65%); }
+
+    /* ── Section Header ── */
+    .section-eyebrow { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(220,38,38,0.65); margin-bottom: 8px; }
+    .section-headline { font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 900; letter-spacing: -0.8px; color: #f5f5f5; line-height: 1.2; margin-bottom: 6px; }
+    .section-sub { font-size: 0.82rem; color: rgba(255,255,255,0.24); font-weight: 400; }
+
+    /* ================================================================
+       RESPONSIVE — MOBILE (≤ 860px)
+       Sidebar berubah jadi off-canvas drawer, grid 2 kolom bertumpuk
+       jadi 1 kolom, dan seluruh area sentuh (input & tombol aksi)
+       dibesarkan supaya nyaman disentuh (≥44×44px) sesuai standar
+       aksesibilitas.
+    ================================================================ */
+    @media (max-width: 860px) {
+
+        /* ── Hamburger & tombol tutup drawer ── */
+        .hamburger-btn      { display: flex; }
+        .sidebar-close-btn  { display: flex; }
+        .sidebar-overlay    { display: block; }
+
+        /* ── Sidebar → off-canvas drawer ── */
         .sidebar {
-            position: fixed; top: 0; left: 0;
-            width: 260px; height: 100vh;
-            background: rgba(8,8,8,0.9);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            z-index: 50; overflow-y: auto;
+            width: 260px;
+            max-width: 82vw;
+            transform: translateX(-100%);
+            box-shadow: none;
         }
-        .sidebar::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
-        }
-        .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--border); }
-        .logo-wordmark {
-            font-size: 0.78rem; font-weight: 900; letter-spacing: 3px;
-            text-transform: uppercase; color: rgba(255,255,255,0.85);
-            display: flex; align-items: center; gap: 9px;
-        }
-        .logo-icon {
-            width: 26px; height: 26px; background: var(--red); border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0;
-        }
-        .logo-icon svg { width: 13px; height: 13px; }
-        .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--border); }
-        .profile-avatar {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: white; flex-shrink: 0;
-            box-shadow: 0 0 18px rgba(220,38,38,0.3);
-        }
-        .profile-name {
-            font-size: 0.78rem; font-weight: 700; color: #f5f5f5;
-            line-height: 1.3; margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .profile-nip { font-size: 0.68rem; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
-        .badge-role {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
-            color: #fca5a5; padding: 2px 9px; border-radius: 30px;
-            font-size: 0.63rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
-        }
-        .live-dot {
-            width: 5px; height: 5px; background: var(--red); border-radius: 50%;
-            box-shadow: 0 0 6px var(--red-glow);
-            animation: livePulse 1.5s ease-in-out infinite;
-        }
-        @keyframes livePulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50%       { opacity: 0.3; transform: scale(0.6); }
-        }
-        .sidebar-nav { flex: 1; padding: 20px 14px; }
-        .nav-label {
-            font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
-            text-transform: uppercase; color: rgba(255,255,255,0.18);
-            padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
-        }
-        .nav-item {
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.35);
-            text-decoration: none; transition: all 0.22s ease;
-            border: 1px solid transparent; margin-bottom: 3px; position: relative;
-        }
-        .nav-item:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); border-color: var(--border); }
-        .nav-item.active { color: #fca5a5; background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2); }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 18px; background: var(--red);
-            border-radius: 0 3px 3px 0; box-shadow: 0 0 10px var(--red-glow);
-        }
-        .nav-item.active svg { color: var(--red); }
-        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-                /* Menu nonaktif — fitur belum tersedia (persiapan sidang) */
-        .nav-item-disabled { opacity: 0.5; cursor: not-allowed; }
-        .nav-item.nav-item-disabled:hover {
-            color: rgba(255,255,255,0.35);
-            background: transparent;
-            border-color: transparent;
-        }
-        .nav-item-label {
-            display: flex; align-items: center; flex-wrap: wrap;
-            gap: 6px; row-gap: 2px;
-        }
-        .badge-soon {
-            font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3px;
-            color: rgba(255,255,255,0.4);
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.09);
-            padding: 1px 6px; border-radius: 20px;
-            white-space: nowrap;
-        }
-        .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
-        .btn-logout {
-            width: 100%; display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px; background: none;
-            border: 1px solid transparent; color: rgba(255,255,255,0.28);
-            font-size: 0.82rem; font-weight: 600; font-family: 'Inter', sans-serif;
-            cursor: pointer; transition: all 0.22s ease;
-        }
-        .btn-logout:hover { color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.18); }
-        .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-        /* ================================================================
-           MAIN
-        ================================================================ */
-        .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
-        .topbar {
-            position: sticky; top: 0; z-index: 30;
-            background: rgba(8,8,8,0.88); backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border);
-            padding: 16px 36px; display: flex; align-items: center; justify-content: space-between;
-        }
-        .topbar-title { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.22); letter-spacing: 0.5px; }
-        .topbar-title span { color: rgba(255,255,255,0.5); margin-left: 6px; }
-        .topbar-pill {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
-            border-radius: 30px; padding: 5px 13px;
-            font-size: 0.68rem; font-weight: 700; color: rgba(220,38,38,0.65); letter-spacing: 0.5px;
-        }
-        .page-inner { padding: 40px 36px 60px; }
-
-        /* ================================================================
-           PROFILE PAGE — Glass Card
-        ================================================================ */
-        .glass-card {
-            background: rgba(255,255,255,0.025);
-            border: 1px solid var(--border);
-            border-radius: 24px; position: relative; overflow: hidden;
-        }
-        .glass-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+        .sidebar.is-open {
+            transform: translateX(0);
+            box-shadow: 24px 0 60px rgba(0,0,0,0.5);
         }
 
-        /* ── Avatar ── */
-        .avatar-outer-ring {
-            width: 130px; height: 130px; border-radius: 50%;
-            padding: 3px;
-            background: linear-gradient(135deg, var(--red) 0%, #7c3aed 55%, var(--red) 100%);
-            box-shadow: 0 0 36px rgba(220,38,38,0.3), 0 0 70px rgba(124,58,237,0.15);
-            display: block; margin: 0 auto;
-            position: relative; cursor: pointer;
-            transition: box-shadow 0.3s ease;
-        }
-        .avatar-outer-ring:hover {
-            box-shadow: 0 0 50px rgba(220,38,38,0.5), 0 0 90px rgba(124,58,237,0.25);
-        }
-        .avatar-inner {
-            width: 100%; height: 100%; border-radius: 50%;
-            overflow: hidden; position: relative;
-            background: #111;
-        }
-        .avatar-img {
-            position: absolute; inset: 0;
-            width: 100%; height: 100%; object-fit: cover;
-        }
-        .avatar-initials-lg {
-            position: absolute; inset: 0;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.5rem; font-weight: 900; color: white;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
-            border-radius: 50%;
-            letter-spacing: -1px;
-        }
-        .avatar-overlay {
-            position: absolute; inset: 0; border-radius: 50%;
-            background: rgba(0,0,0,0.72);
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
-            opacity: 0; transition: opacity 0.25s ease;
-            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
-        }
-        .avatar-outer-ring:hover .avatar-overlay { opacity: 1; }
-        .avatar-overlay svg { width: 22px; height: 22px; color: white; }
-        .avatar-overlay span {
-            font-size: 0.6rem; font-weight: 900; color: white;
-            letter-spacing: 1.2px; text-transform: uppercase;
-        }
+        /* ── Konten utama full width, tidak lagi digeser sidebar ── */
+        .main-content { margin-left: 0; }
 
-        /* ── Profile Card Info ── */
-        .pc-name {
-            font-size: 1.15rem; font-weight: 900; color: #f5f5f5;
-            letter-spacing: -0.5px; text-align: center;
-            margin-top: 18px; line-height: 1.2;
-        }
-        .pc-nip { font-size: 0.7rem; color: rgba(255,255,255,0.28); font-weight: 600; text-align: center; margin-top: 3px; }
-        .badge-guru {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
-            color: #fca5a5; padding: 5px 14px; border-radius: 30px;
-            font-size: 0.62rem; font-weight: 800; letter-spacing: 0.9px; text-transform: uppercase;
-        }
-        .green-dot {
-            width: 6px; height: 6px; background: var(--green); border-radius: 50%;
-            box-shadow: 0 0 8px var(--green-glow);
-            animation: livePulse 1.8s ease-in-out infinite;
-        }
-        .card-divider { height: 1px; background: var(--border); margin: 22px 0; }
-        .info-row {
-            display: flex; align-items: flex-start; gap: 12px;
-            padding: 9px 0;
-        }
-        .info-row + .info-row { border-top: 1px solid rgba(255,255,255,0.04); }
-        .info-row-icon {
-            width: 30px; height: 30px; border-radius: 8px;
-            background: var(--red-soft); border: 1px solid rgba(220,38,38,0.15);
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .info-row-icon svg { width: 13px; height: 13px; color: rgba(220,38,38,0.65); }
-        .info-row-lbl { font-size: 0.59rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
-        .info-row-val { font-size: 0.74rem; font-weight: 600; color: rgba(255,255,255,0.5); word-break: break-all; }
-        .member-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-            border-radius: 20px; padding: 5px 12px;
-            font-size: 0.62rem; font-weight: 700; color: rgba(255,255,255,0.22);
-        }
-        .member-badge svg { width: 10px; height: 10px; color: rgba(220,38,38,0.45); }
+        /* ── Topbar ── */
+        .topbar { padding: 14px 16px; gap: 10px; }
+        .topbar-crumb { display: none; }
 
-        /* ================================================================
-           PROFILE PAGE — Tab System
-        ================================================================ */
-        .tab-nav {
-            display: flex; gap: 4px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 14px; padding: 5px;
-            margin-bottom: 28px;
-        }
-        .tab-btn {
-            flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-            padding: 10px 16px; border-radius: 10px;
-            font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.3);
-            background: none; border: 1px solid transparent;
-            cursor: pointer; font-family: 'Inter', sans-serif;
-            transition: all 0.22s ease; white-space: nowrap;
-        }
-        .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; transition: color 0.22s ease; }
-        .tab-btn:hover { color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.04); }
-        .tab-btn.active {
-            color: #fca5a5; background: rgba(220,38,38,0.12);
-            border-color: rgba(220,38,38,0.22);
-            box-shadow: 0 0 20px rgba(220,38,38,0.1);
-        }
-        .tab-btn.active svg { color: var(--red); }
-        .tab-panel { transition: opacity 0.2s ease; opacity: 1; }
-        .tab-panel.hidden { display: none; }
+        .page-inner { padding: 24px 16px 48px; }
 
-        /* ── Panel Header ── */
-        .panel-eyebrow { font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: rgba(220,38,38,0.6); margin-bottom: 5px; }
-        .panel-title { font-size: 1rem; font-weight: 800; color: #f5f5f5; letter-spacing: -0.3px; }
-        .panel-sub { font-size: 0.75rem; color: rgba(255,255,255,0.2); margin-top: 4px; font-weight: 400; }
+        /* ── Grid profil: 2 kolom → 1 kolom penuh ── */
+        .profile-grid { grid-template-columns: 1fr; gap: 20px; }
+        .profile-card-left  { padding: 24px 20px; }
+        .profile-card-right { padding: 22px 20px; }
 
-        /* ================================================================
-           PROFILE PAGE — Form Elements
-        ================================================================ */
-        .field-group { margin-bottom: 18px; }
-        .field-label {
-            display: block; font-size: 0.68rem; font-weight: 700;
-            color: rgba(255,255,255,0.35); letter-spacing: 0.5px;
-            text-transform: uppercase; margin-bottom: 8px;
-        }
-        .input-wrap { position: relative; }
-        .input-icon {
-            position: absolute; top: 50%; left: 14px;
-            transform: translateY(-50%);
-            width: 15px; height: 15px; color: rgba(255,255,255,0.18);
-            pointer-events: none; transition: color 0.22s ease; flex-shrink: 0;
-        }
+        /* ── Tab navigasi ── */
+        .tab-btn { min-height: 44px; font-size: 0.74rem; padding: 10px 10px; }
+
+        /* ── Ergonomi form: target sentuh ≥44px, font 16px (cegah auto-zoom iOS) ── */
         .form-input {
-            width: 100%;
-            background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08);
-            border-radius: 11px; padding: 12px 14px 12px 42px;
-            font-size: 0.82rem; font-weight: 500; font-family: 'Inter', sans-serif;
-            color: #f5f5f5; outline: none; caret-color: var(--red);
-            transition: all 0.25s ease;
+            min-height: 48px;
+            font-size: 16px;
+            padding-top: 14px;
+            padding-bottom: 14px;
         }
-        .form-input::placeholder { color: rgba(255,255,255,0.14); }
-        .form-input:focus {
-            border-color: var(--red);
-            background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.14), 0 0 22px rgba(220,38,38,0.08);
-        }
-        .input-wrap:focus-within .input-icon { color: rgba(220,38,38,0.65); }
-        .form-input.with-toggle { padding-right: 46px; }
+        .form-input.with-toggle { padding-right: 52px; }
         .pw-toggle {
-            position: absolute; top: 50%; right: 12px;
-            transform: translateY(-50%);
-            background: none; border: none; cursor: pointer;
-            color: rgba(255,255,255,0.2); padding: 4px;
-            display: flex; align-items: center; justify-content: center;
-            transition: color 0.22s ease;
-        }
-        .pw-toggle:hover { color: rgba(255,255,255,0.5); }
-        .pw-toggle svg { width: 16px; height: 16px; }
-        .error-msg {
-            display: flex; align-items: center; gap: 5px;
-            font-size: 0.68rem; color: #f87171; font-weight: 600; margin-top: 6px;
-        }
-        .error-msg::before {
-            content: '!'; width: 14px; height: 14px; flex-shrink: 0;
-            background: rgba(248,113,113,0.18); border-radius: 50%;
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 0.6rem; font-weight: 900;
+            width: 44px; height: 44px;
+            right: 0;
         }
 
-        /* ── Password Strength ── */
-        .strength-wrap { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-        .strength-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
-        .strength-fill { height: 100%; width: 0; border-radius: 3px; transition: width 0.35s ease, background 0.35s ease, box-shadow 0.35s ease; }
-        .strength-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: rgba(255,255,255,0.2); min-width: 60px; transition: color 0.3s ease; }
+        /* ── Tombol aksi: full-width & bertumpuk vertikal ── */
+        .form-actions { flex-direction: column; align-items: stretch; gap: 10px; }
+        .btn-red   { width: 100%; min-height: 48px; }
+        .btn-ghost { width: 100%; min-height: 44px; padding: 10px 0; }
 
-        /* ── Buttons ── */
-        .btn-red {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--red); color: white; border: none;
-            border-radius: 11px; padding: 13px 24px;
-            font-size: 0.82rem; font-weight: 800; font-family: 'Inter', sans-serif;
-            cursor: pointer; letter-spacing: 0.2px; transition: all 0.3s ease;
-        }
-        .btn-red:hover { background: #b91c1c; box-shadow: 0 8px 28px var(--red-glow); transform: translateY(-2px); }
-        .btn-red:active { transform: translateY(0); }
-        .btn-red svg { width: 15px; height: 15px; }
-        .btn-ghost {
-            display: inline-flex; align-items: center;
-            background: none; border: none; cursor: pointer;
-            font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.22);
-            font-family: 'Inter', sans-serif; padding: 6px 0;
-            text-decoration: none; transition: color 0.2s ease;
-        }
-        .btn-ghost:hover { color: rgba(255,255,255,0.5); }
+        .flash-close { width: 40px; height: 40px; top: 8px; right: 8px; }
 
-        /* ── Avatar Info Banner ── */
-        .avatar-info-banner {
-            background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.18);
-            border-radius: 10px; padding: 10px 14px; margin-bottom: 20px;
-            font-size: 0.72rem; color: rgba(134,239,172,0.85); font-weight: 600;
-            align-items: center; gap: 8px; /* display:flex set by JS */
-        }
-        .avatar-info-banner svg { flex-shrink: 0; }
+        /* ── Sidebar nav & logout: target sentuh nyaman ── */
+        .nav-item   { min-height: 46px; }
+        .btn-logout { min-height: 46px; }
+    }
 
-        /* ── Flash Messages ── */
-        .flash-success {
-            display: flex; align-items: flex-start; gap: 14px;
-            background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.2);
-            border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
-            position: relative;
-        }
-        .flash-error {
-            display: flex; align-items: flex-start; gap: 14px;
-            background: rgba(220,38,38,0.07); border: 1px solid rgba(220,38,38,0.2);
-            border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
-            position: relative;
-        }
-        .flash-icon {
-            width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .flash-icon.success { background: rgba(34,197,94,0.12); border: 1px solid rgba(34,197,94,0.2); }
-        .flash-icon.error   { background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.2); }
-        .flash-close {
-            position: absolute; top: 12px; right: 14px; background: none; border: none;
-            color: rgba(255,255,255,0.2); cursor: pointer; padding: 4px;
-            display: flex; align-items: center; transition: color 0.2s ease;
-        }
-        .flash-close:hover { color: rgba(255,255,255,0.5); }
-        .flash-close svg { width: 14px; height: 14px; }
+    @media (max-width: 480px) {
+        .page-inner { padding: 20px 14px 40px; }
+        .profile-card-left,
+        .profile-card-right { padding: 20px 16px; }
+        .avatar-outer-ring { width: 108px; height: 108px; }
+        .avatar-initials-lg { font-size: 2rem; }
+        .section-headline { font-size: 1.4rem; }
+        .topbar-pill { padding: 5px 10px; font-size: 0.62rem; }
+        .tips-box { padding: 12px 14px; }
+    }
 
-        /* ── Security Tips ── */
-        .tips-box {
-            background: rgba(255,255,255,0.025); border: 1px solid var(--border);
-            border-radius: 11px; padding: 14px 16px; margin-bottom: 24px;
+    /* ── Hormati preferensi pengguna yang mengurangi animasi ── */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
         }
-        .tips-box-title { font-size: 0.6rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-        .tip-item { display: flex; align-items: center; gap: 8px; font-size: 0.71rem; color: rgba(255,255,255,0.22); }
-        .tip-item + .tip-item { margin-top: 6px; }
-        .tip-item svg { width: 11px; height: 11px; flex-shrink: 0; color: rgba(220,38,38,0.5); }
+    }
+</style>
+@endpush
 
-        /* ── Card Glow Decor ── */
-        .card-glow { position: absolute; border-radius: 50%; pointer-events: none; }
-        .card-glow-tl { top: -60px; left: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(220,38,38,0.07) 0%, transparent 65%); }
-        .card-glow-tr { top: -50px; right: -50px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 65%); }
-
-        /* ── Section Header ── */
-        .section-eyebrow { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(220,38,38,0.65); margin-bottom: 8px; }
-        .section-headline { font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 900; letter-spacing: -0.8px; color: #f5f5f5; line-height: 1.2; margin-bottom: 6px; }
-        .section-sub { font-size: 0.82rem; color: rgba(255,255,255,0.24); font-weight: 400; }
-    </style>
-</head>
-<body>
+@section('content')
 
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
@@ -477,18 +643,25 @@
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar">
+<aside class="sidebar" id="guruSidebar">
 
     {{-- Logo --}}
     <div class="sidebar-logo">
-        <div class="logo-wordmark">
-            <div class="logo-icon">
-                <svg fill="none" stroke="white" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+        <div class="sidebar-logo-row">
+            <div class="logo-wordmark">
+                <div class="logo-icon">
+                    <svg fill="none" stroke="white" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                DKV<span style="color:var(--red);">.</span>SMEKDA
             </div>
-            DKV<span style="color:var(--red);">.</span>SMEKDA
+            <button type="button" class="sidebar-close-btn" id="sidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
         <div style="font-size:0.62rem;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:1px;text-transform:uppercase;font-weight:600;padding-left:35px;">
             Portal Guru
@@ -580,6 +753,9 @@
     </div>
 </aside>
 
+{{-- Overlay — menutup drawer saat area gelap di luar sidebar disentuh --}}
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
 {{-- ================================================================
      MAIN CONTENT
 ================================================================ --}}
@@ -587,8 +763,14 @@
 
     {{-- Topbar --}}
     <div class="topbar">
+        <button type="button" class="hamburger-btn" id="sidebarToggle"
+                aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="guruSidebar">
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+            <span class="hamburger-bar"></span>
+        </button>
         <div class="topbar-title">
-            Portal DKV SMEKDA <span>/</span> Profil Saya
+            <span class="topbar-crumb">Portal DKV SMEKDA <span>/</span></span> Profil Saya
         </div>
         <div class="topbar-pill">
             <div class="live-dot"></div>
@@ -619,7 +801,7 @@
                     <div style="font-size:0.78rem;font-weight:800;color:#86efac;margin-bottom:3px;">Berhasil Disimpan!</div>
                     <div style="font-size:0.72rem;color:rgba(134,239,172,0.65);font-weight:500;">{{ session('success') }}</div>
                 </div>
-                <button type="button" class="flash-close" onclick="document.getElementById('flashSuccess').remove()">
+                <button type="button" class="flash-close" onclick="document.getElementById('flashSuccess').remove()" aria-label="Tutup notifikasi">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -639,7 +821,7 @@
                     <div style="font-size:0.78rem;font-weight:800;color:#fca5a5;margin-bottom:3px;">Terjadi Kesalahan</div>
                     <div style="font-size:0.72rem;color:rgba(252,165,165,0.65);font-weight:500;">{{ session('error') }}</div>
                 </div>
-                <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()">
+                <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()" aria-label="Tutup notifikasi">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -648,18 +830,21 @@
         @endif
 
         {{-- ── Main Grid ── --}}
-        <div style="display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start;">
+        <div class="profile-grid">
 
             {{-- ════════════════════════════════════════
                  LEFT — Profile Visual Card
             ════════════════════════════════════════ --}}
-            <div class="glass-card" style="padding:30px 24px;">
+            <div class="glass-card profile-card-left">
                 <div class="card-glow card-glow-tl"></div>
                 <div class="card-glow card-glow-tr"></div>
 
                 {{-- Avatar --}}
                 <div style="text-align:center;">
-                    <div class="avatar-outer-ring" onclick="document.getElementById('avatarInput').click()" title="Klik untuk mengubah foto">
+                    <div class="avatar-outer-ring" role="button" tabindex="0"
+                         onclick="document.getElementById('avatarInput').click()"
+                         onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}"
+                         title="Klik untuk mengubah foto" aria-label="Ubah foto profil">
                         <div class="avatar-inner">
                             @if(auth()->user()->avatar)
                                 <img id="avatarPreview"
@@ -760,12 +945,13 @@
             {{-- ════════════════════════════════════════
                  RIGHT — Settings Tabs Card
             ════════════════════════════════════════ --}}
-            <div class="glass-card" style="padding:32px;">
+            <div class="glass-card profile-card-right">
                 <div class="card-glow card-glow-tr"></div>
 
                 {{-- Tab Navigation --}}
-                <div class="tab-nav">
+                <div class="tab-nav" role="tablist">
                     <button type="button" class="tab-btn active" id="tab-biodata"
+                            role="tab" aria-selected="true" aria-controls="panel-biodata"
                             onclick="switchTab('biodata')">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -774,6 +960,7 @@
                         Edit Biodata
                     </button>
                     <button type="button" class="tab-btn" id="tab-keamanan"
+                            role="tab" aria-selected="false" aria-controls="panel-keamanan"
                             onclick="switchTab('keamanan')">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -784,7 +971,7 @@
                 </div>
 
                 {{-- ════ TAB 1: Edit Biodata ════ --}}
-                <div id="panel-biodata" class="tab-panel">
+                <div id="panel-biodata" class="tab-panel" role="tabpanel" aria-labelledby="tab-biodata">
                     <div style="margin-bottom:24px;">
                         <div class="panel-eyebrow">&#9654; Edit Biodata</div>
                         <div class="panel-title">Informasi Pribadi</div>
@@ -816,7 +1003,7 @@
                                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
                                 <input type="text" id="name" name="name" class="form-input"
-                                       placeholder="Masukkan nama lengkap"
+                                       placeholder="Masukkan nama lengkap" autocomplete="name"
                                        value="{{ old('name', auth()->user()->name) }}" required>
                             </div>
                             @error('name')
@@ -850,7 +1037,7 @@
                                           d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                                 </svg>
                                 <input type="email" id="email" name="email" class="form-input"
-                                       placeholder="guru@smkn2padangpanjang.sch.id"
+                                       placeholder="guru@smkn2padangpanjang.sch.id" autocomplete="email"
                                        value="{{ old('email', auth()->user()->email) }}" required>
                             </div>
                             @error('email')
@@ -859,7 +1046,7 @@
                         </div>
 
                         {{-- Actions --}}
-                        <div style="display:flex;align-items:center;gap:14px;padding-top:6px;">
+                        <div class="form-actions">
                             <button type="submit" class="btn-red">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
@@ -872,7 +1059,7 @@
                 </div>
 
                 {{-- ════ TAB 2: Keamanan ════ --}}
-                <div id="panel-keamanan" class="tab-panel hidden">
+                <div id="panel-keamanan" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-keamanan">
                     <div style="margin-bottom:24px;">
                         <div class="panel-eyebrow">&#9654; Keamanan Akun</div>
                         <div class="panel-title">Ganti Password</div>
@@ -894,7 +1081,7 @@
                                 <input type="password" id="currentPassword" name="current_password"
                                        class="form-input with-toggle" placeholder="••••••••••••"
                                        autocomplete="current-password">
-                                <button type="button" class="pw-toggle" onclick="togglePw('currentPassword','eyeIcon1')">
+                                <button type="button" class="pw-toggle" onclick="togglePw('currentPassword','eyeIcon1')" aria-label="Tampilkan/sembunyikan password saat ini">
                                     <svg id="eyeIcon1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -919,7 +1106,7 @@
                                        placeholder="Minimal 8 karakter"
                                        autocomplete="new-password"
                                        oninput="checkStrength(this.value)">
-                                <button type="button" class="pw-toggle" onclick="togglePw('newPassword','eyeIcon2')">
+                                <button type="button" class="pw-toggle" onclick="togglePw('newPassword','eyeIcon2')" aria-label="Tampilkan/sembunyikan password baru">
                                     <svg id="eyeIcon2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -931,7 +1118,7 @@
                                 <div class="strength-track">
                                     <div id="strengthFill" class="strength-fill"></div>
                                 </div>
-                                <span id="strengthLabel" class="strength-label"></span>
+                                <span id="strengthLabel" class="strength-label" aria-live="polite"></span>
                             </div>
                             @error('password')
                                 <p class="error-msg">{{ $message }}</p>
@@ -950,7 +1137,7 @@
                                        class="form-input with-toggle"
                                        placeholder="Ulangi password baru"
                                        autocomplete="new-password">
-                                <button type="button" class="pw-toggle" onclick="togglePw('confirmPassword','eyeIcon3')">
+                                <button type="button" class="pw-toggle" onclick="togglePw('confirmPassword','eyeIcon3')" aria-label="Tampilkan/sembunyikan konfirmasi password">
                                     <svg id="eyeIcon3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -983,7 +1170,7 @@
                         </div>
 
                         {{-- Actions --}}
-                        <div style="display:flex;align-items:center;gap:14px;padding-top:4px;">
+                        <div class="form-actions">
                             <button type="submit" class="btn-red">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1015,6 +1202,9 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
 <script>
     /* ── Tab Switching ── */
     function switchTab(name) {
@@ -1024,6 +1214,7 @@
         });
         document.querySelectorAll('.tab-btn').forEach(function(b) {
             b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
         });
 
         var panel = document.getElementById('panel-' + name);
@@ -1031,7 +1222,9 @@
         requestAnimationFrame(function() {
             panel.style.opacity = '1';
         });
-        document.getElementById('tab-' + name).classList.add('active');
+        var btn = document.getElementById('tab-' + name);
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
     }
 
     /* Init biodata panel opacity */
@@ -1122,7 +1315,66 @@
             }
         }
     });
-</script>
 
-</body>
-</html>
+    /* ── Sidebar Off-canvas Drawer (mobile ≤860px) ── */
+    (function () {
+        var sidebar   = document.getElementById('guruSidebar');
+        var overlay   = document.getElementById('sidebarOverlay');
+        var toggleBtn = document.getElementById('sidebarToggle');
+        var closeBtn  = document.getElementById('sidebarClose');
+
+        function openSidebar() {
+            sidebar.classList.add('is-open');
+            overlay.classList.add('is-visible');
+            toggleBtn.classList.add('is-active');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('no-scroll');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('is-open');
+            overlay.classList.remove('is-visible');
+            toggleBtn.classList.remove('is-active');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('no-scroll');
+        }
+
+        toggleBtn.addEventListener('click', function () {
+            if (sidebar.classList.contains('is-open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
+        });
+
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
+                closeSidebar();
+            }
+        });
+
+        /* Tutup drawer otomatis saat memilih menu navigasi di mobile */
+        sidebar.querySelectorAll('.nav-item:not(.nav-item-disabled)').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.innerWidth <= 860) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        /* Reset state saat layar di-resize melewati breakpoint desktop */
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                if (window.innerWidth > 860) {
+                    closeSidebar();
+                }
+            }, 150);
+        });
+    })();
+</script>
+@endpush
