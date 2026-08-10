@@ -1,22 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-    <style>
+@extends('layouts.app')
+
+@section('title', 'Login — DKV SMEKDA Portal')
+
+{{-- Halaman login punya desain kartu terpusat yang sudah lengkap dengan
+     footer identitas sekolahnya sendiri di bawah kartu, jadi navbar/footer
+     bawaan layout tidak dipakai di sini (sama seperti pola di
+     guru/dashboard.blade.php). --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
+
         :root {
             --red:        #dc2626;
             --red-bright: #ef4444;
@@ -291,18 +286,22 @@
         }
 
         /* Password toggle */
+        /* Target sentuh diperbesar dari ~24x24px jadi ~36x36px (Stage 1:
+           audit target sentuh mobile). right disesuaikan supaya tombol
+           tetap pas di dalam zona padding-right:44px milik input. */
         .pw-toggle {
             position: absolute;
-            top: 50%; right: 14px;
+            top: 50%; right: 8px;
             transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
             color: rgba(255,255,255,0.2);
             transition: color 0.2s ease;
-            padding: 4px;
+            padding: 10px;
             display: flex;
             align-items: center;
+            justify-content: center;
         }
 
         .pw-toggle:hover { color: rgba(255,255,255,0.55); }
@@ -321,10 +320,16 @@
         .field-error svg { width: 13px; height: 13px; flex-shrink: 0; }
 
         /* ── REMEMBER + FORGOT ── */
+        /* flex-wrap ditambahkan (Stage 1): di layar sangat sempit, "Ingat
+           Saya" + "Lupa Password? [Segera Hadir]" bisa nyaris tidak muat
+           sebaris — tanpa wrap, sisanya akan kepotong oleh overflow:hidden
+           milik .login-card. Dengan wrap, otomatis lanjut ke baris kedua. */
         .remember-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
             margin-bottom: 28px;
         }
 
@@ -538,12 +543,20 @@
             animation: focusPulse 1.5s ease-out;
         }
 
-        /* ── FLOATING BADGE ── */
+        /* ── FLOATING BADGE ──
+           Diperbaiki (Stage 1): sebelumnya lebar teks badge ini (~350px+
+           dengan huruf besar semua + letter-spacing) bisa melebihi lebar
+           layar HP kecil (375px), padahal posisinya absolute + centered
+           di atas kartu login — akibatnya teks "kepotong" di kedua sisi
+           karena body punya overflow-x:hidden. Sekarang dibatasi max-width
+           relatif ke kartu (tidak akan pernah lebih lebar dari kartu itu
+           sendiri) DAN mengecil di HP supaya tetap muat satu baris. */
         .floating-badge {
             position: absolute;
             top: -14px;
             left: 50%;
             transform: translateX(-50%);
+            max-width: calc(100% - 8px);
             background: #0f0f0f;
             border: 1px solid rgba(220,38,38,0.25);
             border-radius: 30px;
@@ -553,7 +566,6 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: rgba(255,255,255,0.35);
-            white-space: nowrap;
             display: flex;
             align-items: center;
             gap: 7px;
@@ -566,16 +578,38 @@
             border-radius: 50%;
             animation: livePulse 1.4s ease-in-out infinite;
             box-shadow: 0 0 6px var(--red-glow);
+            flex-shrink: 0;
+        }
+
+        /* Teks dipisah ke elemen sendiri (bukan langsung di .floating-badge)
+           supaya text-overflow:ellipsis bisa bekerja dengan benar di dalam
+           flex container — ini jadi jaring pengaman terakhir kalau di
+           perangkat tertentu teks masih sedikit lebih lebar dari badge. */
+        .floating-badge-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .floating-badge {
+                font-size: 0.58rem;
+                letter-spacing: 0.6px;
+                padding: 5px 11px;
+                gap: 5px;
+            }
         }
 
         @keyframes livePulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50%       { opacity: 0.3; transform: scale(0.65); }
         }
-    </style>
-</head>
-<body>
 
+    </style>
+@endpush
+
+@section('content')
 <div class="bg-grid"></div>
 <div class="blob-center"></div>
 <div class="blob-top-right"></div>
@@ -587,7 +621,7 @@
         {{-- Floating Badge --}}
         <div class="floating-badge">
             <div class="live-dot"></div>
-            Sistem Aktif &bull; SMKN 2 Padang Panjang
+            <span class="floating-badge-text">Sistem Aktif &bull; SMKN 2 Padang Panjang</span>
         </div>
 
         {{-- ===== LOGIN CARD ===== --}}
@@ -765,7 +799,9 @@
 
     </div>
 </div>
+@endsection
 
+@push('scripts')
 <script>
     // ── PASSWORD TOGGLE ──
     const pwToggle  = document.getElementById('pw-toggle');
@@ -794,6 +830,4 @@
         });
     });
 </script>
-
-</body>
-</html>
+@endpush

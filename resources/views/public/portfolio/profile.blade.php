@@ -1,27 +1,27 @@
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.app')
 
-    <title>Portfolio {{ $user->name }} — DKV SMKN 2 Padang Panjang</title>
-    <meta name="description" content="{{ Str::limit($user->bio ?? 'Kumpulan karya desain komunikasi visual '.$user->name, 160) }}">
-    <meta property="og:title" content="Portfolio {{ $user->name }}">
-    <meta property="og:description" content="{{ Str::limit($user->bio ?? 'Kumpulan karya desain komunikasi visual', 160) }}">
-    @if($portfolios->first())
-    <meta property="og:image" content="{{ asset('storage/' . $portfolios->first()->image_path) }}">
-    @endif
-    <meta property="og:type" content="profile">
-    <meta name="twitter:card" content="summary_large_image">
+@section('title', 'Portfolio ' . $user->name . ' — DKV SMKN 2 Padang Panjang')
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
+@push('meta')
+<meta name="description" content="{{ Str::limit($user->bio ?? 'Kumpulan karya desain komunikasi visual '.$user->name, 160) }}">
+<meta property="og:title" content="Portfolio {{ $user->name }}">
+<meta property="og:description" content="{{ Str::limit($user->bio ?? 'Kumpulan karya desain komunikasi visual', 160) }}">
+@if($portfolios->first())
+<meta property="og:image" content="{{ asset('storage/' . $portfolios->first()->image_path) }}">
+@endif
+<meta property="og:type" content="profile">
+<meta name="twitter:card" content="summary_large_image">
+@endpush
+
+{{-- Halaman publik ini punya navbar & footer sendiri (nav anchor-link +
+     footer kontak/CTA), jadi navbar/footer bawaan layout tidak dipakai —
+     sama seperti pola di guru/dashboard.blade.php dan auth/login.blade.php. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
+
         :root {
             --red:      #dc2626;
             --red-glow: rgba(220,38,38,0.4);
@@ -143,6 +143,15 @@
 
         @media (max-width: 768px) {
             .nav-badge { display: none; }
+            /* Target sentuh (Stage 1): pill nav aslinya ~30px tinggi,
+               dinaikkan jadi minimal 44px khusus di mobile/tablet supaya
+               nyaman disentuh, tanpa mengubah ukuran di desktop. */
+            .nav-link {
+                display: inline-flex;
+                align-items: center;
+                min-height: 44px;
+                padding: 8px 14px;
+            }
         }
 
         .main-wrap { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
@@ -226,6 +235,12 @@
             background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.2);
             padding: 6px 14px; border-radius: 20px; transition: all 0.2s ease;
             flex-shrink: 0;
+            display: inline-flex; align-items: center; justify-content: center;
+        }
+        @media (max-width: 768px) {
+            /* Target sentuh (Stage 1): tombol "Copy Link" ini interaktif
+               (onclick), aslinya cuma ~25px tinggi di mobile. */
+            .share-copy-btn { min-height: 44px; padding: 6px 16px; }
         }
         .share-copy-btn:hover { background: rgba(220,38,38,0.18); }
 
@@ -277,6 +292,11 @@
         .skill-tag:hover { border-color: rgba(220,38,38,0.3); color: #f5f5f5; background: rgba(220,38,38,0.06); }
 
         /* ══════════════════════ KARYA GRID ══════════════════════ */
+        /* Grid galeri (Stage 1): grid-cols-1 di HP (<640px), naik ke 2 kolom
+           di tablet (640–1023px), 3 kolom di desktop (>=1024px) — meniru
+           pola Tailwind sm:grid-cols-2 lg:grid-cols-3. Base rule di bawah
+           ini adalah tampilan desktop (3 kolom), dua @media di bawah
+           mengecilkannya bertahap untuk layar lebih sempit. */
         .works-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .work-card {
             background: rgba(255,255,255,0.025); border: 1px solid var(--border);
@@ -318,6 +338,7 @@
         }
 
         /* ══════════════════════ PRESTASI & SERTIFIKAT (publik) ══════════════════════ */
+        /* Sama seperti .works-grid di atas (grid-cols-1 -> sm:2 -> lg:3). */
         .achv-pub-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
         .achv-pub-card {
             background: rgba(255,255,255,0.025); border: 1px solid var(--border);
@@ -362,10 +383,22 @@
         .achv-pub-link:hover { color: #f87171; }
         .achv-pub-link svg { width: 12px; height: 12px; }
 
-        @media (max-width: 640px) {
-            .works-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .achv-pub-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .work-thumb { height: 128px; }
+        @media (max-width: 1023px) {
+            /* Tablet: turun ke 2 kolom (sm:grid-cols-2 setara Tailwind). */
+            .works-grid { grid-template-columns: repeat(2, 1fr); }
+            .achv-pub-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 639px) {
+            /* HP: turun lagi ke 1 kolom penuh (grid-cols-1) — sebelumnya
+               TIDAK PERNAH ada mode 1 kolom sama sekali (langsung dari 3
+               ke 2 kolom saja), jadi kartu karya terasa sempit di HP
+               kecil. Tinggi thumbnail sengaja TIDAK diubah di sini (tetap
+               160px bawaan) supaya proporsi kartu tetap konsisten dengan
+               versi 2 & 3 kolom — penyesuaian aspect-ratio yang lebih
+               menyeluruh sudah dijadwalkan di Stage 2, bukan di sini. */
+            .works-grid { grid-template-columns: repeat(1, 1fr); gap: 12px; }
+            .achv-pub-grid { grid-template-columns: repeat(1, 1fr); gap: 12px; }
             .hero { padding: 48px 0 34px; }
         }
 
@@ -385,6 +418,11 @@
             border-radius: 30px; padding: 9px 18px; font-size: 0.82rem; font-weight: 600;
             color: rgba(255,255,255,0.7); text-decoration: none; transition: all 0.2s ease;
         }
+        @media (max-width: 768px) {
+            /* Target sentuh (Stage 1): pill kontak & unduh PDF di footer,
+               aslinya ~34px tinggi di mobile. */
+            .footer-contact-pill { min-height: 44px; }
+        }
         .footer-contact-pill:hover { border-color: rgba(220,38,38,0.3); color: #f5f5f5; }
         .footer-contact-pill svg { width: 15px; height: 15px; color: var(--red); flex-shrink: 0; }
 
@@ -401,10 +439,11 @@
             opacity: 0; transform: translateY(10px); transition: all 0.3s ease; pointer-events: none;
         }
         .toast.show { opacity: 1; transform: translateY(0); }
-    </style>
-</head>
-<body>
 
+    </style>
+@endpush
+
+@section('content')
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
@@ -719,7 +758,9 @@
 </footer>
 
 <div class="toast" id="toast">Link berhasil disalin ke clipboard!</div>
+@endsection
 
+@push('scripts')
 <script>
     // Salin tautan Live URL ke clipboard, dengan fallback untuk browser lama/tanpa izin clipboard API
     function copyLink() {
@@ -777,6 +818,4 @@
         sections.forEach((section) => observer.observe(section));
     })();
 </script>
-
-</body>
-</html>
+@endpush

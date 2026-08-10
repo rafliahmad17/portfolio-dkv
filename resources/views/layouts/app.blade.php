@@ -14,6 +14,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'DKV SMEKDA — Platform Portfolio Digital')</title>
 
+    {{-- Tempat halaman child menambahkan <meta> khusus miliknya sendiri
+         (mis. og:title/og:description/og:image untuk halaman publik yang
+         perlu preview bagus saat dibagikan ke WhatsApp/media sosial). --}}
+    @stack('meta')
+
     <link rel="icon" href="{{ asset('favicon.ico') }}">
 
     {{-- Tailwind lewat CDN — WAJIB dipertahankan (bukan @vite), sesuai
