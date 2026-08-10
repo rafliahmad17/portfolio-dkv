@@ -1,19 +1,15 @@
+@extends('layouts.app')
 
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
+@section('title', 'Dashboard — DKV SMEKDA Portal')
+
+{{-- Dashboard siswa sudah punya sidebar + topbar sendiri sebagai navigasi,
+     jadi navbar/footer default dari layout tidak dipakai di halaman ini
+     (pola yang sama dengan guru/dashboard.blade.php). --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
         :root {
             --red:        #dc2626;
             --red-bright: #ef4444;
@@ -756,32 +752,211 @@
 
         .add-card-text { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.2); transition: color 0.3s ease; }
         .add-card:hover .add-card-text { color: rgba(220,38,38,0.7); }
-    </style>
-</head>
-<body>
 
+        /* ================================================================
+           OFF-CANVAS DRAWER (SIDEBAR MOBILE) & TOMBOL HAMBURGER
+        ================================================================ */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            -webkit-backdrop-filter: blur(2px);
+            backdrop-filter: blur(2px);
+            z-index: 45;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .hamburger-btn {
+            display: none;
+            align-items: center; justify-content: center;
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.22s ease;
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(220,38,38,0.1);
+            border-color: rgba(220,38,38,0.25);
+            color: #fca5a5;
+        }
+
+        .hamburger-btn svg { width: 20px; height: 20px; }
+
+        .sidebar-close-btn {
+            display: none;
+            align-items: center; justify-content: center;
+            width: 40px; height: 40px;
+            border-radius: 9px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.22s ease;
+        }
+
+        .sidebar-close-btn:hover {
+            background: rgba(220,38,38,0.1);
+            border-color: rgba(220,38,38,0.25);
+            color: #fca5a5;
+        }
+
+        .sidebar-close-btn svg { width: 16px; height: 16px; }
+
+        /* ================================================================
+           GRID YANG DIBUTUHKAN RESPONSIF BERTAHAP (dipakai lintas breakpoint)
+        ================================================================ */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        /* Mobile-first khusus grid galeri karya: 1 kolom → 2 kolom → 3 kolom */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 641px) {
+            .portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (min-width: 1024px) {
+            .portfolio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+        }
+
+        .dashboard-footer-strip {
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 8px;
+        }
+
+        /* ================================================================
+           RESPONSIVE — LAYAR MOBILE (≤860px)
+        ================================================================ */
+        @media (max-width: 860px) {
+
+            .sidebar {
+                transform: translateX(-100%);
+                width: min(300px, 84vw);
+                box-shadow: 24px 0 70px rgba(0,0,0,0.55);
+                transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .sidebar.sidebar-open {
+                transform: translateX(0);
+            }
+
+            .sidebar-close-btn { display: flex; }
+
+            .hamburger-btn { display: inline-flex; }
+
+            .main-content { margin-left: 0; }
+
+            .topbar { padding: 14px 18px; gap: 12px; }
+
+            .page-inner { padding: 24px 16px 48px; }
+
+            .topbar-title-full,
+            .topbar-title-full-sep { display: none; }
+
+            .greeting-headline { font-size: 1.6rem; }
+
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
+
+            /* Target sentuh minimal 44x44px untuk semua tombol aksi */
+            .nav-item,
+            .btn-logout {
+                min-height: 44px;
+                padding: 12px 12px;
+            }
+
+            .btn-add,
+            .btn-export {
+                min-height: 44px;
+                padding: 11px 18px;
+            }
+
+            .btn-action-edit,
+            .btn-action-delete {
+                min-height: 44px;
+                padding: 10px 8px;
+            }
+
+            /* Thumbnail lebih proporsional saat kartu melebar penuh 1 kolom */
+            .portfolio-thumb,
+            .thumb-overlay {
+                height: 200px;
+            }
+
+            .empty-wrap { padding: 56px 22px; }
+
+            .dashboard-footer-strip {
+                justify-content: center;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+@endpush
+
+@section('content')
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
+<div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
+
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar">
+<aside class="sidebar" id="siswaSidebar">
 
     {{-- Logo --}}
     <div class="sidebar-logo">
-        <div class="logo-wordmark">
-            <div class="logo-icon">
-                <svg fill="none" stroke="white" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+                <div class="logo-wordmark">
+                    <div class="logo-icon">
+                        <svg fill="none" stroke="white" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                  d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    DKV<span style="color:var(--red);">.</span>SMEKDA
+                </div>
+                <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
+                    Portal Siswa
+                </div>
             </div>
-            DKV<span style="color:var(--red);">.</span>SMEKDA
-        </div>
-        <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
-            Portal Siswa
+
+            {{-- Tombol tutup drawer — hanya tampil di layar mobile --}}
+            <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -874,8 +1049,19 @@
 
     {{-- Top Bar --}}
     <div class="topbar">
-        <div class="topbar-title">
-            Portal DKV SMEKDA <span>/</span> Dashboard Siswa
+        <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+            {{-- Tombol hamburger — hanya tampil di layar mobile (≤860px) --}}
+            <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
+                    aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+            <div class="topbar-title">
+                <span class="topbar-title-full">Portal DKV SMEKDA</span>
+                <span class="topbar-title-full-sep">/</span>
+                Dashboard Siswa
+            </div>
         </div>
         <div class="topbar-badge">
             <div class="badge-role-dot"></div>
@@ -916,7 +1102,7 @@
         </div>
 
         {{-- ── STAT CARDS ── --}}
-        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:48px;">
+        <div class="stats-grid">
 
             {{-- Card 1: Total Karya --}}
             <div class="stat-card">
@@ -1024,7 +1210,7 @@
 
                 @else
 
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:16px;">
+                    <div class="portfolio-grid">
 
                         @foreach($portfolios as $portfolio)
                         <div class="portfolio-card">
@@ -1111,7 +1297,7 @@
         </div>
 
         {{-- Footer Strip --}}
-        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <div class="dashboard-footer-strip">
             <span style="font-size:0.7rem; color:rgba(255,255,255,0.15);">
                 &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.28);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
@@ -1123,6 +1309,49 @@
 
     </div>
 </div>
+@endsection
 
-</body>
-</html>
+@push('scripts')
+<script>
+    (function () {
+        var sidebar  = document.getElementById('siswaSidebar');
+        var overlay  = document.getElementById('siswaSidebarOverlay');
+        var openBtn  = document.getElementById('siswaSidebarOpen');
+        var closeBtn = document.getElementById('siswaSidebarClose');
+
+        if (!sidebar || !overlay || !openBtn) return;
+
+        function openSidebar() {
+            sidebar.classList.add('sidebar-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openBtn.setAttribute('aria-expanded', 'true');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            openBtn.setAttribute('aria-expanded', 'false');
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        // Tutup drawer otomatis begitu salah satu menu/logout ditekan di mobile
+        document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
+            el.addEventListener('click', closeSidebar);
+        });
+
+        // Reset state drawer kalau layar dibesarkan melewati breakpoint mobile
+        window.addEventListener('resize', function () {
+            if (window.innerWidth > 860) closeSidebar();
+        });
+    })();
+</script>
+@endpush
