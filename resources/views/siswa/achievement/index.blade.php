@@ -2,21 +2,20 @@
 {{-- Halaman "Prestasi & Sertifikat" milik siswa yang login.
      Struktur & gaya mengikuti resources/views/siswa/dashboard.blade.php
      (dark theme #080808, aksen merah #dc2626, Tailwind CDN). --}}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prestasi &amp; Sertifikat — DKV SMEKDA Portal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-        }
-    </script>
-    <style>
+@extends('layouts.app')
+
+@section('title', 'Prestasi & Sertifikat — DKV SMEKDA Portal')
+
+@section('content')
+
+{{-- Tailwind CDN & font Inter dipertahankan di sini sebagai pengaman ganda —
+     idempotent, tidak mengubah tailwind.config, aman meski layouts.app sudah memuatnya. --}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
         :root {
             --red:        #dc2626;
             --red-bright: #ef4444;
@@ -24,7 +23,7 @@
             --red-soft:   rgba(220,38,38,0.10);
             --red-border: rgba(220,38,38,0.35);
             --surface:    rgba(255,255,255,0.03);
-            --border:     rgba(255,255,255,0.07);
+            --border:     rgba(255,255,255,0.1);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -396,27 +395,139 @@
         @media (max-width: 768px) {
             .field-row { grid-template-columns: 1fr; }
         }
+
+        /* ================================================================
+           STAGE 1 — MOBILE-FIRST & RESPONSIVE ENHANCEMENTS
+           Lapisan aditif: hanya menambah properti baru / menimpa properti
+           spesifik lewat urutan cascade. Tidak ada rule lama yang dihapus.
+        ================================================================ */
+
+        /* Off-canvas sidebar */
+        .sidebar { transform: translateX(0); transition: transform .3s ease-in-out; max-width: 85vw; }
+        .sidebar-overlay {
+            position: fixed; inset: 0; z-index: 45; background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+            opacity: 0; pointer-events: none; transition: opacity .3s ease;
+        }
+        .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+        .sidebar-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .sidebar-close-btn {
+            display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
+            border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            color: rgba(255,255,255,0.4); cursor: pointer; flex-shrink: 0; transition: all .2s ease; font: inherit;
+        }
+        .sidebar-close-btn:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.25); color: #fca5a5; }
+        .sidebar-close-btn svg { width: 16px; height: 16px; }
+        .hamburger-btn {
+            display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
+            border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            color: rgba(255,255,255,0.55); cursor: pointer; flex-shrink: 0; transition: all .2s ease; font: inherit;
+        }
+        .hamburger-btn:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.22); color: #fca5a5; }
+        .hamburger-btn svg { width: 19px; height: 19px; }
+        .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+        .topbar-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        /* Fluid grid — 1 kol mobile / 2 kol tablet / 3 kol desktop */
+        .achv-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 641px) and (max-width: 1023px) { .achv-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .achv-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+
+        /* Aspect ratio elegan pada thumbnail — tidak "gepeng" di kolom manapun */
+        .achv-thumb-wrap { height: auto; aspect-ratio: 16 / 9; }
+        .achv-title, .achv-desc, .achv-issuer { overflow-wrap: break-word; }
+
+        /* Empty state — dashed border sesuai spesifikasi */
+        .empty-wrap { border: 1.5px dashed rgba(255,255,255,0.14); border-radius: 20px; }
+
+        /* Touch target minimal 44x44px */
+        .nav-item, .btn-logout, .btn-add, .btn-action-edit, .btn-action-file, .btn-action-delete { min-height: 44px; }
+        .modal-close { width: 44px; height: 44px; border-radius: 12px; font: inherit; }
+        .form-input, .form-select, .form-textarea { min-height: 44px; }
+
+        /* Input file tersembunyi secara visual tapi tetap bisa difokus keyboard */
+        .visually-hidden-file {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
+        .file-drop:focus-within {
+            border-color: var(--red); background: rgba(220,38,38,0.04);
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+        }
+
+        /* Focus ring lembut untuk navigasi keyboard */
+        .nav-item:focus-visible,
+        .btn-logout:focus-visible,
+        .btn-add:focus-visible,
+        .btn-action-edit:focus-visible,
+        .btn-action-file:focus-visible,
+        .btn-action-delete:focus-visible,
+        .modal-close:focus-visible,
+        .hamburger-btn:focus-visible,
+        .sidebar-close-btn:focus-visible {
+            outline: none; box-shadow: 0 0 0 3px rgba(220,38,38,0.35);
+        }
+
+        /* Modal tidak pernah keluar layar, di layar sependek apapun */
+        .modal-box { max-height: calc(100vh - 32px); display: flex; flex-direction: column; }
+        .modal-header { flex-shrink: 0; }
+        .modal-body { flex: 1 1 auto; min-height: 0; max-height: none; }
+
+        @media (max-width: 860px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); box-shadow: 28px 0 60px rgba(0,0,0,0.5); }
+            .sidebar-close-btn { display: flex; }
+            .hamburger-btn { display: flex; }
+            .main-content { margin-left: 0; }
+            .topbar { padding: 12px 16px; }
+            .topbar-badge { display: none; }
+            .page-inner { padding: 28px 18px 48px; }
+        }
+        @media (max-width: 640px) {
+            .btn-add { width: 100%; justify-content: center; }
+            .empty-wrap { padding: 56px 20px; }
+            .modal-overlay { padding: 16px; align-items: flex-start; }
+            .modal-header { padding: 16px 18px; }
+            .modal-body { padding: 18px; }
+        }
+        @media (max-width: 480px) {
+            .page-inner { padding: 22px 14px 40px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: .001ms !important;
+                animation-duration: .001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
     </style>
-</head>
-<body>
 
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar">
+<aside class="sidebar" id="appSidebar">
     <div class="sidebar-logo">
-        <div class="logo-wordmark">
-            <div class="logo-icon">
-                <svg fill="none" stroke="white" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                          d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                </svg>
+        <div class="sidebar-logo-row">
+            <div class="logo-wordmark">
+                <div class="logo-icon">
+                    <svg fill="none" stroke="white" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                DKV<span style="color:var(--red);">.</span>SMEKDA
             </div>
-            DKV<span style="color:var(--red);">.</span>SMEKDA
+            <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" onclick="closeSidebar()" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
         <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
             Portal Siswa
@@ -469,7 +580,7 @@
             Cetak Portfolio
         </a>
 
-        <a href="{{ route('siswa.achievement.index') }}" class="nav-item active">
+        <a href="{{ route('siswa.achievement.index') }}" class="nav-item active" aria-current="page">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 17a3 3 0 013-3h0a3 3 0 013 3v3H9v-3zM6 6h12v2a6 6 0 01-12 0V6zm0 0H4a2 2 0 000 4h2M18 6h2a2 2 0 010 4h-2"/>
@@ -508,8 +619,15 @@
 <div class="main-content">
 
     <div class="topbar">
-        <div class="topbar-title">
-            Portal DKV SMEKDA <span>/</span> Prestasi &amp; Sertifikat
+        <div class="topbar-left">
+            <button type="button" class="hamburger-btn" id="hamburgerBtn" onclick="openSidebar()" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
+                </svg>
+            </button>
+            <div class="topbar-title">
+                Portal DKV SMEKDA <span>/</span> Prestasi &amp; Sertifikat
+            </div>
         </div>
         <div class="topbar-badge">
             <div class="badge-role-dot"></div>
@@ -602,13 +720,13 @@
 
                 @else
 
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:16px;">
+                    <div class="achv-grid">
 
                         @foreach($achievements as $achievement)
                         <div class="achv-card">
                             <div class="achv-thumb-wrap">
                                 @if($achievement->image_path)
-                                    <img src="{{ asset('storage/' . $achievement->image_path) }}" alt="{{ $achievement->title }}" class="achv-thumb">
+                                    <img src="{{ asset('storage/' . $achievement->image_path) }}" alt="{{ $achievement->title }}" class="achv-thumb" loading="lazy" decoding="async">
                                 @else
                                     <div class="achv-thumb-placeholder">
                                         @if($achievement->type === 'prestasi')
@@ -690,6 +808,8 @@
                                     method="POST"
                                     action="{{ route('siswa.achievement.destroy', $achievement) }}"
                                     style="margin-top:8px;"
+                                    class="js-loading-form"
+                                    data-loading-text="Menghapus..."
                                     onsubmit="return confirm('Hapus prestasi/sertifikat ini? Tindakan tidak dapat dibatalkan.')">
                                     @csrf
                                     @method('DELETE')
@@ -697,7 +817,7 @@
                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                         </svg>
-                                        Hapus
+                                        <span>Hapus</span>
                                     </button>
                                 </form>
                             </div>
@@ -729,21 +849,21 @@
 {{-- ================================================================
      MODAL — TAMBAH PRESTASI/SERTIFIKAT
 ================================================================ --}}
-<div class="modal-overlay" id="achievementModal">
-    <div class="modal-box">
+<div class="modal-overlay" id="achievementModal" aria-hidden="true">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="achievementModalTitle">
         <div class="modal-header">
             <div>
-                <div class="modal-header-title">Tambah Prestasi/Sertifikat</div>
+                <div class="modal-header-title" id="achievementModalTitle">Tambah Prestasi/Sertifikat</div>
                 <div class="modal-header-sub">Lengkapi data di bawah ini, lalu simpan.</div>
             </div>
-            <div class="modal-close" onclick="closeAchievementModal()">
+            <button type="button" class="modal-close" onclick="closeAchievementModal()" aria-label="Tutup modal">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
-            </div>
+            </button>
         </div>
 
-        <form method="POST" action="{{ route('siswa.achievement.store') }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route('siswa.achievement.store') }}" enctype="multipart/form-data" class="js-loading-form" data-loading-text="Menyimpan...">
             @csrf
             <div class="modal-body">
 
@@ -838,7 +958,7 @@
                         Thumbnail / Foto
                         <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; JPG/PNG, maks 2MB)</span>
                     </label>
-                    <div class="file-drop" onclick="document.getElementById('imageInput').click()">
+                    <label class="file-drop" for="imageInput">
                         <div class="file-drop-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -849,8 +969,8 @@
                             <div class="file-drop-text" id="imageFileText">Klik untuk memilih gambar</div>
                             <div class="file-drop-sub">Format JPG/PNG &bull; Maksimal 2MB</div>
                         </div>
-                    </div>
-                    <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/jpg" style="display:none;" onchange="updateFileLabel(this, 'imageFileText', 'Klik untuk memilih gambar')">
+                    </label>
+                    <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/jpg" class="visually-hidden-file" onchange="updateFileLabel(this, 'imageFileText', 'Klik untuk memilih gambar')">
                     @error('image')
                         <div class="field-error">
                             <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -864,7 +984,7 @@
                         Dokumen PDF
                         <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; PDF, maks 4MB)</span>
                     </label>
-                    <div class="file-drop" onclick="document.getElementById('fileInput').click()">
+                    <label class="file-drop" for="fileInput">
                         <div class="file-drop-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -875,8 +995,8 @@
                             <div class="file-drop-text" id="fileFileText">Klik untuk memilih file PDF</div>
                             <div class="file-drop-sub">Format PDF &bull; Maksimal 4MB</div>
                         </div>
-                    </div>
-                    <input type="file" id="fileInput" name="file" accept=".pdf" style="display:none;" onchange="updateFileLabel(this, 'fileFileText', 'Klik untuk memilih file PDF')">
+                    </label>
+                    <input type="file" id="fileInput" name="file" accept=".pdf" class="visually-hidden-file" onchange="updateFileLabel(this, 'fileFileText', 'Klik untuk memilih file PDF')">
                     @error('file')
                         <div class="field-error">
                             <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -898,21 +1018,120 @@
 </div>
 
 <script>
+    // ── Util: daftar elemen yang bisa menerima fokus di dalam container ──
+    function getFocusable(container) {
+        if (!container) return [];
+        return Array.from(container.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter(function (el) { return el.offsetParent !== null; });
+    }
+    function isMobileNav() {
+        return window.matchMedia('(max-width: 860px)').matches;
+    }
+
+    // ── Modal Tambah Prestasi/Sertifikat ──
+    var lastFocusedBeforeModal = null;
+
     function openAchievementModal() {
-        document.getElementById('achievementModal').classList.add('open');
+        var modal = document.getElementById('achievementModal');
+        lastFocusedBeforeModal = document.activeElement;
+        modal.classList.add('open');
+        modal.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
+        var focusables = getFocusable(modal.querySelector('.modal-box'));
+        if (focusables.length) focusables[0].focus();
     }
     function closeAchievementModal() {
-        document.getElementById('achievementModal').classList.remove('open');
+        var modal = document.getElementById('achievementModal');
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
+        if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+            lastFocusedBeforeModal.focus();
+        }
     }
     function updateFileLabel(input, labelId, fallback) {
-        const label = document.getElementById(labelId);
+        var label = document.getElementById(labelId);
         label.textContent = input.files && input.files.length > 0 ? input.files[0].name : fallback;
     }
     // Klik di luar modal-box untuk menutup
     document.getElementById('achievementModal').addEventListener('click', function (e) {
         if (e.target === this) closeAchievementModal();
+    });
+    // Trap fokus (Tab / Shift+Tab) selama modal terbuka
+    document.getElementById('achievementModal').addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab') return;
+        var focusables = getFocusable(this.querySelector('.modal-box'));
+        if (!focusables.length) return;
+        var first = focusables[0];
+        var last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+        }
+    });
+
+    // ── Sidebar off-canvas (mobile ≤ 860px) ──
+    function openSidebar() {
+        var sidebar  = document.getElementById('appSidebar');
+        var overlay  = document.getElementById('sidebarOverlay');
+        var hamburger = document.getElementById('hamburgerBtn');
+        var closeBtn = document.getElementById('sidebarCloseBtn');
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+        sidebar.inert = false;
+        document.body.style.overflow = 'hidden';
+        hamburger.setAttribute('aria-expanded', 'true');
+        if (closeBtn) closeBtn.focus();
+    }
+    function closeSidebar() {
+        var sidebar  = document.getElementById('appSidebar');
+        var overlay  = document.getElementById('sidebarOverlay');
+        var hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        if (isMobileNav()) sidebar.inert = true;
+        document.body.style.overflow = '';
+        hamburger.setAttribute('aria-expanded', 'false');
+        if (hamburger) hamburger.focus();
+    }
+    function syncSidebarForViewport() {
+        var sidebar = document.getElementById('appSidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (!sidebar) return;
+        if (isMobileNav()) {
+            if (!sidebar.classList.contains('open')) sidebar.inert = true;
+        } else {
+            sidebar.inert = false;
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    }
+    window.addEventListener('resize', syncSidebarForViewport);
+    syncSidebarForViewport();
+
+    // ── Escape menutup modal / sidebar, mana pun yang sedang terbuka ──
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        var modal   = document.getElementById('achievementModal');
+        var sidebar = document.getElementById('appSidebar');
+        if (modal.classList.contains('open')) { closeAchievementModal(); return; }
+        if (sidebar.classList.contains('open')) { closeSidebar(); }
+    });
+
+    // ── Loading state ringan pada submit form (cegah submit ganda) ──
+    document.querySelectorAll('.js-loading-form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            var btn = form.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
+            btn.disabled = true;
+            var label = btn.querySelector('span');
+            if (label && form.dataset.loadingText) label.textContent = form.dataset.loadingText;
+            btn.style.opacity = '0.65';
+            btn.style.cursor = 'not-allowed';
+        });
     });
 
     @if($errors->any())
@@ -922,5 +1141,4 @@
     @endif
 </script>
 
-</body>
-</html>
+@endsection
