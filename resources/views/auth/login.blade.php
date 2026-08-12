@@ -628,6 +628,16 @@
         <div class="login-card">
             <div class="corner-deco"></div>
 
+            {{-- TOMBOL KEMBALI KE BERANDA (OPSI A) --}}
+            <div style="margin-bottom: 22px;">
+                <a href="{{ url('/') }}" style="display: inline-flex; align-items: center; gap: 7px; font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#ef4444'" onmouseout="this.style.color='rgba(255,255,255,0.4)'">
+                    <svg style="width: 14px; height: 14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Kembali ke Beranda
+                </a>
+            </div>
+            
             {{-- Logo --}}
             <div class="logo-text">
                 
