@@ -711,7 +711,12 @@
 <nav class="navbar" id="navbar">
     <div class="container">
         <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div class="nav-logo">DKV<span>.</span>SMEKDA</div>
+            <div class="nav-logo" style="display: flex; align-items: center; gap: 10px;">
+    <div style="width: 30px; height: 30px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+    </div>
+    <div>DKV<span>.</span>SMEKDA</div>
+</div>
             <div style="display:flex; align-items:center; gap:12px;">
                 <a href="{{ route('login') }}" class="btn-outline-white">Login</a>
                 <a href="{{ route('login') }}" class="btn-red">Register Siswa</a>

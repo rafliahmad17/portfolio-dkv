@@ -29,25 +29,15 @@
     }
 
     
-    .tk-page {
-    position: relative;
-    background: var(--tk-bg);
-    color: var(--tk-text);
-    min-height: 100vh;
+ body {
+        background-color: var(--tk-bg);
+        color: var(--tk-text);
+    }
     
     .tk-page {
-    position: relative;
-    min-height: 100vh;
-    background: #080808;
-    color: #f5f5f5;
-
-}}
-    .tk-page {
         position: relative;
-        background: var(--tk-bg);
-        color: var(--tk-text);
         min-height: 100vh;
-}
+    }
     .tk-page::before {
         content: '';
         position: absolute;
