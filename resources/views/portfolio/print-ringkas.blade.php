@@ -1,12 +1,12 @@
-<!-- resources/views/portfolio/print-ringkas.blade.php -->
 {{-- ================================================================
-     PDF RINGKAS — versi cetak singkat (maks. 2 halaman A4), dipakai
-     dari 2 tempat:
+     PDF RINGKAS — PREMIUM EDITORIAL (Swiss / minimal, light mode)
+     Dipakai dari 2 tempat:
        1) Privat  : PortfolioController@printView       (siswa.portfolio.print)
        2) Publik  : PublicPortfolioController@print     (portfolio.public.print)
      Kedua rute mengirim variabel yang sama: $user, $portfolios.
-     Palet warna & font disamakan dengan tema web (gelap-merah, Inter),
-     BUKAN gaya hangat/editorial print.blade.php lama.
+     Fokus dokumen: identitas desainer, bio, keahlian, kontak, dan QR
+     menuju Live Portfolio online — BUKAN grid thumbnail karya.
+     Gaya: putih bersih, tipografi dominan, aksen merah tipis, 1 halaman A4.
 ================================================================ --}}
 <!DOCTYPE html>
 <html lang="id">
@@ -15,28 +15,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Portfolio {{ $user->name }} — Cetak PDF</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script>
-    tailwind.config = {
-        theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] } } }
-    }
-</script>
 
 <style>
     :root {
-        --red:      #dc2626;
-        --red-glow: rgba(220,38,38,0.4);
-        --border:   rgba(255,255,255,0.07);
+        --paper:     #FFFFFF;
+        --ink:       #111827;
+        --ink-soft:  #6B7280;
+        --ink-faint: #9CA3AF;
+        --border:    #E5E7EB;
+        --red:       #DC2626;
+        --red-tint:  rgba(220,38,38,0.06);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
         font-family: 'Inter', sans-serif;
-        background: #121212;
-        color: #f5f5f5;
+        background: #F5F5F4;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
     }
 
     /* ══════════════════════ TOOLBAR (layar saja) ══════════════════════ */
@@ -44,25 +43,25 @@
         position: sticky; top: 0; z-index: 50;
         display: flex; align-items: center; justify-content: space-between; gap: 10px;
         padding: 12px 16px;
-        background: rgba(8,8,8,0.92);
+        background: rgba(255,255,255,0.92);
         backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         border-bottom: 1px solid var(--border);
     }
     .toolbar-brand {
         display: flex; align-items: center; gap: 6px;
         font-size: 0.68rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-        color: rgba(255,255,255,0.4); white-space: nowrap;
+        color: var(--ink-faint); white-space: nowrap;
     }
     .toolbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .tbtn {
         display: inline-flex; align-items: center; gap: 6px;
         font-size: 0.74rem; font-weight: 700;
         padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer;
-        text-decoration: none; white-space: nowrap; transition: all 0.2s ease;
+        text-decoration: none; white-space: nowrap; transition: all 0.15s ease;
     }
-    .tbtn-ghost { background: rgba(255,255,255,0.06); color: #f5f5f5; border: 1px solid var(--border); }
-    .tbtn-ghost:hover { background: rgba(255,255,255,0.1); }
-    .tbtn-red { background: var(--red); color: #fff; box-shadow: 0 4px 16px rgba(220,38,38,0.35); }
+    .tbtn-ghost { background: #F3F4F6; color: var(--ink); border: 1px solid var(--border); }
+    .tbtn-ghost:hover { background: #E5E7EB; }
+    .tbtn-red { background: var(--red); color: #fff; box-shadow: 0 3px 10px rgba(220,38,38,0.25); }
     .tbtn-red:hover { background: #b91c1c; }
     .tbtn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
@@ -76,117 +75,121 @@
     @media screen and (max-width: 640px) {
         .mobile-hint {
             display: block; margin: 12px 16px 0; padding: 12px 14px;
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2);
+            background: var(--red-tint); border: 1px solid rgba(220,38,38,0.18);
             border-radius: 10px; font-size: 0.72rem; line-height: 1.5;
-            color: rgba(255,255,255,0.6); text-align: center;
+            color: var(--ink-soft); text-align: center;
         }
     }
 
     /* ══════════════════════ SHEET (halaman A4) ══════════════════════ */
-    .stage { padding: 24px 0 48px; }
+    .stage { padding: 40px 0 64px; }
     .sheet {
         width: 210mm;
         min-height: 297mm;
         margin: 0 auto;
-        background: #080808;
-        padding: 14mm 13mm;
+        background: var(--paper);
+        padding: 16mm;
         position: relative;
     }
     @media screen {
         .sheet {
-            box-shadow: 0 1px 1px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.35), 0 30px 70px rgba(0,0,0,0.45);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.06);
         }
     }
     @media screen and (max-width: 900px) {
         .sheet { width: 100%; min-height: 0; padding: 8mm 6mm 10mm; }
     }
     @media print {
-        html, body { background: #080808; }
+        html, body { background: #FFFFFF; }
         .sheet { width: 100%; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
         .stage { padding: 0; }
         .toolbar, .mobile-hint, .no-print { display: none !important; }
-        @page { size: A4 portrait; margin: 14mm 13mm; }
+        @page { size: A4 portrait; margin: 16mm; }
         * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
         .avoid { break-inside: avoid; }
     }
 
     /* ══════════════════════ HEADER IDENTITAS ══════════════════════ */
-    .id-header { display: flex; align-items: center; gap: 14pt; }
+    .id-header { display: flex; align-items: center; gap: 22px; padding-bottom: 26px; }
     .id-avatar {
-        width: 60pt; height: 60pt; border-radius: 14pt;
-        background: linear-gradient(135deg, #dc2626, #7c3aed);
+        width: 88px; height: 88px; border-radius: 8px;
+        background: #F3F4F6; border: 1px solid var(--border);
         display: flex; align-items: center; justify-content: center;
-        font-size: 21pt; font-weight: 900; color: #fff;
+        font-size: 28px; font-weight: 800; color: var(--red);
         overflow: hidden; flex-shrink: 0;
     }
-    .id-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .id-name { font-size: 18.5pt; font-weight: 900; letter-spacing: -0.3pt; line-height: 1.15; word-break: break-word; }
-    .id-tagline { font-size: 9.5pt; font-weight: 600; color: #fca5a5; margin-top: 3pt; }
-    .id-meta { font-size: 7.8pt; color: rgba(255,255,255,0.4); margin-top: 4pt; line-height: 1.5; }
+    .id-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .id-name { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.12; color: var(--ink); word-break: break-word; }
+    .id-tagline { font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); margin-top: 7px; }
+    .id-meta { font-size: 10.5px; color: var(--ink-soft); margin-top: 9px; line-height: 1.6; }
 
-    .rule { height: 1px; background: var(--border); margin: 11pt 0; }
+    .header-rule { height: 1px; background: var(--border); margin-bottom: 30px; }
 
-    .bio-text { font-size: 8.6pt; line-height: 1.65; color: rgba(255,255,255,0.65); }
-
-    .tag-row { display: flex; flex-wrap: wrap; gap: 5pt; margin-top: 11pt; }
-    .tag {
-        font-size: 7.3pt; font-weight: 700; color: rgba(255,255,255,0.7);
-        background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-        border-radius: 5pt; padding: 3pt 8pt;
+    .section { margin-bottom: 32px; }
+    .section-title {
+        font-size: 10.5px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
+        color: var(--ink-soft); padding-left: 12px; border-left: 3px solid var(--red);
+        margin-bottom: 14px; line-height: 1;
     }
 
-    .section-idx {
-        font-size: 7pt; font-weight: 800; letter-spacing: 2pt; text-transform: uppercase;
-        color: rgba(255,255,255,0.3); margin-bottom: 9pt; display: flex; align-items: center; gap: 6pt;
-    }
-    .section-idx::before { content: ''; width: 10pt; height: 1.4pt; background: var(--red); display: block; flex-shrink: 0; }
+    .bio-text { font-size: 12.5px; line-height: 1.9; color: #374151; max-width: 148mm; }
 
-    .karya-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8pt; }
-    .karya-card { border: 1px solid var(--border); border-radius: 6pt; overflow: hidden; }
-    .karya-thumb { width: 100%; height: 60pt; object-fit: cover; display: block; background: #151515; }
-    .karya-info { padding: 6pt 7pt; }
-    .karya-cat { font-size: 5.8pt; font-weight: 800; letter-spacing: 0.6pt; text-transform: uppercase; color: #fca5a5; margin-bottom: 2pt; }
-    .karya-title {
-        font-size: 7.6pt; font-weight: 700; color: #f5f5f5; line-height: 1.3;
-        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+    /* ══════════════════════ KEAHLIAN ══════════════════════ */
+    .skill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-badge {
+        font-size: 10.5px; font-weight: 600; color: var(--ink);
+        background: #F9FAFB; border: 1px solid var(--border);
+        border-radius: 4px; padding: 6px 14px;
     }
 
-    .more-hint { text-align: center; font-size: 7.6pt; color: rgba(255,255,255,0.35); margin-top: 9pt; }
+    /* ══════════════════════ KONTAK ══════════════════════ */
+    .contact-grid {
+        display: grid; grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    }
+    .contact-item {
+        display: flex; align-items: center; gap: 11px;
+        padding: 16px 18px; border-left: 1px solid var(--border);
+    }
+    .contact-item:first-child { border-left: none; padding-left: 0; }
+    .contact-icon {
+        width: 32px; height: 32px; border-radius: 7px; background: var(--red-tint);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .contact-icon svg { width: 15px; height: 15px; stroke: var(--red); }
+    .contact-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
+    .contact-value { font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.35; word-break: break-word; }
 
-    .empty-hint { font-size: 8.6pt; color: rgba(255,255,255,0.35); }
+    @media screen and (max-width: 640px) {
+        .contact-grid { grid-template-columns: 1fr !important; }
+        .contact-item { border-left: none !important; border-top: 1px solid var(--border); padding: 14px 0; }
+        .contact-item:first-child { border-top: none; }
+    }
 
-    .qr-block { display: flex; align-items: center; gap: 14pt; }
-    .qr-img-wrap { flex-shrink: 0; width: 88px; height: 88px; }
-    .qr-img-wrap img { width: 100%; height: 100%; border-radius: 6pt; display: block; }
+    /* ══════════════════════ QR HERO ══════════════════════ */
+    .qr-hero { text-align: center; padding: 40px 0 6px; }
+    .qr-hero img { width: 190px; height: 190px; display: block; margin: 0 auto 22px; }
     .qr-fallback {
-        width: 88px; height: 88px; border: 1.5px solid rgba(255,255,255,0.2);
-        border-radius: 6pt; display: none; align-items: center; justify-content: center;
-        flex-direction: column; gap: 3pt;
+        width: 190px; height: 190px; margin: 0 auto 22px;
+        border: 1.5px solid var(--border); border-radius: 8px;
+        display: none; align-items: center; justify-content: center;
+        flex-direction: column; gap: 4px;
     }
-    .qr-fallback span:first-child { font-size: 6.5pt; font-weight: 800; color: rgba(255,255,255,0.5); }
-    .qr-fallback span:last-child { font-size: 6pt; color: rgba(255,255,255,0.3); }
-    .qr-title { font-size: 9pt; font-weight: 800; color: var(--red); margin-bottom: 4pt; }
-    .qr-desc { font-size: 7.6pt; line-height: 1.55; color: rgba(255,255,255,0.5); margin-bottom: 4pt; }
-    .qr-url { font-size: 6.4pt; color: rgba(255,255,255,0.3); word-break: break-all; }
+    .qr-fallback span:first-child { font-size: 8px; font-weight: 800; letter-spacing: 1px; color: var(--ink-soft); }
+    .qr-fallback span:last-child { font-size: 7.5px; color: var(--ink-faint); }
+    .qr-hero-title { font-size: 14px; font-weight: 800; color: var(--ink); letter-spacing: -0.2px; margin-bottom: 8px; }
+    .qr-hero-desc { font-size: 11px; line-height: 1.75; color: var(--ink-soft); max-width: 340px; margin: 0 auto 10px; }
+    .qr-hero-url { font-size: 9.5px; color: var(--ink-faint); word-break: break-all; letter-spacing: 0.2px; }
 
-    .print-footer { margin-top: 11pt; text-align: center; font-size: 6.4pt; color: rgba(255,255,255,0.16); }
+    .print-footer { margin-top: 30px; text-align: center; font-size: 10px; color: #D1D5DB; letter-spacing: 0.3px; }
 </style>
 </head>
 <body>
 
 @php
     /**
-     * Siapkan data ringkas untuk PDF: total karya, maksimal 6 karya
-     * terbaru untuk ditampilkan pada grid, dan sisa karya (jika ada)
-     * untuk ditulis sebagai teks singkat + arahan pindai QR.
-     */
-    $totalKarya  = $portfolios->count();
-    $karyaTampil = $portfolios->take(6);
-    $sisaKarya   = max(0, $totalKarya - $karyaTampil->count());
-
-    /**
      * Ambil maksimal 3 kalimat pertama dari bio agar isi PDF tetap
-     * ringkas dan halaman tidak melebar melebihi batas 1-2 halaman A4.
+     * ringkas dan halaman tidak melebar melebihi 1 halaman A4.
      */
     $bioSingkat = null;
     if ($user->bio) {
@@ -204,12 +207,23 @@
 
     /**
      * qrImg — generator URL QR code lewat layanan eksternal qrserver.com
-     * (tanpa dependency baru), warna disamakan dengan tema gelap-merah web.
+     * (tanpa dependency baru). Modul gelap di atas kertas putih, tanpa
+     * background gelap, agar konsisten dengan tema cetak premium/light.
      */
     $qrImg = function (string $data, int $size = 220) {
         return 'https://api.qrserver.com/v1/create-qr-code/?size=' . $size . 'x' . $size
-            . '&color=f5f5f5&bgcolor=0a0a0a&qzone=1&data=' . urlencode($data);
+            . '&color=111827&bgcolor=ffffff&qzone=1&data=' . urlencode($data);
     };
+
+    /**
+     * Kumpulan kontak yang tersedia — hanya ditampilkan jika datanya ada,
+     * agar layout kolom Kontak tetap rapi meski sebagian data kosong.
+     */
+    $kontakItems = collect([
+        $user->contact ? ['label' => 'WhatsApp', 'value' => $user->contact, 'icon' => 'phone'] : null,
+        $user->email ? ['label' => 'Email', 'value' => $user->email, 'icon' => 'mail'] : null,
+        (!empty($user->instagram)) ? ['label' => 'Instagram', 'value' => $user->instagram, 'icon' => 'camera'] : null,
+    ])->filter()->values();
 @endphp
 
 {{-- ================================================================
@@ -256,83 +270,75 @@
         </div>
         <div>
             <div class="id-name">{{ $user->name }}</div>
-            <div class="id-tagline">Siswa Desain Komunikasi Visual</div>
+            <div class="id-tagline">Desain Komunikasi Visual</div>
             <div class="id-meta">
                 SMK Negeri 2 Padang Panjang
                 @if($user->nis_nip) &bull; NIS/NIP {{ $user->nis_nip }} @endif
-                @if($user->contact) &bull; WA {{ $user->contact }} @endif
             </div>
         </div>
     </div>
+    <div class="header-rule"></div>
 
-    <div class="rule"></div>
-
+    {{-- ══ TENTANG SAYA ══ --}}
     @if($bioSingkat)
-    <p class="bio-text">{{ $bioSingkat }}</p>
+    <div class="section avoid">
+        <div class="section-title">Tentang Saya</div>
+        <p class="bio-text">{{ $bioSingkat }}</p>
+    </div>
     @endif
 
+    {{-- ══ KEAHLIAN ══ --}}
     @if(!empty($user->skills))
-    <div class="tag-row">
-        @foreach($user->skills as $skill)
-            <span class="tag">{{ $skill }}</span>
-        @endforeach
+    <div class="section avoid">
+        <div class="section-title">Keahlian</div>
+        <div class="skill-row">
+            @foreach($user->skills as $skill)
+                <span class="skill-badge">{{ $skill }}</span>
+            @endforeach
+        </div>
     </div>
     @endif
 
-    <div class="rule"></div>
-
-    {{-- ══ KARYA ══ --}}
-    <div class="section-idx">
-        Karya Terbaru
-        @if($totalKarya > 0)
-            ({{ $totalKarya }})
-        @endif
-    </div>
-
-    @if($karyaTampil->count() > 0)
-    <div class="karya-grid">
-        @foreach($karyaTampil as $portfolio)
-        <div class="karya-card avoid">
-            <img
-                src="{{ asset('storage/' . $portfolio->image_path) }}"
-                alt="{{ $portfolio->title }}"
-                class="karya-thumb"
-                onerror="this.style.background='#1a1a1a'"
-            >
-            <div class="karya-info">
-                <div class="karya-cat">{{ $portfolio->category?->name ?? 'Umum' }}</div>
-                <div class="karya-title">{{ $portfolio->title }}</div>
+    {{-- ══ KONTAK ══ --}}
+    @if($kontakItems->isNotEmpty())
+    <div class="section avoid">
+        <div class="section-title">Kontak</div>
+        <div class="contact-grid" style="grid-template-columns: repeat({{ $kontakItems->count() }}, 1fr);">
+            @foreach($kontakItems as $item)
+            <div class="contact-item">
+                <div class="contact-icon">
+                    @if($item['icon'] === 'phone')
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 01-8.5 8.5c-1.35 0-2.62-.32-3.74-.9L3 21l1.9-5.76A8.5 8.5 0 1121 11.5z"/></svg>
+                    @elseif($item['icon'] === 'mail')
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                    @else
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 012-2h1.2a1 1 0 00.86-.5l.9-1.5a1 1 0 01.86-.5h4.36a1 1 0 01.86.5l.9 1.5a1 1 0 00.86.5H18a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2V8z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
+                    @endif
+                </div>
+                <div>
+                    <div class="contact-label">{{ $item['label'] }}</div>
+                    <div class="contact-value">{{ $item['value'] }}</div>
+                </div>
             </div>
+            @endforeach
         </div>
-        @endforeach
     </div>
-    @if($sisaKarya > 0)
-    <div class="more-hint">+{{ $sisaKarya }} karya lainnya &mdash; pindai QR di bawah untuk lihat semua</div>
-    @endif
-    @else
-    <p class="empty-hint">Siswa ini belum mengunggah karya.</p>
     @endif
 
-    <div class="rule"></div>
-
-    {{-- ══ QR PENUTUP — satu-satunya QR, mengarah ke galeri profil online ══ --}}
-    <div class="qr-block avoid">
-        <div class="qr-img-wrap">
-            <img
-                src="{{ $qrImg($galleryUrl, 220) }}"
-                alt="QR Code Galeri {{ $user->name }}"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            >
-            <div class="qr-fallback">
-                <span>QR CODE</span>
-                <span>Scan online</span>
-            </div>
+    {{-- ══ QR HERO — satu-satunya QR, mengarah ke galeri profil online ══ --}}
+    <div class="qr-hero avoid">
+        <img
+            src="{{ $qrImg($galleryUrl, 460) }}"
+            alt="QR Code Galeri {{ $user->name }}"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+        >
+        <div class="qr-fallback">
+            <span>QR CODE</span>
+            <span>Scan online</span>
         </div>
-        <div>
-            <div class="qr-title">Lihat Semua Karya Secara Online</div>
-            <div class="qr-desc">Pindai kode ini untuk membuka galeri digital lengkap {{ $user->name }}, lengkap dengan deskripsi tiap karya dan pembaruan terbaru.</div>
-            <div class="qr-url">{{ $galleryUrl }}</div>
-        </div>
+        <div class="qr-hero-title">Scan untuk membuka live portfolio</div>
+        <p class="qr-hero-desc">Galeri karya, deskripsi proyek, proses desain, dan pembaruan terbaru tersedia secara online.</p>
+        <div class="qr-hero-url">{{ $galleryUrl }}</div>
     </div>
 
     <div class="print-footer">
