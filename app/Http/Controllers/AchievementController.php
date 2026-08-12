@@ -30,13 +30,31 @@ class AchievementController extends Controller
     {
         $validated = $this->validated($request);
 
+        // Simpan file gambar jika ada
+        $imagePath = $this->storeFile(
+            $request,
+            'image',
+            'achievements/photos'
+        );
+
+        // Simpan file PDF jika ada
+        $filePath = $this->storeFile(
+            $request,
+            'file',
+            'achievements/docs'
+        );
+
+        // Jangan masukkan UploadedFile ke database
+        unset($validated['image'], $validated['file']);
+
         $validated['user_id'] = Auth::id();
-        $validated['image_path'] = $this->storeFile($request, 'image', 'achievements/photos');
-        $validated['file_path']  = $this->storeFile($request, 'file', 'achievements/docs');
+        $validated['image_path'] = $imagePath;
+        $validated['file_path'] = $filePath;
 
         Achievement::create($validated);
 
-        return redirect()->route('siswa.achievement.index')
+        return redirect()
+            ->route('siswa.achievement.index')
             ->with('success', 'Prestasi/sertifikat berhasil ditambahkan!');
     }
 
@@ -53,76 +71,167 @@ class AchievementController extends Controller
     /**
      * Update prestasi/sertifikat.
      */
-    public function update(Request $request, Achievement $achievement): RedirectResponse
-    {
+    public function update(
+        Request $request,
+        Achievement $achievement
+    ): RedirectResponse {
         $this->authorizeOwner($achievement);
 
         $validated = $this->validated($request);
 
+        // Jangan masukkan object UploadedFile ke database
+        unset($validated['image'], $validated['file']);
+
+        /*
+         * Jika ada gambar baru:
+         * hapus gambar lama, kemudian simpan gambar baru.
+         */
         if ($request->hasFile('image')) {
+
             if ($achievement->image_path) {
-                Storage::disk('public')->delete($achievement->image_path);
+                Storage::disk('public')
+                    ->delete($achievement->image_path);
             }
-            $validated['image_path'] = $this->storeFile($request, 'image', 'achievements/photos');
+
+            $validated['image_path'] = $this->storeFile(
+                $request,
+                'image',
+                'achievements/photos'
+            );
         }
 
+        /*
+         * Jika ada PDF baru:
+         * hapus PDF lama, kemudian simpan PDF baru.
+         */
         if ($request->hasFile('file')) {
+
             if ($achievement->file_path) {
-                Storage::disk('public')->delete($achievement->file_path);
+                Storage::disk('public')
+                    ->delete($achievement->file_path);
             }
-            $validated['file_path'] = $this->storeFile($request, 'file', 'achievements/docs');
+
+            $validated['file_path'] = $this->storeFile(
+                $request,
+                'file',
+                'achievements/docs'
+            );
         }
 
         $achievement->update($validated);
 
-        return redirect()->route('siswa.achievement.index')
+        return redirect()
+            ->route('siswa.achievement.index')
             ->with('success', 'Prestasi/sertifikat berhasil diperbarui!');
     }
 
     /**
      * Hapus prestasi/sertifikat.
      */
-    public function destroy(Achievement $achievement): RedirectResponse
-    {
+    public function destroy(
+        Achievement $achievement
+    ): RedirectResponse {
         $this->authorizeOwner($achievement);
 
+        // Hapus gambar
         if ($achievement->image_path) {
-            Storage::disk('public')->delete($achievement->image_path);
-        }
-        if ($achievement->file_path) {
-            Storage::disk('public')->delete($achievement->file_path);
+            Storage::disk('public')
+                ->delete($achievement->image_path);
         }
 
+        // Hapus PDF
+        if ($achievement->file_path) {
+            Storage::disk('public')
+                ->delete($achievement->file_path);
+        }
+
+        // Hapus data database
         $achievement->delete();
 
-        return redirect()->route('siswa.achievement.index')
-            ->with('success', 'Prestasi/sertifikat berhasil dihapus.');
+        return redirect()
+            ->route('siswa.achievement.index')
+            ->with(
+                'success',
+                'Prestasi/sertifikat berhasil dihapus.'
+            );
     }
 
+    /**
+     * Validasi data.
+     */
     private function validated(Request $request): array
     {
         return $request->validate([
-            'type'        => ['required', 'in:prestasi,sertifikat'],
-            'title'       => ['required', 'string', 'max:255'],
-            'issuer'      => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string', 'max:1000'],
-            'achieved_at' => ['nullable', 'date'],
-            'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'file'        => ['nullable', 'file', 'mimes:pdf', 'max:4096'],
+            'type' => [
+                'required',
+                'in:prestasi,sertifikat'
+            ],
+
+            'title' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+
+            'issuer' => [
+                'nullable',
+                'string',
+                'max:255'
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+                'max:1000'
+            ],
+
+            'achieved_at' => [
+                'nullable',
+                'date'
+            ],
+
+            'image' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png',
+                'max:2048'
+            ],
+
+            'file' => [
+                'nullable',
+                'file',
+                'mimes:pdf',
+                'max:4096'
+            ],
         ]);
     }
 
-    private function storeFile(Request $request, string $field, string $folder): ?string
-    {
+    /**
+     * Simpan file ke storage public.
+     */
+    private function storeFile(
+        Request $request,
+        string $field,
+        string $folder
+    ): ?string {
         if (!$request->hasFile($field)) {
             return null;
         }
 
-        return $request->file($field)->store($folder, 'public');
+        return $request
+            ->file($field)
+            ->store($folder, 'public');
     }
 
-    private function authorizeOwner(Achievement $achievement): void
-    {
-        abort_unless($achievement->user_id === Auth::id(), 403);
+    /**
+     * Pastikan data hanya bisa diakses pemiliknya.
+     */
+    private function authorizeOwner(
+        Achievement $achievement
+    ): void {
+        abort_unless(
+            $achievement->user_id === Auth::id(),
+            403
+        );
     }
 }

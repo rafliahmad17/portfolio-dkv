@@ -28,11 +28,7 @@
         --tk-red-glow-3:      rgba(220,38,38,0.25);
     }
 
-    /* ── PAGE AMBIENCE ── */
-    /* Halaman diberi posisi relatif agar lapisan dekoratif (noise + ambient glow)
-       bisa duduk di belakang seluruh konten lewat z-index negatif — tidak pernah
-       menutupi teks/kontrol interaktif, dan tidak mengubah warna body itu sendiri
-       (background utama tetap milik layouts/app.blade.php). */
+    
     .tk-page {
     position: relative;
     background: var(--tk-bg);
