@@ -1,351 +1,1924 @@
-{{-- ================================================================
-     PDF RINGKAS — PREMIUM EDITORIAL (Swiss / minimal, light mode)
-     Dipakai dari 2 tempat:
-       1) Privat  : PortfolioController@printView       (siswa.portfolio.print)
-       2) Publik  : PublicPortfolioController@print     (portfolio.public.print)
-     Kedua rute mengirim variabel yang sama: $user, $portfolios.
-     Fokus dokumen: identitas desainer, bio, keahlian, kontak, dan QR
-     menuju Live Portfolio online — BUKAN grid thumbnail karya.
-     Gaya: putih bersih, tipografi dominan, aksen merah tipis, 1 halaman A4.
-================================================================ --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Portfolio {{ $user->name }} — Cetak PDF</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Portfolio {{ $user->name }} — Cetak PDF</title>
 
-<style>
-    :root {
-        --paper:     #FFFFFF;
-        --ink:       #111827;
-        --ink-soft:  #6B7280;
-        --ink-faint: #9CA3AF;
-        --border:    #E5E7EB;
-        --red:       #DC2626;
-        --red-tint:  rgba(220,38,38,0.06);
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background: #F5F5F4;
-        color: var(--ink);
-        -webkit-font-smoothing: antialiased;
-    }
-
-    /* ══════════════════════ TOOLBAR (layar saja) ══════════════════════ */
-    .toolbar {
-        position: sticky; top: 0; z-index: 50;
-        display: flex; align-items: center; justify-content: space-between; gap: 10px;
-        padding: 12px 16px;
-        background: rgba(255,255,255,0.92);
-        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border);
-    }
-    .toolbar-brand {
-        display: flex; align-items: center; gap: 6px;
-        font-size: 0.68rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
-        color: var(--ink-faint); white-space: nowrap;
-    }
-    .toolbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .tbtn {
-        display: inline-flex; align-items: center; gap: 6px;
-        font-size: 0.74rem; font-weight: 700;
-        padding: 8px 14px; border-radius: 8px; border: none; cursor: pointer;
-        text-decoration: none; white-space: nowrap; transition: all 0.15s ease;
-    }
-    .tbtn-ghost { background: #F3F4F6; color: var(--ink); border: 1px solid var(--border); }
-    .tbtn-ghost:hover { background: #E5E7EB; }
-    .tbtn-red { background: var(--red); color: #fff; box-shadow: 0 3px 10px rgba(220,38,38,0.25); }
-    .tbtn-red:hover { background: #b91c1c; }
-    .tbtn svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-    @media (max-width: 640px) {
-        .toolbar-brand span:last-child { display: none; }
-        .tbtn-ghost span { display: none; }
-    }
-
-    /* ══════════════════════ HINT MOBILE (layar kecil saja) ══════════════════════ */
-    .mobile-hint { display: none; }
-    @media screen and (max-width: 640px) {
-        .mobile-hint {
-            display: block; margin: 12px 16px 0; padding: 12px 14px;
-            background: var(--red-tint); border: 1px solid rgba(220,38,38,0.18);
-            border-radius: 10px; font-size: 0.72rem; line-height: 1.5;
-            color: var(--ink-soft); text-align: center;
+    <style>
+        :root {
+            --paper: #ffffff;
+            --ink: #111827;
+            --ink-2: #374151;
+            --muted: #6b7280;
+            --soft: #9ca3af;
+            --line: #e5e7eb;
+            --surface: #f8fafc;
+            --red: #dc2626;
+            --red-dark: #b91c1c;
+            --red-soft: #fef2f2;
         }
-    }
 
-    /* ══════════════════════ SHEET (halaman A4) ══════════════════════ */
-    .stage { padding: 40px 0 64px; }
-    .sheet {
-        width: 210mm;
-        min-height: 297mm;
-        margin: 0 auto;
-        background: var(--paper);
-        padding: 16mm;
-        position: relative;
-    }
-    @media screen {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--ink);
+            background: #f1f1ef;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-size: 11px;
+        }
+
+        /* =========================================================
+           TOOLBAR
+        ========================================================= */
+
+        .toolbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 18px;
+            background: rgba(255,255,255,.96);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .toolbar-brand {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tbtn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: 0;
+            border-radius: 8px;
+            padding: 9px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .tbtn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .tbtn-gray {
+            color: var(--ink);
+            background: #f3f4f6;
+            border: 1px solid var(--line);
+        }
+
+        .tbtn-red {
+            color: white;
+            background: var(--red);
+        }
+
+        .tbtn-red:hover {
+            background: var(--red-dark);
+        }
+
+        /* =========================================================
+           A4
+        ========================================================= */
+
+        .stage {
+            padding: 36px 0 60px;
+        }
+
         .sheet {
-            box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 16px 40px rgba(0,0,0,0.06);
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            padding: 14mm 15mm 12mm;
+            background: var(--paper);
+            box-shadow:
+                0 2px 5px rgba(0,0,0,.04),
+                0 20px 50px rgba(0,0,0,.08);
         }
-    }
-    @media screen and (max-width: 900px) {
-        .sheet { width: 100%; min-height: 0; padding: 8mm 6mm 10mm; }
-    }
-    @media print {
-        html, body { background: #FFFFFF; }
-        .sheet { width: 100%; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
-        .stage { padding: 0; }
-        .toolbar, .mobile-hint, .no-print { display: none !important; }
-        @page { size: A4 portrait; margin: 16mm; }
-        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
-        .avoid { break-inside: avoid; }
-    }
 
-    /* ══════════════════════ HEADER IDENTITAS ══════════════════════ */
-    .id-header { display: flex; align-items: center; gap: 22px; padding-bottom: 26px; }
-    .id-avatar {
-        width: 88px; height: 88px; border-radius: 8px;
-        background: #F3F4F6; border: 1px solid var(--border);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 28px; font-weight: 800; color: var(--red);
-        overflow: hidden; flex-shrink: 0;
-    }
-    .id-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .id-name { font-size: 30px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.12; color: var(--ink); word-break: break-word; }
-    .id-tagline { font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--red); margin-top: 7px; }
-    .id-meta { font-size: 10.5px; color: var(--ink-soft); margin-top: 9px; line-height: 1.6; }
+        /* =========================================================
+           HEADER SEKOLAH
+        ========================================================= */
 
-    .header-rule { height: 1px; background: var(--border); margin-bottom: 30px; }
+        .school-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 12px;
+        }
 
-    .section { margin-bottom: 32px; }
-    .section-title {
-        font-size: 10.5px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
-        color: var(--ink-soft); padding-left: 12px; border-left: 3px solid var(--red);
-        margin-bottom: 14px; line-height: 1;
-    }
+        .school-logo {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
 
-    .bio-text { font-size: 12.5px; line-height: 1.9; color: #374151; max-width: 148mm; }
+        .school-name {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+        }
 
-    /* ══════════════════════ KEAHLIAN ══════════════════════ */
-    .skill-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .skill-badge {
-        font-size: 10.5px; font-weight: 600; color: var(--ink);
-        background: #F9FAFB; border: 1px solid var(--border);
-        border-radius: 4px; padding: 6px 14px;
-    }
+        .school-dept {
+            margin-top: 3px;
+            font-size: 8.5px;
+            color: var(--soft);
+            letter-spacing: .3px;
+        }
 
-    /* ══════════════════════ KONTAK ══════════════════════ */
-    .contact-grid {
-        display: grid; grid-template-columns: repeat(3, 1fr);
-        border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    }
-    .contact-item {
-        display: flex; align-items: center; gap: 11px;
-        padding: 16px 18px; border-left: 1px solid var(--border);
-    }
-    .contact-item:first-child { border-left: none; padding-left: 0; }
-    .contact-icon {
-        width: 32px; height: 32px; border-radius: 7px; background: var(--red-tint);
-        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .contact-icon svg { width: 15px; height: 15px; stroke: var(--red); }
-    .contact-label { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
-    .contact-value { font-size: 11px; font-weight: 600; color: var(--ink); line-height: 1.35; word-break: break-word; }
+        .top-line {
+            height: 1px;
+            background: var(--line);
+            margin-bottom: 22px;
+        }
 
-    @media screen and (max-width: 640px) {
-        .contact-grid { grid-template-columns: 1fr !important; }
-        .contact-item { border-left: none !important; border-top: 1px solid var(--border); padding: 14px 0; }
-        .contact-item:first-child { border-top: none; }
-    }
+        /* =========================================================
+           IDENTITAS SISWA
+        ========================================================= */
 
-    /* ══════════════════════ QR HERO ══════════════════════ */
-    .qr-hero { text-align: center; padding: 40px 0 6px; }
-    .qr-hero img { width: 190px; height: 190px; display: block; margin: 0 auto 22px; }
-    .qr-fallback {
-        width: 190px; height: 190px; margin: 0 auto 22px;
-        border: 1.5px solid var(--border); border-radius: 8px;
-        display: none; align-items: center; justify-content: center;
-        flex-direction: column; gap: 4px;
-    }
-    .qr-fallback span:first-child { font-size: 8px; font-weight: 800; letter-spacing: 1px; color: var(--ink-soft); }
-    .qr-fallback span:last-child { font-size: 7.5px; color: var(--ink-faint); }
-    .qr-hero-title { font-size: 14px; font-weight: 800; color: var(--ink); letter-spacing: -0.2px; margin-bottom: 8px; }
-    .qr-hero-desc { font-size: 11px; line-height: 1.75; color: var(--ink-soft); max-width: 340px; margin: 0 auto 10px; }
-    .qr-hero-url { font-size: 9.5px; color: var(--ink-faint); word-break: break-all; letter-spacing: 0.2px; }
+        .student-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding-bottom: 20px;
+        }
 
-    .print-footer { margin-top: 30px; text-align: center; font-size: 10px; color: #D1D5DB; letter-spacing: 0.3px; }
-</style>
+        .student-photo {
+            width: 92px;
+            height: 92px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--red);
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .student-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .student-name {
+            font-size: 29px;
+            line-height: 1.05;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .student-role {
+            margin-top: 7px;
+            color: var(--red);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .student-meta {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 9.5px;
+            line-height: 1.6;
+        }
+
+        .section-line {
+            height: 1px;
+            background: var(--line);
+            margin-bottom: 21px;
+        }
+
+        /* =========================================================
+           SECTION
+        ========================================================= */
+
+        .section {
+            margin-bottom: 22px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 11px;
+        }
+
+        .section-mark {
+            width: 3px;
+            height: 17px;
+            background: var(--red);
+            border-radius: 2px;
+        }
+
+        .section-title {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 2.2px;
+            text-transform: uppercase;
+            color: var(--ink);
+        }
+
+        /* =========================================================
+           BIO
+        ========================================================= */
+
+        .bio-box {
+            padding: 12px 14px;
+            background: #fafafa;
+            border-left: 2px solid var(--red);
+            border-radius: 0 7px 7px 0;
+        }
+
+        .bio-text {
+            color: var(--ink-2);
+            font-size: 10.5px;
+            line-height: 1.75;
+        }
+
+        /* =========================================================
+           KEAHLIAN
+        ========================================================= */
+
+        .skill-groups {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .skill-group {
+            page-break-inside: avoid;
+        }
+
+        .skill-group-title {
+            margin-bottom: 8px;
+            font-size: 8px;
+            font-weight: 800;
+            color: var(--soft);
+            text-transform: uppercase;
+            letter-spacing: 1.3px;
+        }
+
+        .skill-list {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+        }
+
+        .skill-card {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            padding: 8px 9px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: #fff;
+            page-break-inside: avoid;
+        }
+
+        .skill-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 7px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            overflow: hidden;
+        }
+
+        .skill-icon svg {
+            width: 25px;
+            height: 25px;
+            display: block;
+        }
+
+        .skill-icon-text {
+            font-size: 9px;
+            font-weight: 900;
+            color: var(--red);
+            letter-spacing: -.3px;
+        }
+
+        .skill-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .skill-name {
+            font-size: 9.5px;
+            line-height: 1.25;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        .skill-level-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 5px;
+        }
+
+        .skill-bar {
+            flex: 1;
+            height: 4px;
+            overflow: hidden;
+            background: #edf0f3;
+            border-radius: 99px;
+        }
+
+        .skill-bar-fill {
+            height: 100%;
+            background: var(--red);
+            border-radius: 99px;
+        }
+
+        .skill-percent {
+            flex-shrink: 0;
+            font-size: 7px;
+            font-weight: 800;
+            color: var(--muted);
+        }
+
+        /* =========================================================
+           KARYA
+        ========================================================= */
+
+        .work-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .work-item {
+            display: flex;
+            gap: 13px;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--line);
+            page-break-inside: avoid;
+        }
+
+        .work-item:first-child {
+            padding-top: 0;
+        }
+
+        .work-item:last-child {
+            border-bottom: 0;
+        }
+
+        .work-image {
+            width: 78px;
+            height: 64px;
+            border-radius: 7px;
+            overflow: hidden;
+            background: var(--surface);
+            border: 1px solid var(--line);
+            flex-shrink: 0;
+        }
+
+        .work-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .work-fallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--red);
+        }
+
+        .work-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .work-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .work-title {
+            font-size: 11px;
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .work-category {
+            flex-shrink: 0;
+            padding: 4px 7px;
+            border-radius: 99px;
+            background: var(--red-soft);
+            color: var(--red);
+            font-size: 7px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: .7px;
+        }
+
+        .work-description {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.55;
+        }
+
+        /* =========================================================
+           KONTAK
+        ========================================================= */
+
+        .contact-grid {
+            display: grid;
+            gap: 0;
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-width: 0;
+            padding: 11px 10px;
+            border-right: 1px solid var(--line);
+        }
+
+        .contact-item:first-child {
+            padding-left: 0;
+        }
+
+        .contact-item:last-child {
+            border-right: 0;
+        }
+
+        .contact-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--red-soft);
+            color: var(--red);
+        }
+
+        .contact-icon svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .contact-label {
+            font-size: 7px;
+            color: var(--soft);
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .contact-value {
+            color: var(--ink);
+            font-size: 8.5px;
+            font-weight: 700;
+            line-height: 1.3;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           QR
+        ========================================================= */
+
+        .qr-section {
+            margin-top: 24px;
+            padding: 18px 0 0;
+            text-align: center;
+            border-top: 1px solid var(--line);
+        }
+
+        .qr-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 10px;
+            display: block;
+        }
+
+        .qr-title {
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .qr-desc {
+            max-width: 340px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 8.5px;
+            line-height: 1.55;
+        }
+
+        .qr-url {
+            margin-top: 6px;
+            color: var(--soft);
+            font-size: 7.5px;
+            word-break: break-all;
+        }
+
+        /* =========================================================
+           FOOTER
+        ========================================================= */
+
+        .footer {
+            margin-top: 18px;
+            padding-top: 9px;
+            border-top: 1px solid var(--line);
+            text-align: center;
+            color: #c4c7cc;
+            font-size: 7.5px;
+            letter-spacing: .2px;
+        }
+
+        /* =========================================================
+           PRINT
+        ========================================================= */
+
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        @media print {
+            html,
+            body {
+                background: #fff;
+            }
+
+            .toolbar,
+            .no-print {
+                display: none !important;
+            }
+
+            .stage {
+                padding: 0;
+            }
+
+            .sheet {
+                width: 210mm;
+                min-height: 297mm;
+                margin: 0;
+                padding: 14mm 15mm 12mm;
+                box-shadow: none;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .avoid,
+            .section,
+            .work-item,
+            .skill-card,
+            .skill-group {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+
+        /* =========================================================
+           MOBILE
+        ========================================================= */
+
+        @media screen and (max-width: 900px) {
+            .stage {
+                padding: 15px 0;
+            }
+
+            .sheet {
+                width: 100%;
+                min-height: 0;
+                padding: 28px 20px;
+            }
+
+            .toolbar-brand {
+                display: none;
+            }
+
+            .toolbar {
+                justify-content: flex-end;
+            }
+        }
+
+        @media screen and (max-width: 600px) {
+            .student-name {
+                font-size: 24px;
+            }
+
+            .student-header {
+                gap: 14px;
+            }
+
+            .student-photo {
+                width: 78px;
+                height: 78px;
+            }
+
+            .skill-list {
+                grid-template-columns: 1fr;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr !important;
+            }
+
+            .contact-item {
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+                padding-left: 0;
+            }
+
+            .contact-item:last-child {
+                border-bottom: 0;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
 @php
-    /**
-     * Ambil maksimal 3 kalimat pertama dari bio agar isi PDF tetap
-     * ringkas dan halaman tidak melebar melebihi 1 halaman A4.
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | BIO
+    |--------------------------------------------------------------------------
+    */
+
     $bioSingkat = null;
-    if ($user->bio) {
-        $kalimatBio = preg_split('/(?<=[.!?])\s+/', trim($user->bio), -1, PREG_SPLIT_NO_EMPTY);
-        $bioSingkat = implode(' ', array_slice($kalimatBio, 0, 3));
+
+    if (!empty($user->bio)) {
+        $kalimatBio = preg_split(
+            '/(?<=[.!?])\s+/',
+            trim($user->bio),
+            -1,
+            PREG_SPLIT_NO_EMPTY
+        );
+
+        $bioSingkat = implode(
+            ' ',
+            array_slice($kalimatBio, 0, 3)
+        );
     }
 
-    /**
-     * URL galeri Live Portfolio online. Fallback aman ke halaman utama
-     * jika portfolio_slug belum tersedia, supaya QR/tautan tidak pernah rusak.
-     */
-    $galleryUrl = $user->portfolio_slug
+
+    /*
+    |--------------------------------------------------------------------------
+    | URL PORTFOLIO
+    |--------------------------------------------------------------------------
+    */
+
+    $galleryUrl = !empty($user->portfolio_slug)
         ? route('portfolio.profile', $user->portfolio_slug)
         : url('/');
 
-    /**
-     * qrImg — generator URL QR code lewat layanan eksternal qrserver.com
-     * (tanpa dependency baru). Modul gelap di atas kertas putih, tanpa
-     * background gelap, agar konsisten dengan tema cetak premium/light.
-     */
-    $qrImg = function (string $data, int $size = 220) {
-        return 'https://api.qrserver.com/v1/create-qr-code/?size=' . $size . 'x' . $size
-            . '&color=111827&bgcolor=ffffff&qzone=1&data=' . urlencode($data);
+
+    /*
+    |--------------------------------------------------------------------------
+    | QR CODE
+    |--------------------------------------------------------------------------
+    */
+
+    $qrImg = function (string $data, int $size = 300) {
+        return 'https://api.qrserver.com/v1/create-qr-code/?size='
+            . $size . 'x' . $size
+            . '&color=111827'
+            . '&bgcolor=ffffff'
+            . '&qzone=1'
+            . '&data=' . urlencode($data);
     };
 
-    /**
-     * Kumpulan kontak yang tersedia — hanya ditampilkan jika datanya ada,
-     * agar layout kolom Kontak tetap rapi meski sebagian data kosong.
-     */
+
+    /*
+    |--------------------------------------------------------------------------
+    | INSTAGRAM
+    |--------------------------------------------------------------------------
+    */
+
+    $formatInstagram = function ($value) {
+
+        if (empty($value)) {
+            return null;
+        }
+
+        $value = trim((string) $value);
+
+        if (preg_match(
+            '#(?:https?://)?(?:www\.)?instagram\.com/([A-Za-z0-9_.]+)#i',
+            $value,
+            $match
+        )) {
+            return '@' . $match[1];
+        }
+
+        if (str_starts_with($value, '@')) {
+            return $value;
+        }
+
+        if (!preg_match('#^https?://#i', $value)) {
+            return '@' . $value;
+        }
+
+        return $value;
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KONTAK
+    |--------------------------------------------------------------------------
+    */
+
     $kontakItems = collect([
-        $user->contact ? ['label' => 'WhatsApp', 'value' => $user->contact, 'icon' => 'phone'] : null,
-        $user->email ? ['label' => 'Email', 'value' => $user->email, 'icon' => 'mail'] : null,
-        (!empty($user->instagram)) ? ['label' => 'Instagram', 'value' => $user->instagram, 'icon' => 'camera'] : null,
+
+        !empty($user->contact)
+            ? [
+                'label' => 'WhatsApp',
+                'value' => $user->contact,
+                'icon' => 'phone'
+            ]
+            : null,
+
+        !empty($user->email)
+            ? [
+                'label' => 'Email',
+                'value' => $user->email,
+                'icon' => 'mail'
+            ]
+            : null,
+
+        !empty($user->instagram)
+            ? [
+                'label' => 'Instagram',
+                'value' => $formatInstagram($user->instagram),
+                'icon' => 'instagram'
+            ]
+            : null,
+
     ])->filter()->values();
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | NORMALISASI SKILL
+    |--------------------------------------------------------------------------
+    |
+    | Struktur skill Anda sekarang:
+    |
+    | [
+    |     [
+    |         'name'  => 'Adobe Photoshop',
+    |         'level' => 80,
+    |         'type'  => 'Software Desain'
+    |     ]
+    | ]
+    |
+    */
+
+    $rawSkills = $user->skills;
+
+    if (is_string($rawSkills)) {
+
+        $decodedSkills = json_decode($rawSkills, true);
+
+        if (
+            json_last_error() === JSON_ERROR_NONE &&
+            is_array($decodedSkills)
+        ) {
+            $rawSkills = $decodedSkills;
+        } else {
+            $rawSkills = array_filter(
+                array_map(
+                    'trim',
+                    explode(',', $rawSkills)
+                )
+            );
+        }
+    }
+
+    if (!is_array($rawSkills)) {
+        $rawSkills = [];
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | UBAH SKILL MENJADI FORMAT SERAGAM
+    |--------------------------------------------------------------------------
+    */
+
+    $normalizedSkills = [];
+
+    foreach ($rawSkills as $skill) {
+
+        /*
+        | Format baru:
+        | ['name' => ..., 'level' => ..., 'type' => ...]
+        */
+
+        if (is_array($skill)) {
+
+            $skillName = trim(
+                (string) ($skill['name'] ?? '')
+            );
+
+            if ($skillName === '') {
+                continue;
+            }
+
+            $skillLevel = (int) (
+                $skill['level'] ?? 50
+            );
+
+            $skillType = trim(
+                (string) (
+                    $skill['type'] ?? 'Keahlian'
+                )
+            );
+
+            $normalizedSkills[] = [
+                'name' => $skillName,
+                'level' => max(
+                    0,
+                    min(100, $skillLevel)
+                ),
+                'type' => $skillType ?: 'Keahlian',
+            ];
+
+        }
+
+        /*
+        | Format lama:
+        | ['Adobe Photoshop', 'Figma', ...]
+        */
+
+        elseif (is_string($skill)) {
+
+            $skillName = trim($skill);
+
+            if ($skillName === '') {
+                continue;
+            }
+
+            $normalizedSkills[] = [
+                'name' => $skillName,
+                'level' => 50,
+                'type' => 'Keahlian',
+            ];
+        }
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | GROUP SKILL
+    |--------------------------------------------------------------------------
+    */
+
+    $skillGroups = [];
+
+    foreach ($normalizedSkills as $skill) {
+
+        $groupName = $skill['type'];
+
+        if (!isset($skillGroups[$groupName])) {
+            $skillGroups[$groupName] = [];
+        }
+
+        $skillGroups[$groupName][] = $skill;
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | IKON APLIKASI / KOMPETENSI
+    |--------------------------------------------------------------------------
+    */
+
+    $skillIcon = function ($skillName) {
+
+        $name = strtolower(
+            trim((string) $skillName)
+        );
+
+
+        /* PHOTOSHOP */
+
+        if (
+            str_contains($name, 'photoshop')
+            || str_contains($name, 'adobe ps')
+        ) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="1"
+                        y="1"
+                        width="30"
+                        height="30"
+                        rx="6"
+                        fill="#001E36"
+                    />
+                    <text
+                        x="5"
+                        y="22"
+                        font-family="Arial,sans-serif"
+                        font-size="13"
+                        font-weight="900"
+                        fill="#31A8FF"
+                    >Ps</text>
+                </svg>
+            ';
+        }
+
+
+        /* ILLUSTRATOR */
+
+        if (
+            str_contains($name, 'illustrator')
+            || str_contains($name, 'adobe ai')
+        ) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="1"
+                        y="1"
+                        width="30"
+                        height="30"
+                        rx="6"
+                        fill="#330000"
+                    />
+                    <text
+                        x="5"
+                        y="22"
+                        font-family="Arial,sans-serif"
+                        font-size="13"
+                        font-weight="900"
+                        fill="#FF9A00"
+                    >Ai</text>
+                </svg>
+            ';
+        }
+
+
+        /* INDESIGN */
+
+        if (str_contains($name, 'indesign')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="1"
+                        y="1"
+                        width="30"
+                        height="30"
+                        rx="6"
+                        fill="#49021F"
+                    />
+                    <text
+                        x="5"
+                        y="22"
+                        font-family="Arial,sans-serif"
+                        font-size="12"
+                        font-weight="900"
+                        fill="#FF3366"
+                    >Id</text>
+                </svg>
+            ';
+        }
+
+
+        /* CORELDRAW */
+
+        if (
+            str_contains($name, 'corel')
+            || str_contains($name, 'coreldraw')
+        ) {
+            return '
+                <svg viewBox="0 0 32 32">
+                    <circle
+                        cx="16"
+                        cy="16"
+                        r="14"
+                        fill="#5AAE3A"
+                    />
+                    <text
+                        x="7"
+                        y="21"
+                        font-family="Arial,sans-serif"
+                        font-size="11"
+                        font-weight="900"
+                        fill="white"
+                    >CD</text>
+                </svg>
+            ';
+        }
+
+
+        /* FIGMA */
+
+        if (
+            str_contains($name, 'figma')
+            || str_contains($name, 'ui/ux')
+            || str_contains($name, 'ui ux')
+        ) {
+            return '
+                <svg viewBox="0 0 32 32">
+                    <circle cx="11" cy="6" r="5" fill="#F24E1E"/>
+                    <circle cx="21" cy="6" r="5" fill="#FF7262"/>
+                    <circle cx="11" cy="16" r="5" fill="#A259FF"/>
+                    <circle cx="21" cy="16" r="5" fill="#1ABCFE"/>
+                    <path
+                        d="M6 26c0-2.76 2.24-5 5-5h5v5c0 2.76-2.24 5-5 5s-5-2.24-5-5z"
+                        fill="#0ACF83"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* CANVA */
+
+        if (str_contains($name, 'canva')) {
+            return '
+                <svg viewBox="0 0 32 32">
+                    <circle
+                        cx="16"
+                        cy="16"
+                        r="14"
+                        fill="#00C4CC"
+                    />
+                    <text
+                        x="7"
+                        y="21"
+                        font-family="Georgia,serif"
+                        font-size="13"
+                        font-weight="700"
+                        fill="white"
+                    >C</text>
+                </svg>
+            ';
+        }
+
+
+        /* BLENDER */
+
+        if (str_contains($name, 'blender')) {
+            return '
+                <svg viewBox="0 0 32 32">
+                    <circle
+                        cx="16"
+                        cy="16"
+                        r="14"
+                        fill="#E87D0D"
+                    />
+                    <circle
+                        cx="16"
+                        cy="17"
+                        r="6"
+                        fill="white"
+                    />
+                    <circle
+                        cx="16"
+                        cy="17"
+                        r="2.5"
+                        fill="#E87D0D"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* PREMIERE PRO */
+
+        if (str_contains($name, 'premiere')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="1"
+                        y="1"
+                        width="30"
+                        height="30"
+                        rx="6"
+                        fill="#00005B"
+                    />
+                    <text
+                        x="5"
+                        y="22"
+                        font-family="Arial,sans-serif"
+                        font-size="12"
+                        font-weight="900"
+                        fill="#9999FF"
+                    >Pr</text>
+                </svg>
+            ';
+        }
+
+
+        /* AFTER EFFECTS */
+
+        if (
+            str_contains($name, 'after effects')
+            || str_contains($name, 'after effect')
+        ) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="1"
+                        y="1"
+                        width="30"
+                        height="30"
+                        rx="6"
+                        fill="#00005B"
+                    />
+                    <text
+                        x="4"
+                        y="22"
+                        font-family="Arial,sans-serif"
+                        font-size="11"
+                        font-weight="900"
+                        fill="#9999FF"
+                    >Ae</text>
+                </svg>
+            ';
+        }
+
+
+        /* FOTOGRAFI */
+
+        if (str_contains($name, 'fotografi')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="3"
+                        y="8"
+                        width="26"
+                        height="19"
+                        rx="4"
+                        stroke="#374151"
+                        stroke-width="2"
+                    />
+                    <path
+                        d="M10 8l2-4h8l2 4"
+                        stroke="#374151"
+                        stroke-width="2"
+                    />
+                    <circle
+                        cx="16"
+                        cy="17"
+                        r="5"
+                        stroke="#dc2626"
+                        stroke-width="2"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* VIDEOGRAFI */
+
+        if (str_contains($name, 'videografi')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="3"
+                        y="7"
+                        width="19"
+                        height="18"
+                        rx="3"
+                        stroke="#374151"
+                        stroke-width="2"
+                    />
+                    <path
+                        d="M22 13l7-4v14l-7-4"
+                        stroke="#dc2626"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* TIPOGRAFI */
+
+        if (str_contains($name, 'tipografi')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M7 7h18M16 7v18M11 25h10"
+                        stroke="#374151"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+                    <path
+                        d="M10 7l-4 18M22 7l4 18"
+                        stroke="#dc2626"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* ILUSTRASI DIGITAL */
+
+        if (str_contains($name, 'ilustrasi')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <path
+                        d="M5 25l4-10 10-10 6 6-10 10-10 4z"
+                        stroke="#374151"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                    />
+                    <path
+                        d="M18 8l6 6"
+                        stroke="#dc2626"
+                        stroke-width="2"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* LAYOUT */
+
+        if (str_contains($name, 'layout')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <rect
+                        x="5"
+                        y="5"
+                        width="22"
+                        height="22"
+                        rx="2"
+                        stroke="#374151"
+                        stroke-width="2"
+                    />
+                    <path
+                        d="M5 12h22M14 12v15"
+                        stroke="#dc2626"
+                        stroke-width="2"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* NIRMANA */
+
+        if (str_contains($name, 'nirmana')) {
+            return '
+                <svg viewBox="0 0 32 32" fill="none">
+                    <circle
+                        cx="10"
+                        cy="10"
+                        r="5"
+                        stroke="#dc2626"
+                        stroke-width="2"
+                    />
+                    <rect
+                        x="16"
+                        y="5"
+                        width="10"
+                        height="10"
+                        stroke="#374151"
+                        stroke-width="2"
+                    />
+                    <path
+                        d="M6 25l10-10 10 10H6z"
+                        stroke="#374151"
+                        stroke-width="2"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+            ';
+        }
+
+
+        /* DEFAULT */
+
+        $initials = strtoupper(
+            substr(
+                preg_replace(
+                    '/[^A-Za-z0-9]/',
+                    '',
+                    $skillName
+                ),
+                0,
+                2
+            )
+        );
+
+        return '
+            <span class="skill-icon-text">
+                ' . e($initials ?: 'SK') . '
+            </span>
+        ';
+    };
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | KARYA UNGGULAN
+    |--------------------------------------------------------------------------
+    */
+
+    $karyaUnggulan = $portfolios->take(3);
+
 @endphp
 
-{{-- ================================================================
-     TOOLBAR — hanya tampil di layar, otomatis hilang saat dicetak
-================================================================ --}}
+
+<!-- =============================================================
+     TOOLBAR
+============================================================== -->
+
 <div class="toolbar no-print">
+
     <div class="toolbar-brand">
-        <span>DKV/SMEKDA</span>
-        <span>&mdash; Portfolio PDF Ringkas</span>
+        DKV SMEKDA — Portfolio PDF
     </div>
+
     <div class="toolbar-actions">
+
         @if(auth()->check() && auth()->id() === $user->id)
-        <a href="{{ route('siswa.dashboard') }}" class="tbtn tbtn-ghost">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-            <span>Dashboard</span>
-        </a>
+
+            <a
+                href="{{ route('siswa.dashboard') }}"
+                class="tbtn tbtn-gray"
+            >
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                </svg>
+
+                Dashboard
+            </a>
+
         @endif
-        <a href="{{ $galleryUrl }}" target="_blank" rel="noopener" class="tbtn tbtn-ghost">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-            <span>Lihat Profil Online</span>
+
+
+        <a
+            href="{{ $galleryUrl }}"
+            target="_blank"
+            rel="noopener"
+            class="tbtn tbtn-gray"
+        >
+            Lihat Portfolio
         </a>
-        <button onclick="window.print()" class="tbtn tbtn-red">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+
+
+        <button
+            type="button"
+            onclick="window.print()"
+            class="tbtn tbtn-red"
+        >
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+            </svg>
+
             Cetak / Simpan PDF
         </button>
+
     </div>
 </div>
 
-<div class="mobile-hint no-print">
-    Untuk hasil terbaik, gunakan tombol <strong>Cetak / Simpan PDF</strong> di atas untuk mengunduh dokumen ini.
-</div>
+
+<!-- =============================================================
+     A4
+============================================================== -->
 
 <div class="stage">
+
 <div class="sheet">
 
-    {{-- ══ HEADER IDENTITAS ══ --}}
-    <div class="id-header avoid">
-        <div class="id-avatar">
-            @if($user->photo)
-                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}">
-            @else
-                {{ strtoupper(substr($user->name, 0, 1)) }}
-            @endif
-        </div>
-        <div>
-            <div class="id-name">{{ $user->name }}</div>
-            <div class="id-tagline">Desain Komunikasi Visual</div>
-            <div class="id-meta">
-                SMK Negeri 2 Padang Panjang
-                @if($user->nis_nip) &bull; NIS/NIP {{ $user->nis_nip }} @endif
-            </div>
-        </div>
-    </div>
-    <div class="header-rule"></div>
+    <!-- SEKOLAH -->
 
-    {{-- ══ TENTANG SAYA ══ --}}
-    @if($bioSingkat)
-    <div class="section avoid">
-        <div class="section-title">Tentang Saya</div>
-        <p class="bio-text">{{ $bioSingkat }}</p>
-    </div>
-    @endif
+    <div class="school-header avoid">
 
-    {{-- ══ KEAHLIAN ══ --}}
-    @if(!empty($user->skills))
-    <div class="section avoid">
-        <div class="section-title">Keahlian</div>
-        <div class="skill-row">
-            @foreach($user->skills as $skill)
-                <span class="skill-badge">{{ $skill }}</span>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-    {{-- ══ KONTAK ══ --}}
-    @if($kontakItems->isNotEmpty())
-    <div class="section avoid">
-        <div class="section-title">Kontak</div>
-        <div class="contact-grid" style="grid-template-columns: repeat({{ $kontakItems->count() }}, 1fr);">
-            @foreach($kontakItems as $item)
-            <div class="contact-item">
-                <div class="contact-icon">
-                    @if($item['icon'] === 'phone')
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 01-8.5 8.5c-1.35 0-2.62-.32-3.74-.9L3 21l1.9-5.76A8.5 8.5 0 1121 11.5z"/></svg>
-                    @elseif($item['icon'] === 'mail')
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
-                    @else
-                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8a2 2 0 012-2h1.2a1 1 0 00.86-.5l.9-1.5a1 1 0 01.86-.5h4.36a1 1 0 01.86.5l.9 1.5a1 1 0 00.86.5H18a2 2 0 012 2v9a2 2 0 01-2 2H6a2 2 0 01-2-2V8z"/><circle cx="12" cy="12.5" r="3.5"/></svg>
-                    @endif
-                </div>
-                <div>
-                    <div class="contact-label">{{ $item['label'] }}</div>
-                    <div class="contact-value">{{ $item['value'] }}</div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-    @endif
-
-    {{-- ══ QR HERO — satu-satunya QR, mengarah ke galeri profil online ══ --}}
-    <div class="qr-hero avoid">
         <img
-            src="{{ $qrImg($galleryUrl, 460) }}"
-            alt="QR Code Galeri {{ $user->name }}"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            src="{{ asset('images/logo-sekolah.png') }}"
+            alt="Logo SMK Negeri 2 Padang Panjang"
+            class="school-logo"
         >
-        <div class="qr-fallback">
-            <span>QR CODE</span>
-            <span>Scan online</span>
+
+        <div>
+
+            <div class="school-name">
+                SMK Negeri 2 Padang Panjang
+            </div>
+
+            <div class="school-dept">
+                Kompetensi Keahlian · Desain Komunikasi Visual
+            </div>
+
         </div>
-        <div class="qr-hero-title">Scan untuk membuka live portfolio</div>
-        <p class="qr-hero-desc">Galeri karya, deskripsi proyek, proses desain, dan pembaruan terbaru tersedia secara online.</p>
-        <div class="qr-hero-url">{{ $galleryUrl }}</div>
+
     </div>
 
-    <div class="print-footer">
-        Dibuat otomatis oleh Sistem Portofolio Digital DKV &bull; SMK Negeri 2 Padang Panjang &bull; {{ now()->translatedFormat('d F Y') }}
+    <div class="top-line"></div>
+
+
+    <!-- IDENTITAS -->
+
+    <div class="student-header avoid">
+
+        <div class="student-photo">
+
+            @if($user->photo)
+
+                <img
+                    src="{{ asset('storage/' . $user->photo) }}"
+                    alt="{{ $user->name }}"
+                >
+
+            @else
+
+                {{ strtoupper(substr($user->name, 0, 1)) }}
+
+            @endif
+
+        </div>
+
+
+        <div>
+
+            <div class="student-name">
+                {{ $user->name }}
+            </div>
+
+            <div class="student-role">
+                Desain Komunikasi Visual
+            </div>
+
+            <div class="student-meta">
+
+                SMK Negeri 2 Padang Panjang
+
+                @if($user->nis_nip)
+                    · NIS/NIP {{ $user->nis_nip }}
+                @endif
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="section-line"></div>
+
+
+    <!-- TENTANG SAYA -->
+
+    @if($bioSingkat)
+
+        <section class="section avoid">
+
+            <div class="section-heading">
+
+                <span class="section-mark"></span>
+
+                <span class="section-title">
+                    Tentang Saya
+                </span>
+
+            </div>
+
+            <div class="bio-box">
+
+                <p class="bio-text">
+                    {{ $bioSingkat }}
+                </p>
+
+            </div>
+
+        </section>
+
+    @endif
+
+
+    <!-- =========================================================
+         KEAHLIAN
+    ========================================================== -->
+
+    @if(!empty($normalizedSkills))
+
+        <section class="section avoid">
+
+            <div class="section-heading">
+
+                <span class="section-mark"></span>
+
+                <span class="section-title">
+                    Keahlian
+                </span>
+
+            </div>
+
+
+            <div class="skill-groups">
+
+                @foreach($skillGroups as $namaGrup => $items)
+
+                    <div class="skill-group">
+
+                        <div class="skill-group-title">
+                            {{ $namaGrup }}
+                        </div>
+
+
+                        <div class="skill-list">
+
+                            @foreach($items as $skill)
+
+                                <div class="skill-card">
+
+                                    <div class="skill-icon">
+                                        {!! $skillIcon($skill['name']) !!}
+                                    </div>
+
+
+                                    <div class="skill-info">
+
+                                        <div class="skill-name">
+                                            {{ $skill['name'] }}
+                                        </div>
+
+
+                                        <div class="skill-level-row">
+
+                                            <div class="skill-bar">
+
+                                                <div
+                                                    class="skill-bar-fill"
+                                                    style="width: {{ $skill['level'] }}%;"
+                                                ></div>
+
+                                            </div>
+
+                                            <span class="skill-percent">
+                                                {{ $skill['level'] }}%
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            @endforeach
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        </section>
+
+    @endif
+
+
+    <!-- KARYA UNGGULAN -->
+
+    @if($karyaUnggulan->isNotEmpty())
+
+        <section class="section avoid">
+
+            <div class="section-heading">
+
+                <span class="section-mark"></span>
+
+                <span class="section-title">
+                    Karya Unggulan
+                </span>
+
+            </div>
+
+
+            <div class="work-list">
+
+                @foreach($karyaUnggulan as $karya)
+
+                    <article class="work-item">
+
+                        <div class="work-image">
+
+                            @if(!empty($karya->image_path))
+
+                                <img
+                                    src="{{ asset('storage/' . $karya->image_path) }}"
+                                    alt="{{ $karya->title }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                                >
+
+                                <div
+                                    class="work-fallback"
+                                    style="display:none;"
+                                >
+                                    {{ strtoupper(substr($karya->title ?? 'K', 0, 1)) }}
+                                </div>
+
+                            @else
+
+                                <div class="work-fallback">
+                                    {{ strtoupper(substr($karya->title ?? 'K', 0, 1)) }}
+                                </div>
+
+                            @endif
+
+                        </div>
+
+
+                        <div class="work-content">
+
+                            <div class="work-top">
+
+                                <div class="work-title">
+                                    {{ $karya->title }}
+                                </div>
+
+
+                                @if($karya->category)
+
+                                    <span class="work-category">
+                                        {{ $karya->category->name }}
+                                    </span>
+
+                                @endif
+
+                            </div>
+
+
+                            @if(!empty($karya->description))
+
+                                <div class="work-description">
+
+                                    {{ \Illuminate\Support\Str::limit(
+                                        strip_tags($karya->description),
+                                        130
+                                    ) }}
+
+                                </div>
+
+                            @endif
+
+                        </div>
+
+                    </article>
+
+                @endforeach
+
+            </div>
+
+        </section>
+
+    @endif
+
+
+    <!-- KONTAK -->
+
+    @if($kontakItems->isNotEmpty())
+
+        <section class="section avoid">
+
+            <div class="section-heading">
+
+                <span class="section-mark"></span>
+
+                <span class="section-title">
+                    Kontak
+                </span>
+
+            </div>
+
+
+            <div
+                class="contact-grid"
+                style="grid-template-columns: repeat({{ $kontakItems->count() }}, minmax(0, 1fr));"
+            >
+
+                @foreach($kontakItems as $item)
+
+                    <div class="contact-item">
+
+                        <div class="contact-icon">
+
+                            @if($item['icon'] === 'phone')
+
+                                <!-- PHONE -->
+
+                                <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="1.7"
+                                        d="M3 5a2 2 0 012-2h2.2a1 1 0 01.95.68l1.05 3.15a1 1 0 01-.45 1.17L7.4 9.05a11.1 11.1 0 005.55 5.55l1.05-1.35a1 1 0 011.17-.45l3.15 1.05a1 1 0 01.68.95V17a2 2 0 01-2 2h-1C9.37 19 5 14.63 5 8V7a2 2 0 01-2-2V5z"
+                                    />
+                                </svg>
+
+
+                            @elseif($item['icon'] === 'mail')
+
+                                <!-- EMAIL -->
+
+                                <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <rect
+                                        x="3"
+                                        y="5"
+                                        width="18"
+                                        height="14"
+                                        rx="2"
+                                        stroke-width="1.7"
+                                    />
+
+                                    <path
+                                        d="M3 7l9 6 9-6"
+                                        stroke-width="1.7"
+                                    />
+                                </svg>
+
+
+                            @else
+
+                                <!-- INSTAGRAM -->
+
+                                <svg
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <rect
+                                        x="3"
+                                        y="3"
+                                        width="18"
+                                        height="18"
+                                        rx="5"
+                                        stroke-width="1.7"
+                                    />
+
+                                    <circle
+                                        cx="12"
+                                        cy="12"
+                                        r="4"
+                                        stroke-width="1.7"
+                                    />
+
+                                    <circle
+                                        cx="17.5"
+                                        cy="6.5"
+                                        r="1"
+                                        fill="currentColor"
+                                        stroke="none"
+                                    />
+                                </svg>
+
+                            @endif
+
+                        </div>
+
+
+                        <div>
+
+                            <div class="contact-label">
+                                {{ $item['label'] }}
+                            </div>
+
+                            <div class="contact-value">
+                                {{ $item['value'] }}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        </section>
+
+    @endif
+
+
+    <!-- QR -->
+
+    <div class="qr-section avoid">
+
+        <img
+            src="{{ $qrImg($galleryUrl, 400) }}"
+            alt="QR Code Portfolio {{ $user->name }}"
+            class="qr-image"
+        >
+
+        <div class="qr-title">
+            Scan untuk membuka live portfolio
+        </div>
+
+        <div class="qr-desc">
+            Lihat seluruh karya, deskripsi proyek, proses desain,
+            dan pembaruan portfolio secara online.
+        </div>
+
+        <div class="qr-url">
+            {{ $galleryUrl }}
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <div class="footer">
+
+        Sistem Portofolio Digital DKV
+        ·
+        SMK Negeri 2 Padang Panjang
+        ·
+        {{ now()->translatedFormat('d F Y') }}
+
     </div>
 
 </div>
+
 </div>
 
 </body>

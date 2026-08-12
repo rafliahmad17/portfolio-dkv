@@ -1,5 +1,5 @@
 <?php
-// app/Models/User.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,10 +10,13 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    // SoftDeletes: akun yang "dihapus" hanya ditandai deleted_at, bukan
-    // dibuang dari database — supaya portofolio & prestasi siswa tidak
-    // ikut lenyap permanen akibat cascadeOnDelete() saat guru salah klik hapus.
     use HasFactory, Notifiable, SoftDeletes;
+
+    /*
+    |--------------------------------------------------------------------------
+    | MASS ASSIGNMENT
+    |--------------------------------------------------------------------------
+    */
 
     protected $fillable = [
         'name',
@@ -24,30 +27,82 @@ class User extends Authenticatable
         'photo',
         'bio',
         'contact',
+
+        /*
+         * Instagram ditambahkan agar data Instagram
+         * dapat disimpan dari ProfileController.
+         */
+        'instagram',
+
+        /*
+         * Skills disimpan sebagai JSON/array.
+         */
         'skills',
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | HIDDEN
+    |--------------------------------------------------------------------------
+    */
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | CASTS
+    |--------------------------------------------------------------------------
+    */
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'role'              => 'string',
-            'skills'            => 'array',
+
+            /*
+             * Password otomatis di-hash oleh Laravel.
+             */
+            'password' => 'hashed',
+
+            'role' => 'string',
+
+            /*
+             * Kolom skills otomatis dikonversi:
+             *
+             * Database JSON
+             *       ↓
+             * PHP Array
+             *
+             * sehingga kita bisa menggunakan:
+             * $user->skills
+             */
+            'skills' => 'array',
         ];
     }
 
-    /**
-     * Daftar skill baku yang ditawarkan sistem ke siswa DKV,
-     * dikelompokkan menjadi Software Desain dan Kompetensi Inti.
-     * Siswa tetap bisa menambah skill custom di luar daftar ini.
-     */
+    /*
+    |--------------------------------------------------------------------------
+    | PILIHAN SKILL DKV
+    |--------------------------------------------------------------------------
+    |
+    | Daftar ini digunakan oleh:
+    | - Form profil siswa
+    | - ProfileController
+    | - PDF portfolio
+    |
+    */
+
     public const SKILL_OPTIONS = [
+
+        /*
+        |--------------------------------------------------------------------------
+        | SOFTWARE DESAIN
+        |--------------------------------------------------------------------------
+        */
+
         'Software Desain' => [
             'Adobe Illustrator',
             'Adobe Photoshop',
@@ -56,6 +111,13 @@ class User extends Authenticatable
             'Figma',
             'Canva',
         ],
+
+        /*
+        |--------------------------------------------------------------------------
+        | KOMPETENSI INTI
+        |--------------------------------------------------------------------------
+        */
+
         'Kompetensi Inti' => [
             'Tipografi',
             'Nirmana (Garis, Bentuk, Warna)',
@@ -66,16 +128,43 @@ class User extends Authenticatable
         ],
     ];
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI PORTFOLIO
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Satu siswa memiliki banyak portfolio.
+     */
     public function portfolios(): HasMany
     {
         return $this->hasMany(Portfolio::class);
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | RELASI ACHIEVEMENT
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Satu siswa memiliki banyak prestasi/sertifikat.
+     */
     public function achievements(): HasMany
     {
         return $this->hasMany(Achievement::class);
     }
-    
+
+    /*
+    |--------------------------------------------------------------------------
+    | AVATAR
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Accessor untuk mengambil foto/avatar user.
+     */
     public function getAvatarAttribute()
     {
         return $this->photo;

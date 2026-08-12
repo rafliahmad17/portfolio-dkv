@@ -13,84 +13,349 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL SISWA
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Tampilkan halaman edit profil siswa.
+     */
     public function edit(): View
     {
         $user = Auth::user();
+
         $skillOptions = User::SKILL_OPTIONS;
 
-        return view('siswa.profile.edit', compact('user', 'skillOptions'));
+        return view('siswa.profile.edit', compact(
+            'user',
+            'skillOptions'
+        ));
     }
 
+    /**
+     * Update profil siswa.
+     *
+     * Data yang disimpan:
+     * - Nama
+     * - NIS/NIP
+     * - Bio
+     * - WhatsApp/Kontak
+     * - Instagram
+     * - Foto
+     * - Password
+     * - Skills + level + kategori
+     */
     public function update(Request $request): RedirectResponse
     {
         $user = Auth::user();
 
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
+
         $validated = $request->validate([
-            'name'             => ['required', 'string', 'max:255'],
-            'nis_nip'          => ['nullable', 'string', 'max:50'],
-            'bio'              => ['nullable', 'string', 'max:500'],
-            'contact'          => ['nullable', 'string', 'max:255'],
-            'photo'            => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'password'         => ['nullable', 'string', 'min:8', 'confirmed'],
-            'skills_active'    => ['nullable', 'array'],
-            'skills_active.*'  => ['string', 'max:100'],
-            'skills_level'     => ['nullable', 'array'],
-            'custom_skill_name'  => ['nullable', 'array'],
-            'custom_skill_name.*' => ['nullable', 'string', 'max:100'],
-            'custom_skill_level' => ['nullable', 'array'],
-            'custom_skill_level.*' => ['nullable', 'integer', 'min:0', 'max:100'],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+
+            'nis_nip' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
+
+            'bio' => [
+                'nullable',
+                'string',
+                'max:500',
+            ],
+
+            'contact' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            /*
+             * Instagram ditambahkan agar dapat disimpan
+             * dan ditampilkan pada PDF portfolio.
+             */
+            'instagram' => [
+                'nullable',
+                'string',
+                'max:255',
+            ],
+
+            'photo' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png',
+                'max:2048',
+            ],
+
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
+
+            /*
+             * Skill bawaan.
+             */
+            'skills_active' => [
+                'nullable',
+                'array',
+            ],
+
+            'skills_active.*' => [
+                'string',
+                'max:100',
+            ],
+
+            /*
+             * Level skill bawaan.
+             */
+            'skills_level' => [
+                'nullable',
+                'array',
+            ],
+
+            /*
+             * Skill custom.
+             */
+            'custom_skill_name' => [
+                'nullable',
+                'array',
+            ],
+
+            'custom_skill_name.*' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+
+            /*
+             * Level skill custom.
+             */
+            'custom_skill_level' => [
+                'nullable',
+                'array',
+            ],
+
+            'custom_skill_level.*' => [
+                'nullable',
+                'integer',
+                'min:0',
+                'max:100',
+            ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | FOTO PROFIL
+        |--------------------------------------------------------------------------
+        */
+
         $photoPath = $user->photo;
+
         if ($request->hasFile('photo')) {
+
+            /*
+             * Hapus foto lama jika ada.
+             */
             if ($photoPath) {
                 Storage::disk('public')->delete($photoPath);
             }
-            $photoPath = $request->file('photo')->store('profiles/photos', 'public');
+
+            /*
+             * Simpan foto baru.
+             */
+            $photoPath = $request
+                ->file('photo')
+                ->store('profiles/photos', 'public');
         }
 
-        // Susun ulang data skill dari daftar baku + skill custom siswa
+        /*
+        |--------------------------------------------------------------------------
+        | SUSUN DATA SKILL
+        |--------------------------------------------------------------------------
+        |
+        | Format yang disimpan:
+        |
+        | [
+        |     [
+        |         'name'  => 'Adobe Photoshop',
+        |         'level' => 80,
+        |         'type'  => 'Software Desain',
+        |     ],
+        |     [
+        |         'name'  => 'Ilustrasi Digital',
+        |         'level' => 85,
+        |         'type'  => 'Kompetensi Inti',
+        |     ],
+        | ]
+        |
+        |--------------------------------------------------------------------------
+        */
+
         $skills = [];
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKILL BAWAAN
+        |--------------------------------------------------------------------------
+        */
+
+        $activeSkills = $validated['skills_active'] ?? [];
+
         foreach (User::SKILL_OPTIONS as $group => $options) {
+
             foreach ($options as $skillName) {
-                if (in_array($skillName, $validated['skills_active'] ?? [], true)) {
-                    $level = (int) ($request->input("skills_level.$skillName") ?? 50);
+
+                /*
+                 * Cek apakah siswa memilih skill ini.
+                 */
+                if (in_array($skillName, $activeSkills, true)) {
+
+                    /*
+                     * Ambil level.
+                     *
+                     * Nama skill digunakan sebagai key:
+                     * skills_level[Adobe Photoshop]
+                     */
+                    $level = (int) (
+                        $request->input(
+                            "skills_level.{$skillName}"
+                        ) ?? 50
+                    );
+
+                    /*
+                     * Pastikan level 0-100.
+                     */
+                    $level = max(
+                        0,
+                        min(100, $level)
+                    );
+
                     $skills[] = [
-                        'name'  => $skillName,
-                        'level' => max(0, min(100, $level)),
-                        'type'  => $group,
+                        'name' => $skillName,
+                        'level' => $level,
+                        'type' => $group,
                     ];
                 }
             }
         }
-        $customNames  = $validated['custom_skill_name'] ?? [];
+
+        /*
+        |--------------------------------------------------------------------------
+        | SKILL CUSTOM
+        |--------------------------------------------------------------------------
+        */
+
+        $customNames = $validated['custom_skill_name'] ?? [];
         $customLevels = $validated['custom_skill_level'] ?? [];
-        foreach ($customNames as $i => $customName) {
-            if (!empty(trim((string) $customName))) {
-                $skills[] = [
-                    'name'  => trim($customName),
-                    'level' => max(0, min(100, (int) ($customLevels[$i] ?? 50))),
-                    'type'  => 'Custom',
-                ];
+
+        foreach ($customNames as $index => $customName) {
+
+            $customName = trim((string) $customName);
+
+            /*
+             * Jangan simpan skill custom kosong.
+             */
+            if ($customName === '') {
+                continue;
             }
+
+            $customLevel = (int) (
+                $customLevels[$index] ?? 50
+            );
+
+            $customLevel = max(
+                0,
+                min(100, $customLevel)
+            );
+
+            $skills[] = [
+                'name' => $customName,
+                'level' => $customLevel,
+                'type' => 'Custom',
+            ];
         }
 
-        $user->name    = $validated['name'];
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN DATA PROFIL
+        |--------------------------------------------------------------------------
+        */
+
+        $user->name = $validated['name'];
+
         $user->nis_nip = $validated['nis_nip'] ?? null;
-        $user->bio     = $validated['bio'] ?? null;
+
+        $user->bio = $validated['bio'] ?? null;
+
         $user->contact = $validated['contact'] ?? null;
-        $user->photo   = $photoPath;
-        $user->skills  = $skills;
+
+        /*
+         * Instagram sekarang ikut disimpan.
+         */
+        $user->instagram = $validated['instagram'] ?? null;
+
+        $user->photo = $photoPath;
+
+        /*
+         * Skills disimpan sebagai array.
+         * User model sudah menggunakan cast 'array'.
+         */
+        $user->skills = $skills;
+
+        /*
+        |--------------------------------------------------------------------------
+        | PASSWORD
+        |--------------------------------------------------------------------------
+        */
 
         if (!empty($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
+
+            $user->password = Hash::make(
+                $validated['password']
+            );
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN KE DATABASE
+        |--------------------------------------------------------------------------
+        */
 
         $user->save();
 
-        return redirect()->route('siswa.profile.edit')
-                         ->with('success', 'Profil berhasil diperbarui! ✏️');
+        /*
+        |--------------------------------------------------------------------------
+        | KEMBALI KE PROFIL
+        |--------------------------------------------------------------------------
+        */
+
+        return redirect()
+            ->route('siswa.profile.edit')
+            ->with(
+                'success',
+                'Profil berhasil diperbarui! ✏️'
+            );
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | PROFIL GURU
+    |--------------------------------------------------------------------------
+    */
 
     /**
      * Tampilkan halaman profil guru.
@@ -101,62 +366,160 @@ class ProfileController extends Controller
     }
 
     /**
-     * Update biodata guru: nama, NIP, email, dan foto (avatar).
+     * Update biodata guru:
+     * nama, NIP, email, dan foto.
      */
-    public function guruUpdate(Request $request): RedirectResponse
-    {
+    public function guruUpdate(
+        Request $request
+    ): RedirectResponse {
+
         $user = Auth::user();
 
         $validated = $request->validate([
-            'name'    => ['required', 'string', 'max:255'],
-            'nis_nip' => ['nullable', 'string', 'max:50'],
-            'email'   => [
-                'required', 'email', 'max:255',
-                Rule::unique('users', 'email')->ignore($user->id),
+            'name' => [
+                'required',
+                'string',
+                'max:255',
             ],
-            'avatar'  => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+
+            'nis_nip' => [
+                'nullable',
+                'string',
+                'max:50',
+            ],
+
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique(
+                    'users',
+                    'email'
+                )->ignore($user->id),
+            ],
+
+            'avatar' => [
+                'nullable',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:2048',
+            ],
         ]);
 
+        /*
+        |--------------------------------------------------------------------------
+        | FOTO GURU
+        |--------------------------------------------------------------------------
+        */
+
         $photoPath = $user->photo;
+
         if ($request->hasFile('avatar')) {
+
             if ($photoPath) {
-                Storage::disk('public')->delete($photoPath);
+                Storage::disk('public')->delete(
+                    $photoPath
+                );
             }
-            $photoPath = $request->file('avatar')->store('profiles/photos', 'public');
+
+            $photoPath = $request
+                ->file('avatar')
+                ->store(
+                    'profiles/photos',
+                    'public'
+                );
         }
 
-        $user->name    = $validated['name'];
+        /*
+        |--------------------------------------------------------------------------
+        | SIMPAN DATA GURU
+        |--------------------------------------------------------------------------
+        */
+
+        $user->name = $validated['name'];
+
         $user->nis_nip = $validated['nis_nip'] ?? null;
-        $user->email   = $validated['email'];
-        $user->photo   = $photoPath;
+
+        $user->email = $validated['email'];
+
+        $user->photo = $photoPath;
+
         $user->save();
 
-        return redirect()->route('guru.profile')
-                         ->with('success', 'Biodata berhasil diperbarui!');
+        return redirect()
+            ->route('guru.profile')
+            ->with(
+                'success',
+                'Biodata berhasil diperbarui!'
+            );
     }
 
     /**
-     * Update password guru — memerlukan password saat ini untuk verifikasi.
+     * Update password guru.
+     *
+     * Memerlukan password saat ini
+     * untuk verifikasi.
      */
-    public function updatePassword(Request $request): RedirectResponse
-    {
+    public function updatePassword(
+        Request $request
+    ): RedirectResponse {
+
         $user = Auth::user();
 
         $validated = $request->validate([
-            'current_password' => ['required', 'string'],
-            'password'         => ['required', 'string', 'min:8', 'confirmed'],
+            'current_password' => [
+                'required',
+                'string',
+            ],
+
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
         ]);
 
-        if (!Hash::check($validated['current_password'], $user->password)) {
+        /*
+        |--------------------------------------------------------------------------
+        | VERIFIKASI PASSWORD LAMA
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !Hash::check(
+                $validated['current_password'],
+                $user->password
+            )
+        ) {
+
             return back()
-                ->withErrors(['current_password' => 'Password saat ini yang Anda masukkan salah.'])
-                ->onlyInput('current_password');
+                ->withErrors([
+                    'current_password' =>
+                        'Password saat ini yang Anda masukkan salah.',
+                ])
+                ->onlyInput(
+                    'current_password'
+                );
         }
 
-        $user->password = Hash::make($validated['password']);
+        /*
+        |--------------------------------------------------------------------------
+        | PASSWORD BARU
+        |--------------------------------------------------------------------------
+        */
+
+        $user->password = Hash::make(
+            $validated['password']
+        );
+
         $user->save();
 
-        return redirect()->route('guru.profile')
-                         ->with('success', 'Password berhasil diperbarui!');
+        return redirect()
+            ->route('guru.profile')
+            ->with(
+                'success',
+                'Password berhasil diperbarui!'
+            );
     }
 }
