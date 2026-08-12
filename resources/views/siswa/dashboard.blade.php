@@ -10,928 +10,948 @@
 
 @push('styles')
 <style>
-        :root {
-            --red:        #dc2626;
-            --red-bright: #ef4444;
-            --red-glow:   rgba(220,38,38,0.45);
-            --red-soft:   rgba(220,38,38,0.10);
-            --red-border: rgba(220,38,38,0.35);
-            --surface:    rgba(255,255,255,0.03);
-            --border:     rgba(255,255,255,0.07);
-        }
+    :root {
+        --red:        #dc2626;
+        --red-bright: #ef4444;
+        --red-glow:   rgba(220,38,38,0.45);
+        --red-soft:   rgba(220,38,38,0.10);
+        --red-border: rgba(220,38,38,0.35);
+        --surface:    rgba(255,255,255,0.03);
+        --border:     rgba(255,255,255,0.07);
+    }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        html, body {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #f5f5f5;
-            overflow-x: hidden;
-        }
+    html, body {
+        height: 100%;
+        font-family: 'Inter', sans-serif;
+        background-color: #080808;
+        color: #f5f5f5;
+        overflow-x: hidden;
+    }
 
+    body::before {
+        content: '';
+        position: fixed; inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+    }
 
-        body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 0;
-        }
+    .bg-grid {
+        position: fixed; inset: 0;
+        background-image:
+            linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
+        background-size: 48px 48px;
+        pointer-events: none; z-index: 0;
+    }
 
+    .blob {
+        position: fixed; border-radius: 50%;
+        pointer-events: none; z-index: 0;
+    }
+    .blob-1 {
+        top: -200px; left: 180px;
+        width: 600px; height: 600px;
+        background: radial-gradient(circle, rgba(220,38,38,0.09) 0%, transparent 65%);
+        animation: blobFloat 10s ease-in-out infinite alternate;
+    }
+    .blob-2 {
+        bottom: -150px; right: -100px;
+        width: 500px; height: 500px;
+        background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
+        animation: blobFloat 13s ease-in-out infinite alternate-reverse;
+    }
+    @keyframes blobFloat {
+        0%   { transform: scale(1)    translate(0,0);       }
+        100% { transform: scale(1.15) translate(20px,15px); }
+    }
 
-        .bg-grid {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none; z-index: 0;
-        }
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
 
+    /* ── FOKUS KEYBOARD (AKSESIBILITAS) ── */
+    a:focus-visible,
+    button:focus-visible,
+    [tabindex]:focus-visible {
+        outline: 2px solid var(--red-bright);
+        outline-offset: 3px;
+        border-radius: 8px;
+    }
 
-        .blob {
-            position: fixed; border-radius: 50%;
-            pointer-events: none; z-index: 0;
-        }
-        .blob-1 {
-            top: -200px; left: 180px;
-            width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(220,38,38,0.09) 0%, transparent 65%);
-            animation: blobFloat 10s ease-in-out infinite alternate;
-        }
-        .blob-2 {
-            bottom: -150px; right: -100px;
-            width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
-            animation: blobFloat 13s ease-in-out infinite alternate-reverse;
-        }
-        @keyframes blobFloat {
-            0%   { transform: scale(1)    translate(0,0);       }
-            100% { transform: scale(1.15) translate(20px,15px); }
-        }
+    /* ── SIDEBAR ── */
+    .sidebar {
+        position: fixed; top: 0; left: 0;
+        width: 260px; height: 100vh;
+        background: rgba(8,8,8,0.88);
+        backdrop-filter: blur(28px);
+        -webkit-backdrop-filter: blur(28px);
+        border-right: 1px solid var(--border);
+        display: flex; flex-direction: column;
+        z-index: 50;
+        overflow-y: auto;
+    }
 
-        /* ── SCROLLBAR ── */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+    .sidebar::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
+    }
 
+    .sidebar-logo {
+        padding: 28px 24px 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .logo-wordmark {
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.85);
+        display: flex; align-items: center; gap: 9px;
+    }
+
+    .logo-icon {
+        width: 26px; height: 26px;
+        background: var(--red);
+        border-radius: 7px;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 14px var(--red-glow);
+        flex-shrink: 0;
+    }
+
+    .logo-icon svg { width: 13px; height: 13px; }
+
+    .sidebar-profile {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .profile-avatar {
+        width: 42px; height: 42px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #dc2626, #ef4444);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1rem; font-weight: 900; color: white;
+        flex-shrink: 0;
+        box-shadow: 0 0 18px rgba(220,38,38,0.3);
+    }
+
+    .profile-name {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #f5f5f5;
+        line-height: 1.3;
+        margin-bottom: 2px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .profile-nis {
+        font-size: 0.7rem;
+        color: rgba(255,255,255,0.48);
+        margin-bottom: 6px;
+    }
+
+    .badge-role {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(220,38,38,0.12);
+        border: 1px solid rgba(220,38,38,0.25);
+        color: #fca5a5;
+        padding: 2px 9px;
+        border-radius: 30px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.8px;
+        text-transform: uppercase;
+    }
+
+    .badge-role-dot {
+        width: 5px; height: 5px;
+        background: var(--red);
+        border-radius: 50%;
+        animation: pulseDot 1.5s ease-in-out infinite;
+        box-shadow: 0 0 6px var(--red-glow);
+    }
+
+    @keyframes pulseDot {
+        0%,100% { opacity: 1; transform: scale(1); }
+        50%      { opacity: 0.35; transform: scale(0.65); }
+    }
+
+    /* Nav */
+    .sidebar-nav {
+        flex: 1;
+        padding: 20px 14px;
+    }
+
+    .nav-label {
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.34);
+        padding: 0 10px;
+        margin-bottom: 8px;
+        margin-top: 4px;
+    }
+
+    .nav-item {
+        display: flex; align-items: center; gap: 11px;
+        padding: 10px 12px;
+        min-height: 44px;
+        border-radius: 10px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.55);
+        text-decoration: none;
+        transition: all 0.22s ease;
+        border: 1px solid transparent;
+        margin-bottom: 3px;
+        position: relative;
+    }
+
+    .nav-item:hover {
+        color: rgba(255,255,255,0.8);
+        background: rgba(255,255,255,0.04);
+        border-color: var(--border);
+    }
+
+    .nav-item.active {
+        color: #fca5a5;
+        background: rgba(220,38,38,0.1);
+        border-color: rgba(220,38,38,0.2);
+    }
+
+    .nav-item.active::before {
+        content: '';
+        position: absolute; left: 0; top: 50%;
+        transform: translateY(-50%);
+        width: 3px; height: 18px;
+        background: var(--red);
+        border-radius: 0 3px 3px 0;
+        box-shadow: 0 0 10px var(--red-glow);
+    }
+
+    .nav-item.active svg { color: var(--red); }
+
+    .nav-item svg {
+        width: 16px; height: 16px;
+        flex-shrink: 0;
+        transition: color 0.22s ease;
+    }
+
+    /* Logout */
+    .sidebar-footer {
+        padding: 14px;
+        border-top: 1px solid var(--border);
+    }
+
+    .btn-logout {
+        width: 100%;
+        display: flex; align-items: center; gap: 11px;
+        padding: 10px 12px;
+        min-height: 44px;
+        border-radius: 10px;
+        background: none; border: 1px solid transparent;
+        color: rgba(255,255,255,0.5);
+        font-size: 0.82rem;
+        font-weight: 600;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        transition: all 0.22s ease;
+    }
+
+    .btn-logout:hover {
+        color: #fca5a5;
+        background: rgba(220,38,38,0.08);
+        border-color: rgba(220,38,38,0.18);
+    }
+
+    .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .main-content {
+        margin-left: 260px;
+        min-height: 100vh;
+        position: relative; z-index: 1;
+    }
+
+    .topbar {
+        position: sticky; top: 0; z-index: 30;
+        background: rgba(8,8,8,0.85);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-bottom: 1px solid var(--border);
+        padding: 16px 36px;
+        display: flex; align-items: center; justify-content: space-between;
+    }
+
+    .topbar-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: rgba(255,255,255,0.42);
+        letter-spacing: 0.5px;
+    }
+
+    .topbar-crumb-brand,
+    .topbar-crumb-sep {
+        color: rgba(255,255,255,0.55);
+        margin-left: 6px;
+    }
+
+    .topbar-crumb-current {
+        color: rgba(255,255,255,0.82);
+        margin-left: 6px;
+    }
+
+    .topbar-badge {
+        display: flex; align-items: center; gap: 6px;
+        background: rgba(220,38,38,0.08);
+        border: 1px solid rgba(220,38,38,0.18);
+        border-radius: 30px;
+        padding: 5px 13px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: rgba(220,38,38,0.7);
+        letter-spacing: 0.5px;
+    }
+
+    /* ── INNER PAGE ── */
+    .page-inner {
+        padding: 40px 36px 60px;
+    }
+
+    /* Greeting */
+    .greeting-eyebrow {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: rgba(220,38,38,0.75);
+        margin-bottom: 10px;
+    }
+
+    .greeting-headline {
+        font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+        font-weight: 900;
+        letter-spacing: -1px;
+        line-height: 1.15;
+        color: #f5f5f5;
+        margin-bottom: 8px;
+    }
+
+    .greeting-headline .name-highlight {
+        color: var(--red);
+        text-shadow: 0 0 30px rgba(220,38,38,0.4);
+    }
+
+    .greeting-sub {
+        font-size: 0.875rem;
+        color: rgba(255,255,255,0.55);
+        font-weight: 400;
+    }
+
+    /* ── STAT CARDS ── */
+    .stat-card {
+        background: rgba(255,255,255,0.025);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 24px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(220,38,38,0.25);
+        box-shadow:
+            0 20px 50px rgba(0,0,0,0.4),
+            0 0 0 1px rgba(220,38,38,0.1),
+            0 0 40px rgba(220,38,38,0.07);
+        background: rgba(220,38,38,0.04);
+    }
+
+    .stat-icon-wrap {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        background: var(--red-soft);
+        border: 1px solid rgba(220,38,38,0.18);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 18px;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon-wrap {
+        background: rgba(220,38,38,0.16);
+        box-shadow: 0 0 20px rgba(220,38,38,0.2);
+    }
+
+    .stat-icon-wrap svg { width: 20px; height: 20px; color: var(--red); }
+
+    .stat-number {
+        font-size: 2.4rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        color: #f5f5f5;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.48);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .stat-bar-wrap {
+        margin-top: 16px;
+        height: 2px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+
+    .stat-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--red), #ef4444);
+        border-radius: 2px;
+        box-shadow: 0 0 8px rgba(220,38,38,0.4);
+    }
+
+    .stat-bg-num {
+        position: absolute;
+        bottom: -8px; right: 16px;
+        font-size: 5rem;
+        font-weight: 900;
+        color: rgba(255,255,255,0.02);
+        letter-spacing: -4px;
+        pointer-events: none;
+        line-height: 1;
+        transition: color 0.3s ease;
+    }
+
+    .stat-card:hover .stat-bg-num { color: rgba(220,38,38,0.04); }
+
+    /* ── SECTION HEADER ── */
+    .section-header-bar {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        gap: 12px; flex-wrap: wrap;
+    }
+
+    .section-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #f5f5f5;
+        letter-spacing: -0.3px;
+    }
+
+    .section-sub {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.42);
+        margin-top: 3px;
+        font-weight: 500;
+    }
+
+    .btn-export {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.55);
+        padding: 9px 18px;
+        min-height: 44px;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.25s ease;
+    }
+
+    .btn-export:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.2);
+        color: #f5f5f5;
+    }
+
+    .btn-export svg { width: 15px; height: 15px; }
+
+    .btn-add {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: var(--red);
+        border: 1px solid var(--red);
+        color: white;
+        padding: 9px 18px;
+        min-height: 44px;
+        border-radius: 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        font-family: 'Inter', sans-serif;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        position: relative; overflow: hidden;
+    }
+
+    .btn-add::before {
+        content: '';
+        position: absolute; inset: 0;
+        background: linear-gradient(135deg, #b91c1c, #ef4444);
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 28px var(--red-glow), 0 0 0 3px rgba(220,38,38,0.15);
+    }
+
+    .btn-add:hover::before { opacity: 1; }
+    .btn-add span, .btn-add svg { position: relative; z-index: 1; }
+    .btn-add svg { width: 15px; height: 15px; }
+
+    /* ── PORTFOLIO CARD ── */
+    .portfolio-card {
+        background: rgba(255,255,255,0.025);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .portfolio-card::before {
+        content: '';
+        position: absolute; top: 0; left: 0; right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+    }
+
+    .portfolio-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(220,38,38,0.22);
+        box-shadow:
+            0 24px 60px rgba(0,0,0,0.45),
+            0 0 0 1px rgba(220,38,38,0.08),
+            0 0 50px rgba(220,38,38,0.06);
+    }
+
+    /* Rasio gambar dijaga konsisten lewat aspect-ratio, bukan tinggi tetap,
+       supaya rasionya tidak berubah saat lebar kolom berubah per breakpoint. */
+    .thumb-wrapper {
+        position: relative;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+        background: #111;
+    }
+
+    .portfolio-thumb {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease, opacity 0.3s ease;
+        background: #111;
+    }
+
+    .portfolio-card:hover .portfolio-thumb { transform: scale(1.04); }
+
+    /* Fallback halus kalau gambar gagal dimuat/rusak */
+    .thumb-broken {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23111111'/%3E%3Cg stroke='%23333333' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Crect x='60' y='60' width='280' height='180' rx='12'/%3E%3Ccircle cx='140' cy='120' r='16'/%3E%3Cpath d='M60 200l70-60 50 40 60-50 100 90'/%3E%3C/g%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 96px 72px;
+    }
+
+    .thumb-broken .portfolio-thumb { opacity: 0; }
+
+    .thumb-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 50%, rgba(8,8,8,0.6) 100%);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .portfolio-card:hover .thumb-overlay { opacity: 1; }
+
+    .pdf-pill {
+        position: absolute; top: 10px; left: 10px;
+        background: rgba(220,38,38,0.85);
+        color: white;
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 6px;
+        backdrop-filter: blur(8px);
+    }
+
+    .portfolio-body { padding: 16px; }
+
+    .portfolio-category {
+        display: inline-flex; align-items: center;
+        background: rgba(220,38,38,0.1);
+        border: 1px solid rgba(220,38,38,0.2);
+        color: #fca5a5;
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        padding: 2px 9px;
+        border-radius: 20px;
+        margin-bottom: 9px;
+    }
+
+    .portfolio-title {
+        font-size: 0.9rem;
+        font-weight: 800;
+        color: #f5f5f5;
+        letter-spacing: -0.2px;
+        line-height: 1.35;
+        margin-bottom: 5px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    .portfolio-desc {
+        font-size: 0.75rem;
+        color: rgba(255,255,255,0.46);
+        line-height: 1.5;
+        margin-bottom: 12px;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        line-clamp: 2;
+        overflow: hidden;
+    }
+
+    .portfolio-meta {
+        display: flex; align-items: center; gap: 5px;
+        font-size: 0.68rem;
+        color: rgba(255,255,255,0.4);
+        margin-bottom: 14px;
+    }
+
+    .portfolio-meta svg { width: 11px; height: 11px; flex-shrink: 0; }
+
+    .portfolio-actions {
+        display: flex; gap: 8px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .btn-action-edit {
+        flex: 1;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px;
+        min-height: 44px;
+        border-radius: 9px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.07);
+        color: rgba(255,255,255,0.5);
+        font-size: 0.73rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.22s ease;
+    }
+
+    .btn-action-edit:hover {
+        background: rgba(255,255,255,0.08);
+        border-color: rgba(255,255,255,0.15);
+        color: #f5f5f5;
+    }
+
+    .btn-action-edit svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    .btn-action-delete {
+        flex: 1;
+        display: flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 8px;
+        min-height: 44px;
+        border-radius: 9px;
+        background: rgba(220,38,38,0.06);
+        border: 1px solid rgba(220,38,38,0.12);
+        color: rgba(220,38,38,0.75);
+        font-size: 0.73rem;
+        font-weight: 700;
+        cursor: pointer;
+        width: 100%;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.22s ease;
+    }
+
+    .btn-action-delete:hover {
+        background: rgba(220,38,38,0.14);
+        border-color: rgba(220,38,38,0.3);
+        color: #f87171;
+    }
+
+    .btn-action-delete svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    .empty-wrap {
+        padding: 80px 40px;
+        min-height: 420px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .empty-icon {
+        width: 72px; height: 72px;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 24px;
+    }
+
+    .empty-icon svg { width: 32px; height: 32px; color: rgba(255,255,255,0.3); }
+
+    .empty-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: rgba(255,255,255,0.62);
+        margin-bottom: 8px;
+    }
+
+    .empty-sub {
+        font-size: 0.82rem;
+        color: rgba(255,255,255,0.42);
+        margin-bottom: 28px;
+        line-height: 1.6;
+    }
+
+    .flash-success {
+        display: flex; align-items: center; gap: 12px;
+        background: rgba(220,38,38,0.06);
+        border: 1px solid rgba(220,38,38,0.2);
+        border-radius: 12px;
+        padding: 14px 18px;
+        margin-bottom: 28px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #f5f5f5;
+    }
+
+    .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--red-bright); }
+
+    .add-card {
+        border: 1.5px dashed rgba(255,255,255,0.07);
+        border-radius: 16px;
+        min-height: 300px;
+        display: flex; flex-direction: column;
+        align-items: center; justify-content: center;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        gap: 12px;
+    }
+
+    .add-card:hover {
+        border-color: rgba(220,38,38,0.3);
+        background: rgba(220,38,38,0.03);
+    }
+
+    .add-card-icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .add-card:hover .add-card-icon {
+        background: var(--red-soft);
+        border-color: rgba(220,38,38,0.25);
+    }
+
+    .add-card-icon svg { width: 18px; height: 18px; color: rgba(255,255,255,0.3); transition: color 0.3s ease; }
+    .add-card:hover .add-card-icon svg { color: var(--red); }
+
+    .add-card-text { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.4); transition: color 0.3s ease; }
+    .add-card:hover .add-card-text { color: rgba(220,38,38,0.85); }
+
+    /* ================================================================
+       OFF-CANVAS DRAWER (SIDEBAR MOBILE) & TOMBOL HAMBURGER
+    ================================================================ */
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.65);
+        -webkit-backdrop-filter: blur(2px);
+        backdrop-filter: blur(2px);
+        z-index: 45;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .hamburger-btn {
+        display: none;
+        align-items: center; justify-content: center;
+        width: 44px; height: 44px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        color: rgba(255,255,255,0.7);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.22s ease;
+    }
+
+    .hamburger-btn:hover {
+        background: rgba(220,38,38,0.1);
+        border-color: rgba(220,38,38,0.25);
+        color: #fca5a5;
+    }
+
+    .hamburger-btn svg { width: 20px; height: 20px; }
+
+    .sidebar-close-btn {
+        display: none;
+        align-items: center; justify-content: center;
+        width: 44px; height: 44px;
+        border-radius: 9px;
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--border);
+        color: rgba(255,255,255,0.5);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.22s ease;
+    }
+
+    .sidebar-close-btn:hover {
+        background: rgba(220,38,38,0.1);
+        border-color: rgba(220,38,38,0.25);
+        color: #fca5a5;
+    }
+
+    .sidebar-close-btn svg { width: 16px; height: 16px; }
+
+    /* ================================================================
+       GRID RESPONSIF BERTAHAP (dipakai lintas breakpoint)
+    ================================================================ */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 48px;
+    }
+
+    /* Mobile-first khusus grid galeri karya: 1 kolom → 2 kolom → 3 kolom */
+    .portfolio-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    @media (min-width: 641px) {
+        .portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (min-width: 1024px) {
+        .portfolio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+    }
+
+    .dashboard-footer-strip {
+        margin-top: 48px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 8px;
+    }
+
+    /* ================================================================
+       RESPONSIVE — LAYAR MOBILE (≤860px)
+    ================================================================ */
+    @media (max-width: 860px) {
 
         .sidebar {
-            position: fixed; top: 0; left: 0;
-            width: 260px; height: 100vh;
-            background: rgba(8,8,8,0.88);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            z-index: 50;
-            overflow-y: auto;
+            transform: translateX(-100%);
+            width: min(300px, 84vw);
+            box-shadow: 24px 0 70px rgba(0,0,0,0.55);
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .sidebar::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
+        .sidebar.sidebar-open {
+            transform: translateX(0);
         }
 
+        .sidebar-close-btn { display: flex; }
 
-        .sidebar-logo {
-            padding: 28px 24px 22px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .logo-wordmark {
-            font-size: 0.78rem;
-            font-weight: 900;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.85);
-            display: flex; align-items: center; gap: 9px;
-        }
-
-        .logo-icon {
-            width: 26px; height: 26px;
-            background: var(--red);
-            border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 14px var(--red-glow);
-            flex-shrink: 0;
-        }
-
-        .logo-icon svg { width: 13px; height: 13px; }
-
-
-        .sidebar-profile {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .profile-avatar {
-            width: 42px; height: 42px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: white;
-            flex-shrink: 0;
-            box-shadow: 0 0 18px rgba(220,38,38,0.3);
-        }
-
-        .profile-name {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: #f5f5f5;
-            line-height: 1.3;
-            margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .profile-nis {
-            font-size: 0.7rem;
-            color: rgba(255,255,255,0.3);
-            margin-bottom: 6px;
-        }
-
-        .badge-role {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(220,38,38,0.12);
-            border: 1px solid rgba(220,38,38,0.25);
-            color: #fca5a5;
-            padding: 2px 9px;
-            border-radius: 30px;
-            font-size: 0.65rem;
-            font-weight: 700;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-
-        .badge-role-dot {
-            width: 5px; height: 5px;
-            background: var(--red);
-            border-radius: 50%;
-            animation: pulseDot 1.5s ease-in-out infinite;
-            box-shadow: 0 0 6px var(--red-glow);
-        }
-
-        @keyframes pulseDot {
-            0%,100% { opacity: 1; transform: scale(1); }
-            50%      { opacity: 0.35; transform: scale(0.65); }
-        }
-
-        /* Nav */
-        .sidebar-nav {
-            flex: 1;
-            padding: 20px 14px;
-        }
-
-        .nav-label {
-            font-size: 0.62rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.18);
-            padding: 0 10px;
-            margin-bottom: 8px;
-            margin-top: 4px;
-        }
-
-        .nav-item {
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: rgba(255,255,255,0.38);
-            text-decoration: none;
-            transition: all 0.22s ease;
-            border: 1px solid transparent;
-            margin-bottom: 3px;
-            position: relative;
-        }
-
-        .nav-item:hover {
-            color: rgba(255,255,255,0.75);
-            background: rgba(255,255,255,0.04);
-            border-color: var(--border);
-        }
-
-        .nav-item.active {
-            color: #fca5a5;
-            background: rgba(220,38,38,0.1);
-            border-color: rgba(220,38,38,0.2);
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute; left: 0; top: 50%;
-            transform: translateY(-50%);
-            width: 3px; height: 18px;
-            background: var(--red);
-            border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 10px var(--red-glow);
-        }
-
-        .nav-item.active svg { color: var(--red); }
-
-        .nav-item svg {
-            width: 16px; height: 16px;
-            flex-shrink: 0;
-            transition: color 0.22s ease;
-        }
-
-        /* Logout */
-        .sidebar-footer {
-            padding: 14px;
-            border-top: 1px solid var(--border);
-        }
-
-        .btn-logout {
-            width: 100%;
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: none; border: 1px solid transparent;
-            color: rgba(255,255,255,0.28);
-            font-size: 0.82rem;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            transition: all 0.22s ease;
-        }
-
-        .btn-logout:hover {
-            color: #fca5a5;
-            background: rgba(220,38,38,0.08);
-            border-color: rgba(220,38,38,0.18);
-        }
-
-        .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    
-        .main-content {
-            margin-left: 260px;
-            min-height: 100vh;
-            position: relative; z-index: 1;
-        }
-
-        
-        .topbar {
-            position: sticky; top: 0; z-index: 30;
-            background: rgba(8,8,8,0.85);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 36px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .topbar-title {
-            font-size: 0.82rem;
-            font-weight: 700;
-            color: rgba(255,255,255,0.25);
-            letter-spacing: 0.5px;
-        }
-
-        .topbar-title span {
-            color: rgba(255,255,255,0.55);
-            margin-left: 6px;
-        }
-
-        .topbar-badge {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.08);
-            border: 1px solid rgba(220,38,38,0.18);
-            border-radius: 30px;
-            padding: 5px 13px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: rgba(220,38,38,0.7);
-            letter-spacing: 0.5px;
-        }
-
-        /* ── INNER PAGE ── */
-        .page-inner {
-            padding: 40px 36px 60px;
-        }
-
-        /* Greeting */
-        .greeting-eyebrow {
-            font-size: 0.68rem;
-            font-weight: 700;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: rgba(220,38,38,0.7);
-            margin-bottom: 10px;
-        }
-
-        .greeting-headline {
-            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
-            font-weight: 900;
-            letter-spacing: -1px;
-            line-height: 1.15;
-            color: #f5f5f5;
-            margin-bottom: 8px;
-        }
-
-        .greeting-headline .name-highlight {
-            color: var(--red);
-            text-shadow: 0 0 30px rgba(220,38,38,0.4);
-        }
-
-        .greeting-sub {
-            font-size: 0.875rem;
-            color: rgba(255,255,255,0.3);
-            font-weight: 400;
-        }
-
-        /* ── STAT CARDS ── */
-        .stat-card {
-            background: rgba(255,255,255,0.025);
-            border: 1px solid var(--border);
-            border-radius: 18px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            border-color: rgba(220,38,38,0.25);
-            box-shadow:
-                0 20px 50px rgba(0,0,0,0.4),
-                0 0 0 1px rgba(220,38,38,0.1),
-                0 0 40px rgba(220,38,38,0.07);
-            background: rgba(220,38,38,0.04);
-        }
-
-        .stat-icon-wrap {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            background: var(--red-soft);
-            border: 1px solid rgba(220,38,38,0.18);
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 18px;
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover .stat-icon-wrap {
-            background: rgba(220,38,38,0.16);
-            box-shadow: 0 0 20px rgba(220,38,38,0.2);
-        }
-
-        .stat-icon-wrap svg { width: 20px; height: 20px; color: var(--red); }
-
-        .stat-number {
-            font-size: 2.4rem;
-            font-weight: 900;
-            letter-spacing: -2px;
-            color: #f5f5f5;
-            line-height: 1;
-            margin-bottom: 6px;
-        }
-
-        .stat-label {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: rgba(255,255,255,0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
-
-        .stat-bar-wrap {
-            margin-top: 16px;
-            height: 2px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .stat-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--red), #ef4444);
-            border-radius: 2px;
-            box-shadow: 0 0 8px rgba(220,38,38,0.4);
-        }
-
-        .stat-bg-num {
-            position: absolute;
-            bottom: -8px; right: 16px;
-            font-size: 5rem;
-            font-weight: 900;
-            color: rgba(255,255,255,0.02);
-            letter-spacing: -4px;
-            pointer-events: none;
-            line-height: 1;
-            transition: color 0.3s ease;
-        }
-
-        .stat-card:hover .stat-bg-num { color: rgba(220,38,38,0.04); }
-
-        /* ── SECTION HEADER ── */
-        .section-header {
-            display: flex; align-items: flex-end; justify-content: space-between;
-            margin-bottom: 24px;
-            gap: 16px; flex-wrap: wrap;
-        }
-
-        .section-title {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: #f5f5f5;
-            letter-spacing: -0.3px;
-        }
+        .hamburger-btn { display: inline-flex; }
 
-        .section-sub {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.25);
-            margin-top: 3px;
-            font-weight: 500;
-        }
-
-        .btn-export {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.55);
-            padding: 9px 18px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.25s ease;
-        }
-
-        .btn-export:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.2);
-            color: #f5f5f5;
-        }
-
-        .btn-export svg { width: 15px; height: 15px; }
-
-        .btn-add {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: var(--red);
-            border: 1px solid var(--red);
-            color: white;
-            padding: 9px 18px;
-            border-radius: 10px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            position: relative; overflow: hidden;
-        }
-
-        .btn-add::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(135deg, #b91c1c, #ef4444);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-
-        .btn-add:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px var(--red-glow), 0 0 0 3px rgba(220,38,38,0.15);
-        }
-
-        .btn-add:hover::before { opacity: 1; }
-        .btn-add span, .btn-add svg { position: relative; z-index: 1; }
-        .btn-add svg { width: 15px; height: 15px; }
-
-        /* ── PORTFOLIO CARD ── */
-        .portfolio-card {
-            background: rgba(255,255,255,0.025);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .portfolio-card::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-        }
-
-        .portfolio-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(220,38,38,0.22);
-            box-shadow:
-                0 24px 60px rgba(0,0,0,0.45),
-                0 0 0 1px rgba(220,38,38,0.08),
-                0 0 50px rgba(220,38,38,0.06);
-        }
-
-        .portfolio-thumb {
-            width: 100%; height: 170px;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.5s ease;
-            background: #111;
-        }
-
-        .portfolio-card:hover .portfolio-thumb { transform: scale(1.04); }
-
-        .thumb-overlay {
-            position: absolute;
-            top: 0; left: 0; right: 0; height: 170px;
-            background: linear-gradient(to bottom, transparent 50%, rgba(8,8,8,0.6) 100%);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .portfolio-card:hover .thumb-overlay { opacity: 1; }
-
-        .thumb-wrapper { position: relative; overflow: hidden; }
-
-        .pdf-pill {
-            position: absolute; top: 10px; left: 10px;
-            background: rgba(220,38,38,0.85);
-            color: white;
-            font-size: 0.62rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            border-radius: 6px;
-            backdrop-filter: blur(8px);
-        }
-
-        .portfolio-body { padding: 16px; }
-
-        .portfolio-category {
-            display: inline-flex; align-items: center;
-            background: rgba(220,38,38,0.1);
-            border: 1px solid rgba(220,38,38,0.2);
-            color: #fca5a5;
-            font-size: 0.62rem;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            padding: 2px 9px;
-            border-radius: 20px;
-            margin-bottom: 9px;
-        }
-
-        .portfolio-title {
-            font-size: 0.9rem;
-            font-weight: 800;
-            color: #f5f5f5;
-            letter-spacing: -0.2px;
-            line-height: 1.35;
-            margin-bottom: 5px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .portfolio-desc {
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.28);
-            line-height: 1.5;
-            margin-bottom: 12px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .portfolio-meta {
-            display: flex; align-items: center; gap: 5px;
-            font-size: 0.68rem;
-            color: rgba(255,255,255,0.2);
-            margin-bottom: 14px;
-        }
-
-        .portfolio-meta svg { width: 11px; height: 11px; }
-
-        .portfolio-actions {
-            display: flex; gap: 8px;
-            padding-top: 12px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .btn-action-edit {
-            flex: 1;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px;
-            border-radius: 9px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            color: rgba(255,255,255,0.35);
-            font-size: 0.73rem;
-            font-weight: 700;
-            text-decoration: none;
-            transition: all 0.22s ease;
-        }
-
-        .btn-action-edit:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.15);
-            color: #f5f5f5;
-        }
+        .main-content { margin-left: 0; }
 
-        .btn-action-edit svg { width: 13px; height: 13px; }
+        .topbar { padding: 14px 18px; gap: 12px; }
 
-        .btn-action-delete {
-            flex: 1;
-            display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px;
-            border-radius: 9px;
-            background: rgba(220,38,38,0.06);
-            border: 1px solid rgba(220,38,38,0.12);
-            color: rgba(220,38,38,0.5);
-            font-size: 0.73rem;
-            font-weight: 700;
-            cursor: pointer;
-            width: 100%;
-            font-family: 'Inter', sans-serif;
-            transition: all 0.22s ease;
-        }
-
-        .btn-action-delete:hover {
-            background: rgba(220,38,38,0.14);
-            border-color: rgba(220,38,38,0.3);
-            color: #f87171;
-        }
-
-        .btn-action-delete svg { width: 13px; height: 13px; }
-
-        
-        .empty-wrap {
-            padding: 80px 40px;
-            text-align: center;
-        }
-
-        .empty-icon {
-            width: 72px; height: 72px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 24px;
-        }
-
-        .empty-icon svg { width: 32px; height: 32px; color: rgba(255,255,255,0.12); }
-
-        .empty-title {
-            font-size: 1rem;
-            font-weight: 800;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 8px;
-        }
-
-        .empty-sub {
-            font-size: 0.82rem;
-            color: rgba(255,255,255,0.2);
-            margin-bottom: 28px;
-            line-height: 1.6;
-        }
-
-   
-        .flash-success {
-            display: flex; align-items: center; gap: 12px;
-            background: rgba(34,197,94,0.08);
-            border: 1px solid rgba(34,197,94,0.2);
-            border-radius: 12px;
-            padding: 14px 18px;
-            margin-bottom: 28px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: #86efac;
-        }
-
-        .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: #4ade80; }
-
-        
-        .add-card {
-            border: 1.5px dashed rgba(255,255,255,0.07);
-            border-radius: 16px;
-            min-height: 300px;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            gap: 12px;
-        }
-
-        .add-card:hover {
-            border-color: rgba(220,38,38,0.3);
-            background: rgba(220,38,38,0.03);
-        }
-
-        .add-card-icon {
-            width: 44px; height: 44px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease;
-        }
+        .page-inner { padding: 24px 16px 48px; }
 
-        .add-card:hover .add-card-icon {
-            background: var(--red-soft);
-            border-color: rgba(220,38,38,0.25);
-        }
-
-        .add-card-icon svg { width: 18px; height: 18px; color: rgba(255,255,255,0.2); transition: color 0.3s ease; }
-        .add-card:hover .add-card-icon svg { color: var(--red); }
-
-        .add-card-text { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.2); transition: color 0.3s ease; }
-        .add-card:hover .add-card-text { color: rgba(220,38,38,0.7); }
-
-        /* ================================================================
-           OFF-CANVAS DRAWER (SIDEBAR MOBILE) & TOMBOL HAMBURGER
-        ================================================================ */
-        .sidebar-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.65);
-            -webkit-backdrop-filter: blur(2px);
-            backdrop-filter: blur(2px);
-            z-index: 45;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .hamburger-btn {
-            display: none;
-            align-items: center; justify-content: center;
-            width: 44px; height: 44px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            color: rgba(255,255,255,0.7);
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.22s ease;
-        }
-
-        .hamburger-btn:hover {
-            background: rgba(220,38,38,0.1);
-            border-color: rgba(220,38,38,0.25);
-            color: #fca5a5;
-        }
+        .topbar-crumb-brand,
+        .topbar-crumb-sep { display: none; }
 
-        .hamburger-btn svg { width: 20px; height: 20px; }
+        .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
 
-        .sidebar-close-btn {
-            display: none;
-            align-items: center; justify-content: center;
-            width: 40px; height: 40px;
-            border-radius: 9px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            color: rgba(255,255,255,0.4);
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.22s ease;
-        }
-
-        .sidebar-close-btn:hover {
-            background: rgba(220,38,38,0.1);
-            border-color: rgba(220,38,38,0.25);
-            color: #fca5a5;
-        }
-
-        .sidebar-close-btn svg { width: 16px; height: 16px; }
-
-        /* ================================================================
-           GRID YANG DIBUTUHKAN RESPONSIF BERTAHAP (dipakai lintas breakpoint)
-        ================================================================ */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-            margin-bottom: 48px;
-        }
-
-        /* Mobile-first khusus grid galeri karya: 1 kolom → 2 kolom → 3 kolom */
-        .portfolio-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        @media (min-width: 641px) {
-            .portfolio-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        }
-
-        @media (min-width: 1024px) {
-            .portfolio-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-        }
+        .empty-wrap { padding: 56px 22px; min-height: 320px; }
 
         .dashboard-footer-strip {
-            margin-top: 48px;
-            padding-top: 24px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            align-items: center; justify-content: space-between;
-            flex-wrap: wrap; gap: 8px;
+            justify-content: center;
+            text-align: center;
         }
+    }
 
-        /* ================================================================
-           RESPONSIVE — LAYAR MOBILE (≤860px)
-        ================================================================ */
-        @media (max-width: 860px) {
+    @media (max-width: 480px) {
+        .stats-grid { grid-template-columns: 1fr; }
+    }
 
-            .sidebar {
-                transform: translateX(-100%);
-                width: min(300px, 84vw);
-                box-shadow: 24px 0 70px rgba(0,0,0,0.55);
-                transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .sidebar.sidebar-open {
-                transform: translateX(0);
-            }
-
-            .sidebar-close-btn { display: flex; }
-
-            .hamburger-btn { display: inline-flex; }
-
-            .main-content { margin-left: 0; }
-
-            .topbar { padding: 14px 18px; gap: 12px; }
-
-            .page-inner { padding: 24px 16px 48px; }
-
-            .topbar-title-full,
-            .topbar-title-full-sep { display: none; }
-
-            .greeting-headline { font-size: 1.6rem; }
-
-            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 32px; }
-
-            /* Target sentuh minimal 44x44px untuk semua tombol aksi */
-            .nav-item,
-            .btn-logout {
-                min-height: 44px;
-                padding: 12px 12px;
-            }
-
-            .btn-add,
-            .btn-export {
-                min-height: 44px;
-                padding: 11px 18px;
-            }
-
-            .btn-action-edit,
-            .btn-action-delete {
-                min-height: 44px;
-                padding: 10px 8px;
-            }
-
-            /* Thumbnail lebih proporsional saat kartu melebar penuh 1 kolom */
-            .portfolio-thumb,
-            .thumb-overlay {
-                height: 200px;
-            }
-
-            .empty-wrap { padding: 56px 22px; }
-
-            .dashboard-footer-strip {
-                justify-content: center;
-                text-align: center;
-            }
+    /* ================================================================
+       HORMATI PREFERENSI REDUCED MOTION
+    ================================================================ */
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
         }
-
-        @media (max-width: 480px) {
-            .stats-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+    }
+</style>
 @endpush
 
 @section('content')
-<div class="bg-grid"></div>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="blob blob-1" aria-hidden="true"></div>
+<div class="blob blob-2" aria-hidden="true"></div>
 
 <div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
 
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar" id="siswaSidebar">
+<aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
 
     {{-- Logo --}}
     <div class="sidebar-logo">
@@ -939,21 +959,21 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-icon">
-                        <svg fill="none" stroke="white" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="white" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                   d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     DKV<span style="color:var(--red);">.</span>SMEKDA
                 </div>
-                <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
+                <div style="font-size:0.62rem; color:rgba(255,255,255,0.38); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
                     Portal Siswa
                 </div>
             </div>
 
             {{-- Tombol tutup drawer — hanya tampil di layar mobile --}}
             <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
@@ -962,30 +982,31 @@
 
     {{-- Profile --}}
     <div class="sidebar-profile">
-        <div class="profile-avatar" style="overflow: hidden;">
-    @if(auth()->user()->photo)
-        <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-    @else
-        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-    @endif
-</div>
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <div class="profile-avatar" style="overflow: hidden;">
+                @if(auth()->user()->photo)
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @endif
+            </div>
             <div style="flex:1; min-width:0;">
                 <div class="profile-name">{{ auth()->user()->name }}</div>
                 <div class="profile-nis">NIS: {{ auth()->user()->nis_nip ?? '—' }}</div>
             </div>
         </div>
         <div class="badge-role">
-            <div class="badge-role-dot"></div>
+            <div class="badge-role-dot" aria-hidden="true"></div>
             Siswa DKV
         </div>
     </div>
 
     {{-- Nav --}}
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" aria-label="Menu utama">
         <div class="nav-label">Menu Utama</div>
 
-        <a href="{{ route('siswa.dashboard') }}" class="nav-item active">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('siswa.dashboard') }}" class="nav-item active" aria-current="page">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
             </svg>
@@ -993,23 +1014,23 @@
         </a>
 
         <a href="{{ route('siswa.portfolio.create') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 4v16m8-8H4"/>
             </svg>
             Tambah Karya
         </a>
 
-       <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
             </svg>
             Cetak Portfolio
-            
         </a>
-                <a href="{{ route('siswa.achievement.index') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+        <a href="{{ route('siswa.achievement.index') }}" class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 17a3 3 0 013-3h0a3 3 0 013 3v3H9v-3zM6 6h12v2a6 6 0 01-12 0V6zm0 0H4a2 2 0 000 4h2M18 6h2a2 2 0 010 4h-2"/>
             </svg>
@@ -1019,7 +1040,7 @@
         <div class="nav-label" style="margin-top:20px;">Akun</div>
 
         <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
@@ -1032,7 +1053,7 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="btn-logout">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
@@ -1045,36 +1066,36 @@
 {{-- ================================================================
      MAIN CONTENT
 ================================================================ --}}
-<div class="main-content">
+<main class="main-content" id="konten-utama">
 
     {{-- Top Bar --}}
-    <div class="topbar">
+    <header class="topbar">
         <div style="display:flex; align-items:center; gap:14px; min-width:0;">
             {{-- Tombol hamburger — hanya tampil di layar mobile (≤860px) --}}
             <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
                     aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 7h16M4 12h16M4 17h16"/>
                 </svg>
             </button>
             <div class="topbar-title">
-                <span class="topbar-title-full">Portal DKV SMEKDA</span>
-                <span class="topbar-title-full-sep">/</span>
-                Dashboard Siswa
+                <span class="topbar-crumb-brand">Portal DKV SMEKDA</span>
+                <span class="topbar-crumb-sep">/</span>
+                <span class="topbar-crumb-current">Dashboard Siswa</span>
             </div>
         </div>
         <div class="topbar-badge">
-            <div class="badge-role-dot"></div>
+            <div class="badge-role-dot" aria-hidden="true"></div>
             {{ now()->translatedFormat('d F Y') }}
         </div>
-    </div>
+    </header>
 
     <div class="page-inner">
 
         {{-- Flash Success --}}
         @if(session('success'))
-            <div class="flash-success">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flash-success" role="status">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
                 {{ session('success') }}
@@ -1091,24 +1112,23 @@
                 <p class="greeting-sub">Selamat datang di workspace kreatifmu. Terus berkarya dan biarkan karyamu berbicara.</p>
             </div>
 
-            {{-- Tombol cetak PDF ringkas — jelas terlihat begitu dashboard dibuka --}}
-            <a href="{{ route('siswa.portfolio.print') }}" class="btn-add" style="flex-shrink:0;">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            {{-- CTA utama halaman: Tambah Karya --}}
+            <a href="{{ route('siswa.portfolio.create') }}" class="btn-add" style="flex-shrink:0;">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                 </svg>
-                <span>Cetak PDF</span>
+                <span>Tambah Karya</span>
             </a>
         </div>
 
         {{-- ── STAT CARDS ── --}}
-        <div class="stats-grid">
+        <section class="stats-grid" aria-label="Ringkasan statistik karya">
 
             {{-- Card 1: Total Karya --}}
             <div class="stat-card">
-                <div class="stat-bg-num">{{ $totalKarya }}</div>
+                <div class="stat-bg-num" aria-hidden="true">{{ $totalKarya }}</div>
                 <div class="stat-icon-wrap">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
@@ -1122,9 +1142,9 @@
 
             {{-- Card 2: Poster --}}
             <div class="stat-card">
-                <div class="stat-bg-num">{{ $totalPoster }}</div>
+                <div class="stat-bg-num" aria-hidden="true">{{ $totalPoster }}</div>
                 <div class="stat-icon-wrap">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
@@ -1138,9 +1158,9 @@
 
             {{-- Card 3: UI/UX --}}
             <div class="stat-card">
-                <div class="stat-bg-num">{{ $totalUIUX }}</div>
+                <div class="stat-bg-num" aria-hidden="true">{{ $totalUIUX }}</div>
                 <div class="stat-icon-wrap">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                     </svg>
@@ -1152,29 +1172,29 @@
                 </div>
             </div>
 
-        </div>
+        </section>
 
         {{-- ── PORTFOLIO SECTION ── --}}
-        <div style="background:rgba(255,255,255,0.018); border:1px solid var(--border); border-radius:20px; overflow:hidden;">
+        <section aria-labelledby="portfolio-heading" style="background:rgba(255,255,255,0.018); border:1px solid var(--border); border-radius:20px; overflow:hidden;">
 
             {{-- Section Top Bar --}}
-            <div style="padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div class="section-header-bar">
                 <div>
-                    <div class="section-title">Karya Portofolio Saya</div>
+                    <h2 class="section-title" id="portfolio-heading">Karya Portofolio Saya</h2>
                     <div class="section-sub">
                         {{ $portfolios->count() }} karya tersimpan &bull; Diurutkan dari terbaru
                     </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
                     <a href="{{ route('siswa.portfolio.print') }}" class="btn-export">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         Export PDF
                     </a>
                     <a href="{{ route('siswa.portfolio.create') }}" class="btn-add">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                         </svg>
                         <span>Tambah Karya</span>
@@ -1190,18 +1210,18 @@
                     {{-- Empty State --}}
                     <div class="empty-wrap">
                         <div class="empty-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
                         </div>
-                        <div class="empty-title">Kanvas masih kosong.</div>
+                        <h3 class="empty-title">Kanvas masih kosong.</h3>
                         <div class="empty-sub">
                             Belum ada karya yang kamu unggah.<br>
                             Mulai upload karya pertamamu dan tampilkan kreativitasmu ke dunia.
                         </div>
                         <a href="{{ route('siswa.portfolio.create') }}" class="btn-add" style="margin:0 auto;">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/>
                             </svg>
                             <span>Upload Karya Pertama</span>
@@ -1219,6 +1239,9 @@
                                     src="{{ asset('storage/' . $portfolio->image_path) }}"
                                     alt="{{ $portfolio->title }}"
                                     class="portfolio-thumb"
+                                    loading="lazy"
+                                    decoding="async"
+                                    onerror="this.onerror=null; this.closest('.thumb-wrapper').classList.add('thumb-broken');"
                                 >
                                 <div class="thumb-overlay"></div>
                                 @if($portfolio->file_pdf_path)
@@ -1229,10 +1252,10 @@
                                 <div class="portfolio-category">
                                     {{ $portfolio->category?->name ?? 'Umum' }}
                                 </div>
-                                <div class="portfolio-title">{{ $portfolio->title }}</div>
+                                <h3 class="portfolio-title">{{ $portfolio->title }}</h3>
                                 <div class="portfolio-desc">{{ $portfolio->description }}</div>
                                 <div class="portfolio-meta">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
@@ -1241,24 +1264,24 @@
                                     {{ $portfolio->created_at->format('d M Y') }}
                                 </div>
                                 <div class="portfolio-actions">
-                                    {{-- 1. Tombol Lihat Publik (BARU) --}}
-                                    <a href="{{ route('portfolio.public', $portfolio->slug) }}" target="_blank" class="btn-action-edit">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    {{-- 1. Tombol Lihat Publik --}}
+                                    <a href="{{ route('portfolio.public', $portfolio->slug) }}" target="_blank" rel="noopener noreferrer" class="btn-action-edit">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                         </svg>
                                         Lihat
                                     </a>
 
-                                    {{-- 2. Tombol Edit (SUDAH ADA) --}}
+                                    {{-- 2. Tombol Edit --}}
                                     <a href="{{ route('siswa.portfolio.edit', $portfolio) }}" class="btn-action-edit">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                         </svg>
                                         Edit
                                     </a>
 
-                                    {{-- 3. Tombol Hapus (SUDAH ADA) --}}
+                                    {{-- 3. Tombol Hapus --}}
                                     <form
                                         method="POST"
                                         action="{{ route('siswa.portfolio.destroy', $portfolio) }}"
@@ -1267,7 +1290,7 @@
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-action-delete">
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                                             </svg>
                                             Hapus
@@ -1281,7 +1304,7 @@
                         {{-- Add Placeholder --}}
                         <a href="{{ route('siswa.portfolio.create') }}" class="add-card">
                             <div class="add-card-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
                             </div>
@@ -1294,21 +1317,21 @@
 
             </div>
 
-        </div>
+        </section>
 
         {{-- Footer Strip --}}
         <div class="dashboard-footer-strip">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.15);">
-                &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.28);">DKV SMEKDA</strong>
+            <span style="font-size:0.7rem; color:rgba(255,255,255,0.32);">
+                &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.5);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
             </span>
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.12);">
-                Dikembangkan untuk Skripsi oleh <strong style="color:rgba(255,255,255,0.22);">Rafli</strong> &mdash; 2026
+            <span style="font-size:0.7rem; color:rgba(255,255,255,0.32);">
+                Dikembangkan untuk Skripsi oleh <strong style="color:rgba(255,255,255,0.5);">Rafli</strong> &mdash; 2026
             </span>
         </div>
 
     </div>
-</div>
+</main>
 @endsection
 
 @push('scripts')
@@ -1321,37 +1344,83 @@
 
         if (!sidebar || !overlay || !openBtn) return;
 
+        function isMobile() {
+            return window.innerWidth <= 860;
+        }
+
+        // Sinkronkan aria-hidden dengan status drawer supaya screen reader
+        // tidak "melihat" menu yang sedang disembunyikan secara visual.
+        function syncA11y() {
+            if (isMobile() && !sidebar.classList.contains('sidebar-open')) {
+                sidebar.setAttribute('aria-hidden', 'true');
+            } else {
+                sidebar.removeAttribute('aria-hidden');
+            }
+        }
+
         function openSidebar() {
             sidebar.classList.add('sidebar-open');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
             openBtn.setAttribute('aria-expanded', 'true');
+            syncA11y();
+            window.requestAnimationFrame(function () {
+                if (closeBtn) closeBtn.focus();
+            });
         }
 
-        function closeSidebar() {
+        function closeSidebar(returnFocus) {
             sidebar.classList.remove('sidebar-open');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
             openBtn.setAttribute('aria-expanded', 'false');
+            syncA11y();
+            if (returnFocus !== false) openBtn.focus();
+        }
+
+        // Perangkap fokus sederhana: Tab/Shift+Tab berputar di dalam drawer
+        // selama drawer terbuka di layar mobile.
+        function trapFocus(e) {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('sidebar-open')) return;
+            var focusable = sidebar.querySelectorAll('a[href], button:not([disabled])');
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
         }
 
         openBtn.addEventListener('click', openSidebar);
-        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-        overlay.addEventListener('click', closeSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', function () { closeSidebar(); });
+        overlay.addEventListener('click', function () { closeSidebar(); });
 
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeSidebar();
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) {
+                closeSidebar();
+            }
+            trapFocus(e);
         });
 
         // Tutup drawer otomatis begitu salah satu menu/logout ditekan di mobile
         document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
-            el.addEventListener('click', closeSidebar);
+            el.addEventListener('click', function () { closeSidebar(false); });
         });
 
         // Reset state drawer kalau layar dibesarkan melewati breakpoint mobile
         window.addEventListener('resize', function () {
-            if (window.innerWidth > 860) closeSidebar();
+            if (!isMobile()) {
+                closeSidebar(false);
+            } else {
+                syncA11y();
+            }
         });
+
+        syncA11y();
     })();
 </script>
 @endpush
