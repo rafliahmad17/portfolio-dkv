@@ -964,41 +964,46 @@
                     </div>
 
                     {{-- Category --}}
-                    <div class="select-wrap">
-                        <select name="category" class="select-filter">
-                            <option value="">Semua Kategori</option>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}"
-                                    {{ request('category') == $cat->id ? 'selected' : '' }}>
-                                    {{ $cat->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </div>
+                   <div class="select-wrap">
+    <select name="category" class="select-filter">
+        {{-- OPSI DEFAULT --}}
+        <option value="" class="bg-[#18181b] text-white" style="background-color: #18181b; color: #ffffff;">
+            Semua Kategori
+        </option>
 
-                    {{-- Submit --}}
-                    <button type="submit" class="btn-filter">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
-                        Filter
-                    </button>
+        {{-- LOOP KATEGORI --}}
+        @foreach($categories as $cat)
+            <option value="{{ $cat->id }}"
+                {{ request('category') == $cat->id ? 'selected' : '' }}
+                class="bg-[#18181b] text-white"
+                style="background-color: #18181b; color: #ffffff;">
+                {{ $cat->name }}
+            </option>
+        @endforeach
+    </select>
+    <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+    </svg>
+</div>
 
-                    {{-- Reset --}}
-                    @if(request('search') || request('category'))
-                        <a href="{{ route('guru.dashboard') }}" class="btn-reset">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                            Reset
-                        </a>
-                    @endif
-                </div>
+{{-- Submit --}}
+<button type="submit" class="btn-filter">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+    </svg>
+    Filter
+</button>
 
+{{-- Reset --}}
+@if(request('search') || request('category'))
+    <a href="{{ route('guru.dashboard') }}" class="btn-reset">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        Reset
+    </a>
+@endif
                 {{-- Active Filter Tags --}}
                 @if(request('search') || request('category'))
                     <div style="margin-top:12px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">

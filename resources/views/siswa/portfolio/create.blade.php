@@ -490,52 +490,54 @@
                         </div>
 
                         {{-- KATEGORI --}}
-                        <div>
-                            <label for="category_id" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45] mb-2">
-                                Kategori <span class="text-red-600 ml-0.5">*</span>
-                            </label>
-                            <div class="relative group">
-                                <svg class="pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-white/[0.2] transition-colors group-focus-within:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                                </svg>
-                                <select
-                                    id="category_id"
-                                    name="category_id"
-                                    required
-                                    aria-required="true"
-                                    @if ($categoriesEmpty) disabled @endif
-                                    @if ($errors->has('category_id')) aria-invalid="true" aria-describedby="category-error" @endif
-                                    class="w-full min-h-[44px] appearance-none rounded-[11px] border-[1.5px] {{ $errors->has('category_id') ? 'border-red-500 bg-red-500/[0.05]' : 'border-white/[0.08]' }} bg-white/[0.04] pl-[42px] pr-10 py-3 text-[0.85rem] font-medium text-white/[0.7] outline-none cursor-pointer transition-all duration-200 hover:border-white/[0.15] focus:border-red-600 focus:bg-red-600/[0.05] focus:ring-2 focus:ring-red-600/[0.2] focus:text-[#f5f5f5] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/[0.08]"
-                                >
-                                    <option value="" disabled {{ old('category_id') ? '' : 'selected' }}>
-                                        @if($categoriesEmpty)
-                                            &#9888; Belum ada kategori
-                                        @else
-                                            &mdash; Pilih Kategori &mdash;
-                                        @endif
-                                    </option>
-                                    @if(isset($categories))
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                                {{ $category->name }}
-                                            </option>
-                                        @endforeach
-                                    @endif
-                                </select>
-                                <svg class="pointer-events-none absolute right-[13px] top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-white/[0.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                                </svg>
-                            </div>
-                            @error('category_id')
-                                <p id="category-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
-                                    <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                    </svg>
-                                    {{ $message }}
-                                </p>
-                            @enderror
-                        </div>
-
+                                {{-- KATEGORI --}}
+        <div>
+            <label for="category_id" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45] mb-2">
+                Kategori <span class="text-red-600 ml-0.5">*</span>
+            </label>
+            <div class="relative group">
+                <svg class="pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-white/[0.2] transition-colors group-focus-within:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                <select
+                    id="category_id"
+                    name="category_id"
+                    required
+                    aria-required="true"
+                    @if ($categoriesEmpty) disabled @endif
+                    @if ($errors->has('category_id')) aria-invalid="true" aria-describedby="category-error" @endif
+                    class="w-full min-h-[44px] appearance-none rounded-[11px] border-[1.5px] {{ $errors->has('category_id') ? 'border-red-500 bg-red-500/[0.05]' : 'border-white/[0.08]' }} bg-white/[0.04] pl-[42px] pr-10 py-3 text-[0.85rem] font-medium text-white/[0.7] outline-none cursor-pointer transition-all duration-200 hover:border-white/[0.15] focus:border-red-600 focus:bg-red-600/[0.05] focus:ring-2 focus:ring-red-600/[0.2] focus:text-[#f5f5f5] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/[0.08]"
+                >
+                    {{-- TAMBAHKAN STYLING GELAP PADA OPTION INI --}}
+                    <option value="" disabled {{ old('category_id') ? '' : 'selected' }} class="bg-[#18181b] text-white" style="background-color: #18181b; color: #ffffff;">
+                        @if($categoriesEmpty)
+                            &#9888; Belum ada kategori
+                        @else
+                            &mdash; Pilih Kategori &mdash;
+                        @endif
+                    </option>
+                    @if(isset($categories))
+                        @foreach($categories as $category)
+                            {{-- TAMBAHKAN STYLING GELAP PADA OPTION INI JUGA --}}
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }} class="bg-[#18181b] text-white" style="background-color: #18181b; color: #ffffff;">
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    @endif
+                </select>
+                <svg class="pointer-events-none absolute right-[13px] top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-white/[0.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </div>
+            @error('category_id')
+                <p id="category-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
+                    <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                    </svg>
+                    {{ $message }}
+                </p>
+            @enderror
+        </div>
                     </div>
 
                     {{-- DESKRIPSI --}}
