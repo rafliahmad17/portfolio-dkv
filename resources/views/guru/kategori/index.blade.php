@@ -4,9 +4,10 @@
 
 {{-- Halaman guru sudah punya sidebar & topbar sendiri sebagai navigasi
      utama, jadi navbar/footer bawaan layout tidak dipakai di sini (pola
-     sama seperti guru/dashboard.blade.php). Tailwind CDN + tailwind.config
-     kini datang dari layouts/app.blade.php — SATU-SATUNYA sumbernya —
-     jadi tidak diduplikasi lagi di sini. --}}
+     sama seperti guru/dashboard.blade.php). Tailwind (via Vite) beserta
+     tema (@theme di resources/css/app.css) kini datang dari
+     layouts/app.blade.php — SATU-SATUNYA sumbernya — jadi tidak
+     diduplikasi lagi di sini. --}}
 @section('navbar')@endsection
 @section('footer')@endsection
 
