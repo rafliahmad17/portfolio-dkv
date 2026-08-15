@@ -6,6 +6,39 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    /* Dipindahkan apa adanya dari tailwind.config inline (CDN) di
+       resources/views/layouts/app.blade.php. Nilai TIDAK diubah. */
+
+    /* Font UI/body — tidak berubah dari yang sudah dipakai. */
+    --font-sans: 'Inter', sans-serif;
+
+    /* Untuk headline halaman publik/katalog ke depan
+       (belum dipakai di halaman manapun saat ini). */
+    --font-display: 'Fraunces', serif;
+
+    /* Skala penuh warna aksen sekolah (identitas resmi). */
+    --color-brand-50: #fef2f2;
+    --color-brand-100: #fee2e2;
+    --color-brand-200: #fecaca;
+    --color-brand-300: #fca5a5;
+    --color-brand-400: #f87171;
+    --color-brand-500: #ef4444;
+    --color-brand-600: #dc2626;
+    --color-brand-700: #b91c1c;
+    --color-brand-800: #991b1b;
+    --color-brand-900: #7f1d1d;
+    --color-brand-950: #450a0a;
+
+    /* Lebar sidebar guru/siswa. */
+    --spacing-sidebar: 260px;
+
+    /* Border radius custom (menggantikan skala default xs-2xl bawaan
+       Tailwind untuk key yang sama, persis seperti versi CDN). */
+    --radius-xs: 4px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
+    --radius-pill: 999px;
 }
