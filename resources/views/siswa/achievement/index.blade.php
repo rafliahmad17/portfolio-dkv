@@ -8,12 +8,12 @@
 
 @section('content')
 
-{{-- Tailwind CDN & font Inter dipertahankan di sini sebagai pengaman ganda —
-     idempotent, tidak mengubah tailwind.config, aman meski layouts.app sudah memuatnya. --}}
+{{-- Font Inter dipertahankan di sini sebagai pengaman ganda — idempotent,
+     aman meski layouts.app sudah memuatnya. Tailwind CDN sudah dihapus dari
+     sini; styling halaman ini memakai Vite yang sudah dimuat layouts.app. --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
 
 <style>
         :root {
