@@ -29,6 +29,24 @@
     --color-brand-900: #7f1d1d;
     --color-brand-950: #450a0a;
 
+    /* ── Sistem warna editorial baru (Tahap redesign UI/UX) ── */
+    /* Paper — latar & permukaan, warna ivory hangat, BUKAN putih polos */
+    --color-paper: #faf7f1;
+    --color-paper-elevated: #ffffff;
+    --color-paper-muted: #f0eae0;
+    --color-paper-border: #e2d9c9;
+    /* Ink — teks, hitam hangat (bukan #000 pekat) */
+    --color-ink: #221e1a;
+    --color-ink-muted: #6b6055;
+    --color-ink-faint: #a79c8c;
+    /* Accent — oxblood pudar, dipakai SANGAT terbatas: tombol utama,
+       link aktif, garis aksen tipis. Bukan untuk mewarnai area luas. */
+    --color-accent-50: #f6e8e4;
+    --color-accent-200: #e0b3a8;
+    --color-accent-500: #a8503d;
+    --color-accent-600: #8b3a2b;
+    --color-accent-700: #6b2b1f;
+
     /* Lebar sidebar guru/siswa. */
     --spacing-sidebar: 260px;
 
