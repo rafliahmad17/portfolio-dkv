@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
 
     <title>@yield('title', 'DKV SMEKDA — Digital Art Showcase & Exhibition Archive')</title>
 
-    {{-- Meta tags khusus halaman child --}}
     @stack('meta')
 
     <link rel="icon" href="{{ asset('favicon.ico') }}">
 
-    {{-- Asset Tailwind CSS & JS via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    {{-- Typography Kurasi: Fraunces (Editorial Display), Inter (Clean Sans), & JetBrains Mono (Archival Labels) --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -22,12 +20,20 @@
         rel="stylesheet"
     >
 
-    {{-- Custom styles per halaman --}}
     @stack('styles')
+
+    <script>
+        (() => {
+            const saved = localStorage.getItem('dkv-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (saved === 'dark' || (!saved && prefersDark)) {
+                document.documentElement.classList.add('dark');
+            }
+        })();
+    </script>
 </head>
 
-<body class="min-h-screen bg-[#FAF7F2] text-[#191816] font-sans antialiased selection:bg-[#7A2E2E] selection:text-[#FAF7F2] flex flex-col justify-between">
-
+<body class="min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text)] font-sans antialiased flex flex-col justify-between transition-colors duration-200">
     @section('navbar')
         @include('layouts.partials.navbar')
     @show
@@ -41,6 +47,5 @@
     @show
 
     @stack('scripts')
-
 </body>
 </html>
