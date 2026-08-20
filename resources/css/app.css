@@ -6,17 +6,9 @@
 @source '../**/*.js';
 
 @theme {
-    /* Dipindahkan apa adanya dari tailwind.config inline (CDN) di
-       resources/views/layouts/app.blade.php. Nilai TIDAK diubah. */
-
-    /* Font UI/body — tidak berubah dari yang sudah dipakai. */
     --font-sans: 'Inter', sans-serif;
-
-    /* Untuk headline halaman publik/katalog ke depan
-       (belum dipakai di halaman manapun saat ini). */
     --font-display: 'Fraunces', serif;
 
-    /* Skala penuh warna aksen sekolah (identitas resmi). */
     --color-brand-50: #fef2f2;
     --color-brand-100: #fee2e2;
     --color-brand-200: #fecaca;
@@ -29,29 +21,20 @@
     --color-brand-900: #7f1d1d;
     --color-brand-950: #450a0a;
 
-    /* ── Sistem warna editorial baru (Tahap redesign UI/UX) ── */
-    /* Paper — latar & permukaan, warna ivory hangat, BUKAN putih polos */
     --color-paper: #faf7f1;
     --color-paper-elevated: #ffffff;
     --color-paper-muted: #f0eae0;
     --color-paper-border: #e2d9c9;
-    /* Ink — teks, hitam hangat (bukan #000 pekat) */
     --color-ink: #221e1a;
     --color-ink-muted: #6b6055;
     --color-ink-faint: #a79c8c;
-    /* Accent — oxblood pudar, dipakai SANGAT terbatas: tombol utama,
-       link aktif, garis aksen tipis. Bukan untuk mewarnai area luas. */
     --color-accent-50: #f6e8e4;
     --color-accent-200: #e0b3a8;
     --color-accent-500: #a8503d;
     --color-accent-600: #8b3a2b;
     --color-accent-700: #6b2b1f;
 
-    /* Lebar sidebar guru/siswa. */
     --spacing-sidebar: 260px;
-
-    /* Border radius custom (menggantikan skala default xs-2xl bawaan
-       Tailwind untuk key yang sama, persis seperti versi CDN). */
     --radius-xs: 4px;
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -60,3 +43,60 @@
     --radius-2xl: 28px;
     --radius-pill: 999px;
 }
+
+/* Semantic theme tokens. Components should use these instead of hard-coded
+   background/text colors so both themes stay visually consistent. */
+:root {
+    color-scheme: light;
+    --theme-bg: #faf7f1;
+    --theme-surface: #ffffff;
+    --theme-surface-muted: #f0eae0;
+    --theme-border: #e2d9c9;
+    --theme-text: #221e1a;
+    --theme-text-muted: #6b6055;
+    --theme-text-faint: #8f8375;
+    --theme-accent: #8b3a2b;
+    --theme-accent-soft: #f6e8e4;
+    --theme-selection: #8b3a2b;
+    --theme-selection-text: #fffaf5;
+}
+
+.dark {
+    color-scheme: dark;
+    --theme-bg: #141210;
+    --theme-surface: #1d1a17;
+    --theme-surface-muted: #26221e;
+    --theme-border: #3a342e;
+    --theme-text: #f5efe7;
+    --theme-text-muted: #c7baaa;
+    --theme-text-faint: #978b7d;
+    --theme-accent: #d98b77;
+    --theme-accent-soft: #38231f;
+    --theme-selection: #d98b77;
+    --theme-selection-text: #1a1412;
+}
+
+html {
+    background: var(--theme-bg);
+}
+
+body {
+    background-color: var(--theme-bg);
+    color: var(--theme-text);
+}
+
+::selection {
+    background: var(--theme-selection);
+    color: var(--theme-selection-text);
+}
+
+.theme-bg { background-color: var(--theme-bg); }
+.theme-surface { background-color: var(--theme-surface); }
+.theme-surface-muted { background-color: var(--theme-surface-muted); }
+.theme-border { border-color: var(--theme-border); }
+.theme-text { color: var(--theme-text); }
+.theme-text-muted { color: var(--theme-text-muted); }
+.theme-text-faint { color: var(--theme-text-faint); }
+.theme-accent { color: var(--theme-accent); }
+.theme-accent-bg { background-color: var(--theme-accent); }
+.theme-accent-soft { background-color: var(--theme-accent-soft); }
