@@ -9,13 +9,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --red:        #dc2626;
-            --red-bright: #ef4444;
-            --red-glow:   rgba(220,38,38,0.45);
-            --red-soft:   rgba(220,38,38,0.10);
-            --border:     rgba(255,255,255,0.07);
-        }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
