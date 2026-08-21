@@ -60,3 +60,25 @@
     --radius-2xl: 28px;
     --radius-pill: 999px;
 }
+
+/* ── Tahap 1 refactor CSS: ekstraksi zero-risk ──
+   Token & keyframe berikut disalin PERSIS (tanpa perubahan nilai) dari
+   blok yang identik byte-per-byte di beberapa file Blade tema gelap
+   (guru/*, sebagian CRUD siswa). Ini BUKAN bagian dari sistem token
+   editorial (--color-*) di atas — sengaja dipisah karena keduanya masih
+   representasi dua sistem desain yang berbeda (lihat audit CSS).
+   Referensi: guru/dashboard, guru/kategori/index, guru/siswa/index,
+   guru/profile, siswa/portfolio/edit, siswa/profile/edit,
+   siswa/achievement/edit. */
+:root {
+    --red:        #dc2626;
+    --red-bright: #ef4444;
+    --red-glow:   rgba(220,38,38,0.45);
+    --red-soft:   rgba(220,38,38,0.10);
+    --border:     rgba(255,255,255,0.07);
+}
+
+@keyframes livePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.3; transform: scale(0.6); }
+}

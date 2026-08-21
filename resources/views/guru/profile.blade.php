@@ -11,11 +11,10 @@
 @push('styles')
 <style>
     :root {
-        --red:        #dc2626;
-        --red-bright: #ef4444;
-        --red-glow:   rgba(220,38,38,0.45);
-        --red-soft:   rgba(220,38,38,0.10);
-        --border:     rgba(255,255,255,0.07);
+        /* --red, --red-bright, --red-glow, --red-soft, --border dipindahkan
+           ke resources/css/app.css (Tahap 1 refactor CSS) — nilai identik,
+           tidak berubah. --green & --green-glow unik untuk halaman ini,
+           tidak dipindah. */
         --green:      #22c55e;
         --green-glow: rgba(34,197,94,0.35);
     }
@@ -153,10 +152,6 @@
         width: 5px; height: 5px; background: var(--red); border-radius: 50%;
         box-shadow: 0 0 6px var(--red-glow);
         animation: livePulse 1.5s ease-in-out infinite;
-    }
-    @keyframes livePulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50%       { opacity: 0.3; transform: scale(0.6); }
     }
     .sidebar-nav { flex: 1; padding: 20px 14px; }
     .nav-label {
