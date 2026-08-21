@@ -17,10 +17,7 @@
 
 <style>
         :root {
-            --red:        #dc2626;
-            --red-bright: #ef4444;
-            --red-glow:   rgba(220,38,38,0.45);
-            --red-soft:   rgba(220,38,38,0.10);
+            
             --red-border: rgba(220,38,38,0.35);
             --surface:    rgba(255,255,255,0.03);
             --border:     rgba(255,255,255,0.1);
