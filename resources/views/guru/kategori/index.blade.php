@@ -13,13 +13,6 @@
 
 @push('styles')
 <style>
-        :root {
-            --red:        #dc2626;
-            --red-bright: #ef4444;
-            --red-glow:   rgba(220,38,38,0.45);
-            --red-soft:   rgba(220,38,38,0.10);
-            --border:     rgba(255,255,255,0.07);
-        }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -154,10 +147,6 @@
             animation: livePulse 1.5s ease-in-out infinite;
         }
 
-        @keyframes livePulse {
-            0%,100% { opacity: 1; transform: scale(1); }
-            50%      { opacity: 0.3; transform: scale(0.6); }
-        }
 
         .sidebar-nav { flex: 1; padding: 20px 14px; }
 
