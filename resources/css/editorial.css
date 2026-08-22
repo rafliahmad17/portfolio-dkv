@@ -1,0 +1,106 @@
+/* resources/css/editorial.css
+   ============================================================
+   Tahap 1 — Fase 0: Fondasi Design System
+   ============================================================
+   Berisi gaya GLOBAL yang dipakai lintas halaman: reset dasar,
+   paper grain overlay, scrollbar, :focus-visible, prefers-reduced-motion,
+   animasi reveal, dan reset tombol dasar.
+
+   File ini di-import lewat resources/css/app.css (@import './editorial.css')
+   sehingga tetap satu entry Vite (resources/css/app.css) — TIDAK didaftarkan
+   terpisah di vite.config.js.
+
+   ATURAN: jangan taruh style spesifik satu halaman/komponen di sini.
+   Style per halaman tetap tinggal di @push('styles') masing-masing Blade.
+   ============================================================ */
+
+/* ── RESET DASAR ──
+   Tailwind v4 preflight sudah menerapkan box-sizing: border-box, tapi baris
+   ini dipertahankan eksplisit sebagai bagian dari fondasi bersama, sesuai
+   permintaan Fase 0. Tidak mengubah apa pun yang sudah berjalan. */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ── PREFERS-REDUCED-MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--color-paper);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--color-accent-500);
+    border-radius: var(--radius-pill);
+}
+
+/* ── FOCUS STATE ──
+   Konsisten dipakai ulang di beberapa halaman (login, public profile, dll)
+   dengan warna oxblood aksen. Disatukan di sini sebagai default global. */
+:focus-visible {
+    outline: 2px solid var(--color-accent-500);
+    outline-offset: 3px;
+}
+
+/* ── PAPER GRAIN OVERLAY ──
+   Dipakai lewat: <div class="grain-overlay" aria-hidden="true"></div>
+   Sengaja TIDAK dipasang otomatis ke <body> supaya tidak mengubah tampilan
+   halaman yang belum direskin di fase berikutnya. */
+.grain-overlay {
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* ── REVEAL-ON-SCROLL ──
+   Dipasangkan dengan IntersectionObserver di JS masing-masing halaman:
+   tambahkan class "is-visible" saat elemen .reveal masuk viewport. */
+.reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+        opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── TOMBOL DASAR ──
+   Reset minimal elemen <button> polos. Gaya visual (warna, padding, radius)
+   tetap ditentukan lewat class tambahan per komponen/halaman. */
+.btn-reset {
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    border: none;
+    cursor: pointer;
+}

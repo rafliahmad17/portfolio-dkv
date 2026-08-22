@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+/* Tahap 1 — Fase 0: gaya global bersama (reset, grain, scrollbar, focus,
+   reveal, tombol dasar). Dipisah ke file sendiri, tetap satu entry Vite. */
+@import './editorial.css';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
@@ -15,6 +19,12 @@
     /* Untuk headline halaman publik/katalog ke depan
        (belum dipakai di halaman manapun saat ini). */
     --font-display: 'Fraunces', serif;
+
+    /* Ditambahkan Fase 0: JetBrains Mono sudah dimuat di layouts/app.blade.php
+       tapi belum punya token di sini, jadi utility Tailwind `font-mono`
+       masih jatuh ke default. Nilai TIDAK mengubah font apa pun yang sudah
+       tampil, hanya mengekspos token yang sebelumnya hilang. */
+    --font-mono: 'JetBrains Mono', monospace;
 
     /* Skala penuh warna aksen sekolah (identitas resmi). */
     --color-brand-50: #fef2f2;
