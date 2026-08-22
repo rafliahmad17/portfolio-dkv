@@ -11,9 +11,6 @@
 @push('styles')
 <style>
 
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-        @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap');
-
         :root {
             --canvas:        #FAF7F2;
             --canvas-raised: #FFFFFF;
@@ -30,9 +27,7 @@
             --success:       #3F6B4A;
             --success-wash:  rgba(63, 107, 74, 0.08);
 
-            --font-display: 'Cormorant Garamond', 'Iowan Old Style', Georgia, serif;
-            --font-sans:    'Satoshi', 'Helvetica Neue', Arial, sans-serif;
-            --font-mono:    'IBM Plex Mono', 'SFMono-Regular', Menlo, Consolas, monospace;
+            --font-display: var(--font-serif);
 
             /* Skala radius terkunci di seluruh halaman: 4px elemen kecil,
                8px input & tombol, 16px hanya untuk card mobile. */
