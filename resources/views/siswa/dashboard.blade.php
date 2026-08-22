@@ -13,7 +13,7 @@
 {{--
     ARAH DESAIN — "Curatorial Command Desk"
     Palet   : Warm ivory canvas (#FAF7F2), surface putih, aksen oxblood (#7A2E2E)
-    Tipografi: Fraunces (editorial serif — judul & angka besar), Archivo (sans — UI/body),
+    Tipografi: Fraunces (editorial serif — judul & angka besar), Public Sans (sans — UI/body),
                JetBrains Mono (label arsip, meta-data, angka statistik)
     Motif   : Sidebar sebagai "Studio Index" bernomor, kartu karya berlabel nomor katalog,
               blok statistik berbentuk ledger/buku arsip. Ikon tetap inline SVG bawaan
@@ -22,9 +22,6 @@
 --}}
 
 @push('styles')
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
     :root {
         --canvas:         #FAF7F2;
@@ -43,10 +40,6 @@
         --oxblood-ink:    #6E2A2A;
         --shadow-paper:   0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
         --shadow-lift:    0 1px 2px rgba(25,24,22,0.05), 0 22px 44px -20px rgba(122,46,46,0.22);
-
-        --font-serif: 'Fraunces', 'Newsreader', Georgia, serif;
-        --font-sans:  'Archivo', 'Public Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-        --font-mono:  'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
