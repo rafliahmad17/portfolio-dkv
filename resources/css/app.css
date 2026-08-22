@@ -13,18 +13,19 @@
     /* Dipindahkan apa adanya dari tailwind.config inline (CDN) di
        resources/views/layouts/app.blade.php. Nilai TIDAK diubah. */
 
-    /* Font UI/body — tidak berubah dari yang sudah dipakai. */
-    --font-sans: 'Inter', sans-serif;
+    /* Font UI/body — distandardisasi ke Public Sans (Fase 0.1). */
+    --font-sans: 'Public Sans', sans-serif;
 
     /* Untuk headline halaman publik/katalog ke depan
        (belum dipakai di halaman manapun saat ini). */
     --font-display: 'Fraunces', serif;
 
-    /* Ditambahkan Fase 0: JetBrains Mono sudah dimuat di layouts/app.blade.php
-       tapi belum punya token di sini, jadi utility Tailwind `font-mono`
-       masih jatuh ke default. Nilai TIDAK mengubah font apa pun yang sudah
-       tampil, hanya mengekspos token yang sebelumnya hilang. */
-    --font-mono: 'JetBrains Mono', monospace;
+    /* Token resmi font serif editorial (Fase 0.1). */
+    --font-serif: 'Fraunces', 'Newsreader', Georgia, serif;
+
+    /* Distandardisasi ke nilai resmi Fase 0.1 — menambahkan fallback
+       IBM Plex Mono & ui-monospace sebelum jatuh ke monospace default. */
+    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
 
     /* Skala penuh warna aksen sekolah (identitas resmi). */
     --color-brand-50: #fef2f2;
@@ -39,23 +40,23 @@
     --color-brand-900: #7f1d1d;
     --color-brand-950: #450a0a;
 
-    /* ── Sistem warna editorial baru (Tahap redesign UI/UX) ── */
+    /* ── Sistem warna editorial resmi "Kertas & Oxblood" (Fase 0.1) ── */
     /* Paper — latar & permukaan, warna ivory hangat, BUKAN putih polos */
-    --color-paper: #faf7f1;
-    --color-paper-elevated: #ffffff;
-    --color-paper-muted: #f0eae0;
-    --color-paper-border: #e2d9c9;
+    --color-paper: #FAF7F2;
+    --color-paper-elevated: #FFFFFF;
+    --color-paper-muted: #F0EADC;
+    --color-paper-border: #E2D9C9;
     /* Ink — teks, hitam hangat (bukan #000 pekat) */
-    --color-ink: #221e1a;
-    --color-ink-muted: #6b6055;
-    --color-ink-faint: #a79c8c;
+    --color-ink: #1C1A17;
+    --color-ink-muted: #4B463F;
+    --color-ink-faint: #756F65;
     /* Accent — oxblood pudar, dipakai SANGAT terbatas: tombol utama,
        link aktif, garis aksen tipis. Bukan untuk mewarnai area luas. */
-    --color-accent-50: #f6e8e4;
-    --color-accent-200: #e0b3a8;
-    --color-accent-500: #a8503d;
-    --color-accent-600: #8b3a2b;
-    --color-accent-700: #6b2b1f;
+    --color-accent-50: #F6E8E4;
+    --color-accent-200: #E0B3A8;
+    --color-accent-500: #A8503D;
+    --color-accent-600: #7A2E2E;
+    --color-accent-700: #5C2222;
 
     /* Lebar sidebar guru/siswa. */
     --spacing-sidebar: 260px;
