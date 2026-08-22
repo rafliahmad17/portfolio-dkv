@@ -14,7 +14,6 @@
         :root {
             --canvas:        #FAF7F2;
             --canvas-raised: #FFFFFF;
-            --ink:           #1C1917;
             --ink-soft:      #6B615A;
             --ink-faint:     #A79E93;
             --oxblood:       #7A2E2E;
@@ -39,7 +38,7 @@
         body {
             font-family: var(--font-sans);
             background: var(--canvas);
-            color: var(--ink);
+            color: var(--color-ink);
             -webkit-font-smoothing: antialiased;
             padding: 14px;
         }
@@ -215,10 +214,10 @@
             background: var(--canvas-raised);
         }
         .brandmark-text { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
-        .brandmark-text b { color: var(--ink); font-weight: 600; }
+        .brandmark-text b { color: var(--color-ink); font-weight: 600; }
 
         /* ── headline form ── */
-        .form-headline { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.18; color: var(--ink); }
+        .form-headline { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.18; color: var(--color-ink); }
         .form-headline em { font-style: italic; font-weight: 500; color: var(--oxblood); }
         .form-sub { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; margin-bottom: 30px; }
 
@@ -264,7 +263,7 @@
             width: 100%;
             font-family: var(--font-sans);
             font-size: 0.92rem; font-weight: 500;
-            color: var(--ink);
+            color: var(--color-ink);
             background: var(--canvas-raised);
             border: 1.5px solid var(--line);
             border-radius: var(--radius-sm);
@@ -335,7 +334,7 @@
             font-family: var(--font-sans);
             font-size: 0.88rem; font-weight: 600; letter-spacing: 0.01em;
             color: var(--canvas);
-            background: var(--ink);
+            background: var(--color-ink);
             border: none;
             border-radius: var(--radius-sm);
             padding: 6px 6px 6px 22px;
@@ -364,7 +363,7 @@
 
         /* ── bottom link + footer ── */
         .bottom-link { margin-top: 26px; text-align: center; font-size: 0.82rem; color: var(--ink-faint); }
-        .bottom-link a { color: var(--ink); font-weight: 600; text-decoration: none; }
+        .bottom-link a { color: var(--color-ink); font-weight: 600; text-decoration: none; }
         .bottom-link a:hover { color: var(--oxblood); }
 
         .page-footer {

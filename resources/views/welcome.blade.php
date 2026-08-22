@@ -33,7 +33,7 @@
         ========================================================== */
         :root {
             --ivory: #FAF7F2;
-            --paper: #FFFFFF;
+            --surface: #FFFFFF;
             --charcoal: #1C1A17;
             --charcoal-soft: rgba(28, 26, 23, 0.62);
             --charcoal-faint: rgba(28, 26, 23, 0.66);
@@ -189,7 +189,7 @@
 
         .nav-logo-mark {
             width: 32px; height: 32px;
-            background: var(--paper);
+            background: var(--surface);
             border: 1px solid var(--hairline);
             border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
@@ -378,7 +378,7 @@
         .plate {
             position: relative;
             z-index: 2;
-            background: var(--paper);
+            background: var(--surface);
             padding: 14px 14px 16px;
             border-radius: 4px;
             box-shadow: var(--shadow-warm);
@@ -636,7 +636,7 @@
         .feature-card--plain {
             position: relative;
             overflow: hidden;
-            background: var(--paper);
+            background: var(--surface);
             border: 1px solid var(--hairline);
             border-radius: 16px;
             padding: 28px 24px;
