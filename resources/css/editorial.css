@@ -104,3 +104,24 @@ html {
     border: none;
     cursor: pointer;
 }
+
+/* ── AUDIT TOMBOL GLOBAL (Fase 0.3A) ──
+   .btn-primary / .btn-outline / .btn-ghost SENGAJA belum dipusatkan di sini.
+   Audit lintas halaman menemukan implementasi yang masih berbeda-beda:
+   - .btn-primary di siswa/dashboard.blade.php (radius 9px, min-height 44px,
+     padding 8px 8px 8px 22px, font 0.82rem/700, teks var(--canvas), ikon
+     dibungkus .btn-icon-chip) TIDAK sama dengan .btn-primary di
+     welcome.blade.php (radius 100px/pill, tanpa min-height, padding
+     8px 8px 8px 24px, font 0.95rem/600, teks var(--ivory), ikon dibungkus
+     .icon-chip).
+   - .btn-ghost juga berbeda: radius 9px vs 7px, dan state hover-nya
+     memakai set custom property yang berbeda konsep (oxblood-border/
+     oxblood-ink/oxblood-soft di dashboard vs charcoal/hairline-soft di
+     welcome — bukan turunan oxblood sama sekali).
+   - auth/login.blade.php malah tidak memakai .btn-primary/.btn-ghost sama
+     sekali; tombol submit-nya pakai class sendiri, .btn-submit.
+   - .btn-outline belum dipakai di halaman mana pun saat ini.
+   Memaksakan satu class global sekarang berisiko mengubah tampilan
+   halaman yang sudah direskin. Abstraksi tombol akan disusun setelah
+   audit menyeluruh halaman editorial pada fase berikutnya — untuk saat
+   ini .btn-reset di atas tetap satu-satunya fondasi tombol global. */
