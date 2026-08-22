@@ -31,9 +31,6 @@
 
             /* Skala radius terkunci di seluruh halaman: 4px elemen kecil,
                8px input & tombol, 16px hanya untuk card mobile. */
-            --radius-xs: 4px;
-            --radius-sm: 8px;
-            --radius-lg: 16px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
