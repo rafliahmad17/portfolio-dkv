@@ -21,7 +21,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,500;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,500;1,600&family=Public+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* ==========================================================
            DESIGN TOKENS — Editorial Light (ivory / charcoal / oxblood)
@@ -50,9 +50,8 @@
             --ink: #0F0D0B;
             --shadow-warm: 0 30px 70px -20px rgba(28, 26, 23, 0.18);
             --shadow-soft: 0 2px 10px rgba(28, 26, 23, 0.05);
-            --font-display: 'Fraunces', 'Times New Roman', serif;
-            --font-body: 'Plus Jakarta Sans', sans-serif;
-            --font-mono: 'Space Mono', monospace;
+            --font-display: var(--font-serif);
+            --font-body: var(--font-sans);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
