@@ -21,7 +21,7 @@
 
             --soft: #9ca3af;
             --line: #e5e7eb;
-            --surface: #f8fafc;
+
             --red: #dc2626;
             --red-dark: #b91c1c;
             --red-soft: #fef2f2;
@@ -181,7 +181,7 @@
             height: 92px;
             border-radius: 10px;
             overflow: hidden;
-            background: var(--surface);
+            background: var(--color-paper);
             border: 1px solid var(--line);
             flex-shrink: 0;
             display: flex;
@@ -324,7 +324,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: var(--surface);
+            background: var(--color-paper);
             border: 1px solid var(--line);
             overflow: hidden;
         }
@@ -412,7 +412,7 @@
             height: 64px;
             border-radius: 7px;
             overflow: hidden;
-            background: var(--surface);
+            background: var(--color-paper);
             border: 1px solid var(--line);
             flex-shrink: 0;
         }
