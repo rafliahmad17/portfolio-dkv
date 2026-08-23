@@ -26,7 +26,7 @@
     :root {
         --canvas:         #FAF7F2;
         --canvas-deep:    #F3EEE3;
-        --surface:        #FFFFFF;
+
         --surface-sunk:   #F6F1E7;
         --ink-soft:       #4B463F;
         --ink-faint:      #756F65;
@@ -105,7 +105,7 @@
     .sidebar {
         position: fixed; top: 0; left: 0;
         width: 280px; height: 100vh;
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border-right: 1px solid var(--hairline);
         display: flex; flex-direction: column;
         z-index: 50;
@@ -347,7 +347,7 @@
     /* Catatan / flash message */
     .flash-note {
         display: flex; align-items: flex-start; gap: 14px;
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--hairline);
         border-left: 3px solid var(--oxblood);
         border-radius: 10px;
@@ -470,7 +470,7 @@
 
     .btn-ghost {
         display: inline-flex; align-items: center; gap: 9px;
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--hairline-strong);
         color: var(--ink-soft);
         padding: 10px 20px;
@@ -656,7 +656,7 @@
     }
 
     .stat-block {
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         padding: 28px 26px;
         transition: background 0.25s ease;
     }
@@ -695,7 +695,7 @@
 
     /* ── PANEL ETALASE KARYA ── */
     .showcase-panel {
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--hairline);
         border-radius: 20px;
         overflow: hidden;
@@ -744,7 +744,7 @@
     }
 
     .portfolio-card {
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--hairline);
         border-radius: 16px;
         overflow: hidden;
@@ -873,7 +873,7 @@
         padding: 9px;
         min-height: 42px;
         border-radius: 8px;
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--hairline-strong);
         color: var(--ink-soft);
         font-family: var(--font-sans);
@@ -891,7 +891,7 @@
         padding: 9px;
         min-height: 42px;
         border-radius: 8px;
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--oxblood-border);
         color: var(--oxblood-ink);
         font-family: var(--font-sans);
@@ -959,7 +959,7 @@
         display: flex; align-items: center; justify-content: center;
         transition: all 0.25s ease;
     }
-    .add-card:hover .add-card-icon { border-color: var(--oxblood-border); background: var(--surface); }
+    .add-card:hover .add-card-icon { border-color: var(--oxblood-border); background: var(--color-paper-elevated); }
     .add-card-icon svg { width: 17px; height: 17px; color: var(--ink-faint); transition: color 0.25s ease; }
     .add-card:hover .add-card-icon svg { color: var(--oxblood); }
 
@@ -1009,7 +1009,7 @@
         align-items: center; justify-content: center;
         width: 44px; height: 44px;
         border-radius: 10px;
-        background: var(--surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--hairline-strong);
         color: var(--ink-soft);
         cursor: pointer;
