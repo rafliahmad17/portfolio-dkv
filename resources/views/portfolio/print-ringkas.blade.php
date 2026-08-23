@@ -15,10 +15,10 @@
 
     <style>
         :root {
-            --paper: #ffffff;
+
 
             --ink-2: #374151;
-            --muted: #6b7280;
+
             --soft: #9ca3af;
             --line: #e5e7eb;
             --surface: #f8fafc;
@@ -67,7 +67,7 @@
             font-weight: 800;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: var(--muted);
+            color: var(--color-muted);
         }
 
         .toolbar-actions {
@@ -121,7 +121,7 @@
             min-height: 297mm;
             margin: 0 auto;
             padding: 14mm 15mm 12mm;
-            background: var(--paper);
+            background: var(--color-paper-elevated);
             box-shadow:
                 0 2px 5px rgba(0,0,0,.04),
                 0 20px 50px rgba(0,0,0,.08);
@@ -217,7 +217,7 @@
 
         .student-meta {
             margin-top: 8px;
-            color: var(--muted);
+            color: var(--color-muted);
             font-size: 9.5px;
             line-height: 1.6;
         }
@@ -379,7 +379,7 @@
             flex-shrink: 0;
             font-size: 7px;
             font-weight: 800;
-            color: var(--muted);
+            color: var(--color-muted);
         }
 
         /* =========================================================
@@ -467,7 +467,7 @@
 
         .work-description {
             margin-top: 4px;
-            color: var(--muted);
+            color: var(--color-muted);
             font-size: 9px;
             line-height: 1.55;
         }
@@ -562,7 +562,7 @@
         .qr-desc {
             max-width: 340px;
             margin: 0 auto;
-            color: var(--muted);
+            color: var(--color-muted);
             font-size: 8.5px;
             line-height: 1.55;
         }
