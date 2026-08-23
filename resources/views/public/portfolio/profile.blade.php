@@ -44,7 +44,6 @@
             --faint:        #8C857D;
             --line:         rgba(120,113,108,0.24);
             --line-soft:    rgba(120,113,108,0.14);
-            --oxblood:      #7A2E2E;
             --oxblood-ink:  #5E2222;
             --oxblood-04:   rgba(122,46,46,0.04);
             --oxblood-08:   rgba(122,46,46,0.08);
@@ -62,8 +61,6 @@
             --r-xs:   6px;
             --r-sm:   10px;
             --r-md:   14px;
-            --r-lg:   20px;
-            --r-pill: 999px;
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -101,10 +98,10 @@
 
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--color-paper); }
-        ::-webkit-scrollbar-thumb { background: var(--oxblood); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--color-accent-600); border-radius: 10px; }
 
         a:focus-visible, .share-copy-btn:focus-visible, button:focus-visible, .to-top-btn:focus-visible {
-            outline: 2px solid var(--oxblood); outline-offset: 3px; border-radius: 4px;
+            outline: 2px solid var(--color-accent-600); outline-offset: 3px; border-radius: 4px;
         }
 
         /* ══════════════════════ PROGRES BACA - garis tipis di tepi atas ══════════════════════
@@ -114,7 +111,7 @@
         .scroll-progress {
             position: fixed; top: 0; left: 0; height: 3px; width: 100%;
             transform-origin: 0 50%; transform: scaleX(0);
-            background: var(--oxblood); z-index: 60; pointer-events: none;
+            background: var(--color-accent-600); z-index: 60; pointer-events: none;
         }
         @supports (animation-timeline: scroll()) {
             .scroll-progress { animation: scrollProgressFill linear both; animation-timeline: scroll(root); }
@@ -142,7 +139,7 @@
 
         /* Tanda register/crop-mark, motif berulang dari dunia pracetak DKV,
            dipakai sebagai signature visual, bukan dekorasi generik. */
-        .corner { position: absolute; width: 12px; height: 12px; border-color: var(--oxblood); pointer-events: none; }
+        .corner { position: absolute; width: 12px; height: 12px; border-color: var(--color-accent-600); pointer-events: none; }
         .corner-tl { top: 7px; left: 7px; border-top: 1.4px solid; border-left: 1.4px solid; }
         .corner-tr { top: 7px; right: 7px; border-top: 1.4px solid; border-right: 1.4px solid; }
         .corner-bl { bottom: 7px; left: 7px; border-bottom: 1.4px solid; border-left: 1.4px solid; }
@@ -176,7 +173,7 @@
             background: rgba(250,247,242,0.86);
             backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--line);
-            border-radius: var(--r-lg);
+            border-radius: var(--radius-xl);
             box-shadow: var(--shadow-ambient);
             padding: 8px 8px 8px 16px;
         }
@@ -184,18 +181,18 @@
         .nav-brand { display: flex; align-items: center; gap: 9px; text-decoration: none; flex-shrink: 0; }
         .nav-logo-icon {
             width: 26px; height: 26px; border-radius: 50%;
-            border: 1.6px solid var(--oxblood);
+            border: 1.6px solid var(--color-accent-600);
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0;
         }
-        .nav-logo-icon svg { width: 13px; height: 13px; stroke: var(--oxblood); }
+        .nav-logo-icon svg { width: 13px; height: 13px; stroke: var(--color-accent-600); }
         .nav-brand-text {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.68rem; font-weight: 500; letter-spacing: 2.5px;
             text-transform: uppercase; color: var(--color-ink);
             white-space: nowrap;
         }
-        .nav-brand-text span { color: var(--oxblood); }
+        .nav-brand-text span { color: var(--color-accent-600); }
 
         .nav-links {
             display: flex; align-items: center; gap: 2px;
@@ -216,14 +213,14 @@
         .nav-badge {
             display: inline-flex; align-items: center; gap: 6px;
             background: var(--oxblood-08); border: 1px solid var(--oxblood-14);
-            border-radius: var(--r-pill); padding: 6px 12px 6px 10px;
+            border-radius: var(--radius-pill); padding: 6px 12px 6px 10px;
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.6rem; font-weight: 500; color: var(--oxblood-ink);
             letter-spacing: 1.2px; text-transform: uppercase;
             flex-shrink: 0; white-space: nowrap;
         }
         .live-dot {
-            width: 5px; height: 5px; background: var(--oxblood); border-radius: 50%;
+            width: 5px; height: 5px; background: var(--color-accent-600); border-radius: 50%;
             animation: livePulse 1.8s ease-in-out infinite;
             flex-shrink: 0; display: inline-block;
         }
@@ -349,7 +346,7 @@
         /* ══════════════════════ TENTANG ══════════════════════ */
         .about-card {
             background: var(--paper-raised); border: 1px solid var(--line);
-            border-radius: var(--r-lg); padding: 36px; box-shadow: var(--shadow-ambient);
+            border-radius: var(--radius-xl); padding: 36px; box-shadow: var(--shadow-ambient);
         }
         .about-bio {
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
@@ -430,7 +427,7 @@
         .empty-state {
             display: flex; flex-direction: column; align-items: center; gap: 14px;
             text-align: center; padding: 56px 24px; color: var(--faint);
-            border: 1px dashed var(--line); border-radius: var(--r-lg); font-size: 0.85rem;
+            border: 1px dashed var(--line); border-radius: var(--radius-xl); font-size: 0.85rem;
         }
         .empty-state svg { width: 34px; height: 34px; stroke: var(--faint); }
 
@@ -455,7 +452,7 @@
             background: var(--oxblood-08); border: 1px solid var(--oxblood-14);
             color: var(--oxblood-ink); font-family: 'IBM Plex Mono', monospace;
             font-size: 0.58rem; font-weight: 500; letter-spacing: 1.4px;
-            text-transform: uppercase; padding: 4px 9px; border-radius: var(--r-pill); margin-bottom: 11px;
+            text-transform: uppercase; padding: 4px 9px; border-radius: var(--radius-pill); margin-bottom: 11px;
         }
         .achv-type svg { width: 10px; height: 10px; }
         .achv-title {
@@ -518,7 +515,7 @@
             .footer-pill { min-height: 44px; }
         }
         .footer-pill:hover { border-color: var(--oxblood-24); color: var(--oxblood-ink); background: var(--oxblood-04); transform: translateY(-2px); }
-        .footer-pill svg { width: 15px; height: 15px; color: var(--oxblood); flex-shrink: 0; }
+        .footer-pill svg { width: 15px; height: 15px; color: var(--color-accent-600); flex-shrink: 0; }
 
         .footer-text { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--faint); line-height: 2; }
         .footer-text strong { color: var(--color-muted); font-weight: 500; }

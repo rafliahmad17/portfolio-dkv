@@ -13,10 +13,8 @@
 
         :root {
 
-            --canvas-raised: #FFFFFF;
             --ink-soft:      #6B615A;
             --ink-faint:     #A79E93;
-            --oxblood:       #7A2E2E;
             --oxblood-deep:  #5B2020;
             --oxblood-wash:  rgba(122, 46, 46, 0.07);
             --oxblood-ring:  rgba(122, 46, 46, 0.16);
@@ -93,7 +91,7 @@
         /* ── PANEL KIRI: "sampul katalog" — satu-satunya bidang oxblood penuh ── */
         .gallery-panel {
             position: relative;
-            background: var(--oxblood);
+            background: var(--color-accent-600);
             background-image:
                 radial-gradient(ellipse 620px 460px at 12% -8%, rgba(255,255,255,0.07), transparent 60%),
                 radial-gradient(ellipse 520px 520px at 100% 118%, rgba(0,0,0,0.22), transparent 62%),
@@ -200,7 +198,7 @@
             text-decoration: none;
             transition: color 0.2s ease;
         }
-        .back-link:hover { color: var(--oxblood); }
+        .back-link:hover { color: var(--color-accent-600); }
         .back-link svg { width: 13px; height: 13px; }
 
         /* ── brandmark kecil di panel form ── */
@@ -211,14 +209,14 @@
             border: 1px solid var(--line);
             border-radius: var(--radius-xs);
             padding: 3px;
-            background: var(--canvas-raised);
+            background: var(--color-paper-elevated);
         }
         .brandmark-text { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
         .brandmark-text b { color: var(--color-ink); font-weight: 600; }
 
         /* ── headline form ── */
         .form-headline { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.18; color: var(--color-ink); }
-        .form-headline em { font-style: italic; font-weight: 500; color: var(--oxblood); }
+        .form-headline em { font-style: italic; font-weight: 500; color: var(--color-accent-600); }
         .form-sub { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; margin-bottom: 30px; }
 
         /* ── status & error ── */
@@ -230,7 +228,7 @@
             margin-bottom: 20px;
         }
         .status-box { background: var(--success-wash); border-left: 2px solid var(--success); color: var(--success); font-weight: 500; }
-        .error-alert { background: var(--oxblood-wash); border-left: 2px solid var(--oxblood); color: var(--oxblood-deep); font-weight: 500; }
+        .error-alert { background: var(--oxblood-wash); border-left: 2px solid var(--color-accent-600); color: var(--oxblood-deep); font-weight: 500; }
         .status-box svg, .error-alert svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
 
         /* ── divider ── */
@@ -257,14 +255,14 @@
             pointer-events: none;
             transition: color 0.2s ease;
         }
-        .input-icon-wrap:focus-within .input-icon { color: var(--oxblood); }
+        .input-icon-wrap:focus-within .input-icon { color: var(--color-accent-600); }
 
         .input-field {
             width: 100%;
             font-family: var(--font-sans);
             font-size: 0.92rem; font-weight: 500;
             color: var(--color-ink);
-            background: var(--canvas-raised);
+            background: var(--color-paper-elevated);
             border: 1.5px solid var(--line);
             border-radius: var(--radius-sm);
             padding: 13px 16px 13px 43px;
@@ -272,8 +270,8 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
         .input-field::placeholder { color: var(--ink-faint); font-weight: 400; }
-        .input-field:focus { border-color: var(--oxblood); box-shadow: 0 0 0 3px var(--oxblood-ring); }
-        .input-field.is-error { border-color: var(--oxblood); background: var(--oxblood-wash); }
+        .input-field:focus { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px var(--oxblood-ring); }
+        .input-field.is-error { border-color: var(--color-accent-600); background: var(--oxblood-wash); }
 
         .pw-toggle {
             position: absolute; top: 50%; right: 6px;
@@ -285,7 +283,7 @@
             border-radius: var(--radius-xs);
             transition: color 0.2s ease;
         }
-        .pw-toggle:hover { color: var(--oxblood); }
+        .pw-toggle:hover { color: var(--color-accent-600); }
         .pw-toggle svg { width: 16px; height: 16px; }
 
         .field-error { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 0.74rem; font-weight: 500; color: var(--oxblood-deep); }
@@ -298,13 +296,13 @@
             width: 16px; height: 16px;
             border: 1.5px solid var(--line);
             border-radius: 4px;
-            background: var(--canvas-raised);
+            background: var(--color-paper-elevated);
             appearance: none; -webkit-appearance: none;
             cursor: pointer; position: relative;
             transition: all 0.2s ease;
             flex-shrink: 0;
         }
-        .remember-checkbox:checked { background: var(--oxblood); border-color: var(--oxblood); }
+        .remember-checkbox:checked { background: var(--color-accent-600); border-color: var(--color-accent-600); }
         .remember-checkbox:checked::after {
             content: '';
             position: absolute; top: 2px; left: 5px;
@@ -341,7 +339,7 @@
             cursor: pointer;
             transition: background 0.25s cubic-bezier(0.2,0.7,0.3,1), transform 0.2s cubic-bezier(0.2,0.7,0.3,1), box-shadow 0.25s ease;
         }
-        .btn-submit:hover { background: var(--oxblood); transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(122,46,46,0.5); }
+        .btn-submit:hover { background: var(--color-accent-600); transform: translateY(-2px); box-shadow: 0 12px 28px -10px rgba(122,46,46,0.5); }
         .btn-submit:active { transform: translateY(0) scale(0.98); }
         .btn-submit-label { padding: 8px 0; }
 
@@ -364,7 +362,7 @@
         /* ── bottom link + footer ── */
         .bottom-link { margin-top: 26px; text-align: center; font-size: 0.82rem; color: var(--ink-faint); }
         .bottom-link a { color: var(--color-ink); font-weight: 600; text-decoration: none; }
-        .bottom-link a:hover { color: var(--oxblood); }
+        .bottom-link a:hover { color: var(--color-accent-600); }
 
         .page-footer {
             margin-top: 30px;
@@ -375,11 +373,11 @@
             color: var(--ink-faint);
             line-height: 1.8;
         }
-        .page-footer .accent { color: var(--oxblood); }
+        .page-footer .accent { color: var(--color-accent-600); }
 
         /* ── fokus keyboard tetap kelihatan ── */
         a:focus-visible, button:focus-visible, input:focus-visible {
-            outline: 2px solid var(--oxblood);
+            outline: 2px solid var(--color-accent-600);
             outline-offset: 2px;
         }
 
@@ -394,7 +392,7 @@
 
             .form-panel { padding: 32px 20px 44px; min-height: auto; }
             .form-shell {
-                background: var(--canvas-raised);
+                background: var(--color-paper-elevated);
                 border: 1px solid var(--line);
                 border-radius: var(--radius-lg);
                 padding: 30px 26px;

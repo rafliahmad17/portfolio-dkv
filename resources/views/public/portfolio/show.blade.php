@@ -59,7 +59,6 @@
        ══════════════════════════════════════════════════════════════ */
     :root {
         --pw-paper:       #FAF7EF;  /* latar halaman — kertas gading hangat */
-        --pw-surface:     #FFFFFF;  /* permukaan kartu/mat di atas kertas */
         --pw-surface-2:   #F2ECDD;  /* permukaan sekunder — mat foto, chip */
         --pw-ink:         #1C1A16;  /* teks utama — charcoal hangat, bukan hitam pekat */
         --pw-ink-soft:    #4A453B;  /* teks sekunder / paragraf panjang */
@@ -72,9 +71,7 @@
         --pw-accent-tint: #F4E6DF; /* oxblood sangat pudar — latar chip/badge */
 
         --pw-font-body:    'Inter', sans-serif;
-        --pw-font-display: 'Fraunces', serif;
 
-        --pw-radius-sm: 8px;
         --pw-radius-md: 14px;
         --pw-radius-lg: 22px;
 
@@ -186,7 +183,7 @@
         color: var(--pw-ink-soft);
         text-decoration: none;
         border: 1px solid transparent;
-        border-radius: var(--pw-radius-sm);
+        border-radius: var(--radius-sm);
         background: transparent;
         cursor: pointer;
         transition: background 0.2s var(--pw-ease), border-color 0.2s var(--pw-ease), color 0.2s var(--pw-ease);
@@ -194,7 +191,7 @@
     }
 
     .pw-nav-btn:hover {
-        background: var(--pw-surface);
+        background: var(--color-paper-elevated);
         border-color: var(--pw-hairline);
         color: var(--pw-ink);
     }
@@ -233,7 +230,7 @@
     }
 
     .pw-frame-inner {
-        background: var(--pw-surface);
+        background: var(--color-paper-elevated);
         border: 1px solid var(--pw-hairline-2);
         border-radius: var(--pw-radius-md);
         overflow: hidden;
@@ -246,7 +243,7 @@
         width: 100%;
         max-height: 74vh;
         object-fit: contain;
-        background: var(--pw-surface);
+        background: var(--color-paper-elevated);
     }
 
     .pw-plate {
@@ -268,7 +265,7 @@
     }
 
     .pw-title {
-        font-family: var(--pw-font-display);
+        font-family: var(--font-display);
         font-weight: 700;
         font-size: clamp(1.9rem, 4.6vw, 3.1rem);
         line-height: 1.08;
@@ -289,12 +286,12 @@
     }
 
     .pw-avatar {
-        width: 42px; height: 42px; border-radius: var(--pw-radius-sm);
+        width: 42px; height: 42px; border-radius: var(--radius-sm);
         flex-shrink: 0; overflow: hidden;
         background: var(--pw-surface-2);
         border: 1px solid var(--pw-hairline);
         display: flex; align-items: center; justify-content: center;
-        font-family: var(--pw-font-display);
+        font-family: var(--font-display);
         font-weight: 700; font-size: 1rem; color: var(--pw-ink-soft);
     }
 
@@ -375,7 +372,7 @@
         padding: 10px 16px;
         border: 1px solid var(--pw-hairline);
         border-radius: 999px;
-        background: var(--pw-surface);
+        background: var(--color-paper-elevated);
         color: var(--pw-ink);
         text-decoration: none;
         font-size: 0.82rem; font-weight: 600;
@@ -397,7 +394,7 @@
         margin-top: 40px;
         border: 1px solid var(--pw-hairline);
         border-radius: var(--pw-radius-md);
-        background: var(--pw-surface);
+        background: var(--color-paper-elevated);
         padding: 22px;
         display: grid;
         grid-template-columns: 1fr auto;
@@ -422,7 +419,7 @@
         display: flex; align-items: center; gap: 8px;
         background: var(--pw-paper);
         border: 1px solid var(--pw-hairline);
-        border-radius: var(--pw-radius-sm);
+        border-radius: var(--radius-sm);
         padding: 10px 12px;
         cursor: pointer;
         transition: border-color 0.2s var(--pw-ease);
@@ -442,7 +439,7 @@
     .pw-btn {
         display: inline-flex; align-items: center; justify-content: center; gap: 7px;
         padding: 10px 16px;
-        border-radius: var(--pw-radius-sm);
+        border-radius: var(--radius-sm);
         font-family: var(--pw-font-body);
         font-size: 0.8rem; font-weight: 700;
         border: 1px solid var(--pw-accent);
@@ -527,7 +524,7 @@
     }
 
     .pw-related-head h2 {
-        font-family: var(--pw-font-display);
+        font-family: var(--font-display);
         font-weight: 700;
         font-size: 1.3rem;
         color: var(--pw-ink);
@@ -547,7 +544,7 @@
         border-radius: var(--pw-radius-md);
         overflow: hidden;
         border: 1px solid var(--pw-hairline-2);
-        background: var(--pw-surface);
+        background: var(--color-paper-elevated);
         transition: border-color 0.25s var(--pw-ease), box-shadow 0.25s var(--pw-ease), transform 0.25s var(--pw-ease);
     }
 

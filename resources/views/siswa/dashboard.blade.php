@@ -25,15 +25,11 @@
 <style>
     :root {
 
-        --canvas-deep:    #F3EEE3;
-
         --surface-sunk:   #F6F1E7;
 
 
         --hairline:       rgba(25,24,22,0.10);
         --hairline-strong:rgba(25,24,22,0.18);
-        --oxblood:        #7A2E2E;
-        --oxblood-deep:   #5C2222;
         --oxblood-soft:   rgba(122,46,46,0.08);
         --oxblood-border: rgba(122,46,46,0.26);
         --oxblood-ink:    #6E2A2A;
@@ -85,7 +81,7 @@
     a:focus-visible,
     button:focus-visible,
     [tabindex]:focus-visible {
-        outline: 2px solid var(--oxblood);
+        outline: 2px solid var(--color-accent-600);
         outline-offset: 3px;
         border-radius: 6px;
     }
@@ -127,7 +123,7 @@
         display: flex; align-items: center; gap: 10px;
     }
 
-    .logo-wordmark .dot { color: var(--oxblood); }
+    .logo-wordmark .dot { color: var(--color-accent-600); }
 
     .logo-mark {
         width: 34px; height: 34px;

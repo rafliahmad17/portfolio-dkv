@@ -22,8 +22,6 @@
             --soft: #9ca3af;
             --line: #e5e7eb;
 
-            --red: #dc2626;
-            --red-dark: #b91c1c;
             --red-soft: #fef2f2;
         }
 
@@ -101,11 +99,11 @@
 
         .tbtn-red {
             color: white;
-            background: var(--red);
+            background: var(--color-brand-600);
         }
 
         .tbtn-red:hover {
-            background: var(--red-dark);
+            background: var(--color-brand-700);
         }
 
         /* =========================================================
@@ -187,7 +185,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--red);
+            color: var(--color-brand-600);
             font-size: 28px;
             font-weight: 900;
         }
@@ -208,7 +206,7 @@
 
         .student-role {
             margin-top: 7px;
-            color: var(--red);
+            color: var(--color-brand-600);
             font-size: 10px;
             font-weight: 800;
             letter-spacing: 1.5px;
@@ -246,7 +244,7 @@
         .section-mark {
             width: 3px;
             height: 17px;
-            background: var(--red);
+            background: var(--color-brand-600);
             border-radius: 2px;
         }
 
@@ -265,7 +263,7 @@
         .bio-box {
             padding: 12px 14px;
             background: #fafafa;
-            border-left: 2px solid var(--red);
+            border-left: 2px solid var(--color-brand-600);
             border-radius: 0 7px 7px 0;
         }
 
@@ -338,7 +336,7 @@
         .skill-icon-text {
             font-size: 9px;
             font-weight: 900;
-            color: var(--red);
+            color: var(--color-brand-600);
             letter-spacing: -.3px;
         }
 
@@ -371,7 +369,7 @@
 
         .skill-bar-fill {
             height: 100%;
-            background: var(--red);
+            background: var(--color-brand-600);
             border-radius: 99px;
         }
 
@@ -432,7 +430,7 @@
             align-items: center;
             font-size: 20px;
             font-weight: 900;
-            color: var(--red);
+            color: var(--color-brand-600);
         }
 
         .work-content {
@@ -458,7 +456,7 @@
             padding: 4px 7px;
             border-radius: 99px;
             background: var(--red-soft);
-            color: var(--red);
+            color: var(--color-brand-600);
             font-size: 7px;
             font-weight: 900;
             text-transform: uppercase;
@@ -509,7 +507,7 @@
             align-items: center;
             justify-content: center;
             background: var(--red-soft);
-            color: var(--red);
+            color: var(--color-brand-600);
         }
 
         .contact-icon svg {
