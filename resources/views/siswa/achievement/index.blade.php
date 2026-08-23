@@ -19,7 +19,7 @@
         :root {
             
             --red-border: rgba(220,38,38,0.35);
-            --surface:    rgba(255,255,255,0.03);
+
             --border:     rgba(255,255,255,0.1);
         }
 
