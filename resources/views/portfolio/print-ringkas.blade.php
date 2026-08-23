@@ -65,7 +65,7 @@
             font-weight: 800;
             letter-spacing: 1.5px;
             text-transform: uppercase;
-            color: var(--color-muted);
+            color: var(--color-ink-muted);
         }
 
         .toolbar-actions {
@@ -215,7 +215,7 @@
 
         .student-meta {
             margin-top: 8px;
-            color: var(--color-muted);
+            color: var(--color-ink-muted);
             font-size: 9.5px;
             line-height: 1.6;
         }
@@ -377,7 +377,7 @@
             flex-shrink: 0;
             font-size: 7px;
             font-weight: 800;
-            color: var(--color-muted);
+            color: var(--color-ink-muted);
         }
 
         /* =========================================================
@@ -465,7 +465,7 @@
 
         .work-description {
             margin-top: 4px;
-            color: var(--color-muted);
+            color: var(--color-ink-muted);
             font-size: 9px;
             line-height: 1.55;
         }
@@ -560,7 +560,7 @@
         .qr-desc {
             max-width: 340px;
             margin: 0 auto;
-            color: var(--color-muted);
+            color: var(--color-ink-muted);
             font-size: 8.5px;
             line-height: 1.55;
         }
