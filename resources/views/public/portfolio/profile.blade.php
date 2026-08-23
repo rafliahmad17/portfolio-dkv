@@ -40,7 +40,7 @@
             --paper-raised: #FFFEFB;
 
             --ink-soft:     #3A3733;
-            --muted:        #57534E;
+
             --faint:        #8C857D;
             --line:         rgba(120,113,108,0.24);
             --line-soft:    rgba(120,113,108,0.14);
@@ -206,7 +206,7 @@
         .nav-link {
             flex-shrink: 0;
             font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1px;
-            color: var(--muted); text-decoration: none;
+            color: var(--color-muted); text-decoration: none;
             padding: 8px 14px; border-radius: var(--r-sm);
             white-space: nowrap; transition: all 0.25s var(--ease);
         }
@@ -313,7 +313,7 @@
             flex-wrap: wrap;
         }
         .share-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); }
-        .share-url-text { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--muted); min-width: 160px; word-break: break-all; }
+        .share-url-text { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--color-muted); min-width: 160px; word-break: break-all; }
         .share-copy-btn {
             font-size: 0.68rem; font-weight: 700; color: var(--oxblood-ink);
             letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
@@ -336,7 +336,7 @@
            tanpa label sama sekali. */
         .section-block { padding-bottom: 72px; }
         .mast { display: flex; align-items: baseline; gap: 10px; margin-bottom: 28px; }
-        .mast-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); flex-shrink: 0; }
+        .mast-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.7rem; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--color-muted); flex-shrink: 0; }
         .mast-rule { flex: 1; height: 1px; background: var(--line); }
 
         .karya-heading {
@@ -464,7 +464,7 @@
         }
         .achv-issuer {
             display: flex; align-items: center; gap: 6px; font-size: 0.78rem;
-            color: var(--muted); margin-bottom: 9px; font-weight: 500;
+            color: var(--color-muted); margin-bottom: 9px; font-weight: 500;
         }
         .achv-issuer svg { width: 12px; height: 12px; flex-shrink: 0; color: var(--faint); }
         .achv-meta {
@@ -503,7 +503,7 @@
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
             font-weight: 700; font-size: 1.7rem; color: var(--color-ink); margin-bottom: 10px;
         }
-        .footer-cta-sub { font-size: 0.86rem; color: var(--muted); margin-bottom: 30px; }
+        .footer-cta-sub { font-size: 0.86rem; color: var(--color-muted); margin-bottom: 30px; }
         .footer-contact-row {
             display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
             margin-bottom: 40px;
@@ -521,7 +521,7 @@
         .footer-pill svg { width: 15px; height: 15px; color: var(--oxblood); flex-shrink: 0; }
 
         .footer-text { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; color: var(--faint); line-height: 2; }
-        .footer-text strong { color: var(--muted); font-weight: 500; }
+        .footer-text strong { color: var(--color-muted); font-weight: 500; }
 
         .to-top-btn {
             display: inline-flex; align-items: center; gap: 7px; margin-top: 26px;
