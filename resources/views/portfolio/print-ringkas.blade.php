@@ -16,7 +16,7 @@
     <style>
         :root {
             --paper: #ffffff;
-            --ink: #111827;
+
             --ink-2: #374151;
             --muted: #6b7280;
             --soft: #9ca3af;
@@ -36,7 +36,7 @@
         html,
         body {
             font-family: 'Inter', Arial, sans-serif;
-            color: var(--ink);
+            color: var(--color-ink);
             background: #f1f1ef;
             -webkit-font-smoothing: antialiased;
         }
@@ -94,7 +94,7 @@
         }
 
         .tbtn-gray {
-            color: var(--ink);
+            color: var(--color-ink);
             background: #f3f4f6;
             border: 1px solid var(--line);
         }
@@ -255,7 +255,7 @@
             font-weight: 900;
             letter-spacing: 2.2px;
             text-transform: uppercase;
-            color: var(--ink);
+            color: var(--color-ink);
         }
 
         /* =========================================================
@@ -351,7 +351,7 @@
             font-size: 9.5px;
             line-height: 1.25;
             font-weight: 700;
-            color: var(--ink);
+            color: var(--color-ink);
         }
 
         .skill-level-row {
@@ -527,7 +527,7 @@
         }
 
         .contact-value {
-            color: var(--ink);
+            color: var(--color-ink);
             font-size: 8.5px;
             font-weight: 700;
             line-height: 1.3;
