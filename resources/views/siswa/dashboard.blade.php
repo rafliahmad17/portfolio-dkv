@@ -24,7 +24,7 @@
 @push('styles')
 <style>
     :root {
-        --canvas:         #FAF7F2;
+
         --canvas-deep:    #F3EEE3;
 
         --surface-sunk:   #F6F1E7;
@@ -46,7 +46,7 @@
     html, body {
         height: 100%;
         font-family: var(--font-sans);
-        background-color: var(--canvas);
+        background-color: var(--color-paper);
         color: var(--color-ink);
         overflow-x: hidden;
     }
@@ -92,7 +92,7 @@
 
     .skip-link {
         position: fixed; top: -100px; left: 16px; z-index: 100;
-        background: var(--color-ink); color: var(--canvas);
+        background: var(--color-ink); color: var(--color-paper);
         padding: 10px 18px; border-radius: 8px;
         font-family: var(--font-sans);
         font-size: 0.8rem; font-weight: 600;
@@ -170,7 +170,7 @@
         background: var(--oxblood);
         display: flex; align-items: center; justify-content: center;
         font-family: var(--font-serif);
-        font-size: 1.05rem; font-weight: 700; color: var(--canvas);
+        font-size: 1.05rem; font-weight: 700; color: var(--color-paper);
         flex-shrink: 0;
         overflow: hidden;
     }
@@ -437,7 +437,7 @@
         display: inline-flex; align-items: center; gap: 12px;
         background: var(--oxblood);
         border: 1px solid var(--oxblood);
-        color: var(--canvas);
+        color: var(--color-paper);
         padding: 8px 8px 8px 22px;
         min-height: 44px;
         border-radius: 9px;
@@ -464,7 +464,7 @@
     .btn-primary:hover .btn-icon-chip { transform: translate(2px,-2px) rotate(8deg); }
 
     /* Varian terang — dipakai di atas panel gelap (Hero Spotlight) */
-    .btn-primary.on-dark { background: var(--canvas); border-color: var(--canvas); color: var(--color-ink); }
+    .btn-primary.on-dark { background: var(--color-paper); border-color: var(--color-paper); color: var(--color-ink); }
     .btn-primary.on-dark:hover { background: #FFFFFF; box-shadow: 0 24px 48px -22px rgba(0,0,0,0.5); }
     .btn-primary.on-dark .btn-icon-chip { background: rgba(25,24,22,0.08); }
 
@@ -487,7 +487,7 @@
     .btn-ghost svg { width: 15px; height: 15px; flex-shrink: 0; }
 
     .btn-ghost.on-dark { background: transparent; border-color: rgba(250,247,242,0.22); color: rgba(250,247,242,0.82); }
-    .btn-ghost.on-dark:hover { background: rgba(250,247,242,0.08); border-color: rgba(250,247,242,0.42); color: var(--canvas); }
+    .btn-ghost.on-dark:hover { background: rgba(250,247,242,0.08); border-color: rgba(250,247,242,0.42); color: var(--color-paper); }
 
     /* ── HERO SPOTLIGHT — karya terbaru, dipajang seperti di dinding galeri ── */
     .hero-spotlight {
@@ -528,7 +528,7 @@
         overflow: hidden;
         border-radius: 10px;
         aspect-ratio: 4 / 3;
-        background: var(--canvas);
+        background: var(--color-paper);
         display: block;
     }
     .hero-image {
@@ -568,7 +568,7 @@
         font-weight: 600;
         letter-spacing: -0.5px;
         line-height: 1.16;
-        color: var(--canvas);
+        color: var(--color-paper);
         margin-bottom: 14px;
     }
     .hero-desc {
@@ -622,7 +622,7 @@
         transform: translate(var(--fx, -999px), var(--fy, -999px)) translate(-50%, -50%) scale(0.6);
         opacity: 0;
         background: var(--color-ink);
-        color: var(--canvas);
+        color: var(--color-paper);
         font-family: var(--font-mono);
         font-size: 0.68rem;
         font-weight: 600;
@@ -801,7 +801,7 @@
     .pdf-pill {
         position: absolute; top: 10px; left: 10px;
         background: var(--color-ink);
-        color: var(--canvas);
+        color: var(--color-paper);
         font-family: var(--font-mono);
         font-size: 0.6rem;
         font-weight: 700;
@@ -901,7 +901,7 @@
         width: 100%;
         transition: all 0.2s ease;
     }
-    .btn-action-delete:hover { background: var(--oxblood); border-color: var(--oxblood); color: var(--canvas); }
+    .btn-action-delete:hover { background: var(--oxblood); border-color: var(--oxblood); color: var(--color-paper); }
     .btn-action-delete svg { width: 13px; height: 13px; flex-shrink: 0; }
 
     .empty-wrap {
