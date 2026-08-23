@@ -28,7 +28,7 @@
         --canvas-deep:    #F3EEE3;
 
         --surface-sunk:   #F6F1E7;
-        --ink-soft:       #4B463F;
+
         --ink-faint:      #756F65;
         --hairline:       rgba(25,24,22,0.10);
         --hairline-strong:rgba(25,24,22,0.18);
@@ -237,7 +237,7 @@
         font-family: var(--font-sans);
         font-size: 0.85rem;
         font-weight: 600;
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         text-decoration: none;
         transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
         border: 1px solid transparent;
@@ -283,7 +283,7 @@
         min-height: 44px;
         border-radius: 10px;
         background: none; border: 1px solid transparent;
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         font-family: var(--font-sans);
         font-size: 0.85rem;
         font-weight: 600;
@@ -326,7 +326,7 @@
     }
 
     .topbar-crumb-sep { margin-left: 8px; color: var(--ink-faint); }
-    .topbar-crumb-current { margin-left: 8px; color: var(--ink-soft); }
+    .topbar-crumb-current { margin-left: 8px; color: var(--color-ink-muted); }
 
     .date-stamp {
         display: inline-flex; align-items: center; gap: 8px;
@@ -336,7 +336,7 @@
         font-family: var(--font-mono);
         font-size: 0.7rem;
         font-weight: 600;
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         letter-spacing: 0.5px;
         white-space: nowrap;
     }
@@ -427,7 +427,7 @@
     .studio-sub {
         font-family: var(--font-sans);
         font-size: 0.92rem;
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         max-width: 52ch;
         line-height: 1.65;
     }
@@ -472,7 +472,7 @@
         display: inline-flex; align-items: center; gap: 9px;
         background: var(--color-paper-elevated);
         border: 1px solid var(--hairline-strong);
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         padding: 10px 20px;
         min-height: 44px;
         border-radius: 9px;
@@ -789,7 +789,7 @@
         background: rgba(250,247,242,0.92);
         backdrop-filter: blur(6px);
         border: 1px solid var(--hairline-strong);
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         font-family: var(--font-mono);
         font-size: 0.64rem;
         font-weight: 600;
@@ -842,7 +842,7 @@
     .portfolio-desc {
         font-family: var(--font-sans);
         font-size: 0.8rem;
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         line-height: 1.55;
         margin-bottom: 14px;
         display: -webkit-box;
@@ -875,7 +875,7 @@
         border-radius: 8px;
         background: var(--color-paper-elevated);
         border: 1px solid var(--hairline-strong);
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         font-family: var(--font-sans);
         font-size: 0.74rem;
         font-weight: 700;
@@ -934,7 +934,7 @@
     .empty-sub {
         font-family: var(--font-sans);
         font-size: 0.85rem;
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         margin-bottom: 30px;
         line-height: 1.7;
         max-width: 38ch;
@@ -986,7 +986,7 @@
         color: var(--ink-faint);
         letter-spacing: 0.3px;
     }
-    .dashboard-footer-strip strong { color: var(--ink-soft); font-weight: 600; }
+    .dashboard-footer-strip strong { color: var(--color-ink-muted); font-weight: 600; }
 
     /* ================================================================
        OFF-CANVAS DRAWER (SIDEBAR MOBILE) & TOMBOL HAMBURGER
@@ -1011,7 +1011,7 @@
         border-radius: 10px;
         background: var(--color-paper-elevated);
         border: 1px solid var(--hairline-strong);
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         cursor: pointer;
         flex-shrink: 0;
         transition: all 0.22s ease;
@@ -1026,7 +1026,7 @@
         border-radius: 9px;
         background: var(--surface-sunk);
         border: 1px solid var(--hairline);
-        color: var(--ink-soft);
+        color: var(--color-ink-muted);
         cursor: pointer;
         flex-shrink: 0;
         transition: all 0.22s ease;
