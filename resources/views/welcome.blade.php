@@ -47,7 +47,6 @@
             --sage: #6E7A5E;
             --gold: #A8823C;
             --gold-line: rgba(168, 130, 60, 0.35);
-            --ink: #0F0D0B;
             --shadow-warm: 0 30px 70px -20px rgba(28, 26, 23, 0.18);
             --shadow-soft: 0 2px 10px rgba(28, 26, 23, 0.05);
             --font-display: var(--font-serif);
@@ -689,7 +688,7 @@
         /* ====== MANIFESTO (dark editorial break) ====== */
         .manifesto {
             position: relative;
-            background: var(--ink);
+            background: var(--color-ink);
             color: var(--ivory);
             padding: 100px 0;
             overflow: hidden;
