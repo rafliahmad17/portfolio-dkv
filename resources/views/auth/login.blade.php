@@ -12,7 +12,7 @@
 <style>
 
         :root {
-            --canvas:        #FAF7F2;
+
             --canvas-raised: #FFFFFF;
             --ink-soft:      #6B615A;
             --ink-faint:     #A79E93;
@@ -37,7 +37,7 @@
 
         body {
             font-family: var(--font-sans);
-            background: var(--canvas);
+            background: var(--color-paper);
             color: var(--color-ink);
             -webkit-font-smoothing: antialiased;
             padding: 14px;
@@ -309,7 +309,7 @@
             content: '';
             position: absolute; top: 2px; left: 5px;
             width: 4px; height: 7px;
-            border: 2px solid var(--canvas);
+            border: 2px solid var(--color-paper);
             border-top: none; border-left: none;
             transform: rotate(45deg);
         }
@@ -333,7 +333,7 @@
             display: flex; align-items: center; justify-content: space-between;
             font-family: var(--font-sans);
             font-size: 0.88rem; font-weight: 600; letter-spacing: 0.01em;
-            color: var(--canvas);
+            color: var(--color-paper);
             background: var(--color-ink);
             border: none;
             border-radius: var(--radius-sm);
