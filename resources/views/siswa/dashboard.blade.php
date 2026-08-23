@@ -29,7 +29,7 @@
 
         --surface-sunk:   #F6F1E7;
 
-        --ink-faint:      #756F65;
+
         --hairline:       rgba(25,24,22,0.10);
         --hairline-strong:rgba(25,24,22,0.18);
         --oxblood:        #7A2E2E;
@@ -152,7 +152,7 @@
     .logo-sub {
         font-family: var(--font-mono);
         font-size: 0.62rem;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         margin-top: 6px;
         letter-spacing: 1.6px;
         text-transform: uppercase;
@@ -188,7 +188,7 @@
     .profile-nis {
         font-family: var(--font-mono);
         font-size: 0.68rem;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         margin-bottom: 8px;
         letter-spacing: 0.3px;
     }
@@ -223,7 +223,7 @@
         font-weight: 600;
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         padding: 0 10px;
         margin-bottom: 10px;
         margin-top: 4px;
@@ -249,7 +249,7 @@
         font-family: var(--font-mono);
         font-size: 0.68rem;
         font-weight: 500;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         flex-shrink: 0;
         width: 16px;
     }
@@ -320,12 +320,12 @@
         font-family: var(--font-mono);
         font-size: 0.72rem;
         font-weight: 500;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         letter-spacing: 1px;
         text-transform: uppercase;
     }
 
-    .topbar-crumb-sep { margin-left: 8px; color: var(--ink-faint); }
+    .topbar-crumb-sep { margin-left: 8px; color: var(--color-ink-faint); }
     .topbar-crumb-current { margin-left: 8px; color: var(--color-ink-muted); }
 
     .date-stamp {
@@ -397,7 +397,7 @@
         font-size: 0.68rem;
         letter-spacing: 1.4px;
         text-transform: uppercase;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
     }
     .studio-eyebrow-row .sep { color: var(--hairline-strong); }
     .studio-eyebrow-row a {
@@ -669,7 +669,7 @@
         font-weight: 600;
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         margin-bottom: 20px;
     }
     .stat-label .idx { color: var(--oxblood); }
@@ -720,7 +720,7 @@
     .section-sub {
         font-family: var(--font-mono);
         font-size: 0.72rem;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         margin-top: 5px;
         letter-spacing: 0.3px;
     }
@@ -856,7 +856,7 @@
         display: flex; align-items: center; gap: 6px;
         font-family: var(--font-mono);
         font-size: 0.68rem;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         margin-bottom: 16px;
     }
     .portfolio-meta svg { width: 12px; height: 12px; flex-shrink: 0; }
@@ -921,7 +921,7 @@
         display: flex; align-items: center; justify-content: center;
         margin: 0 auto 26px;
     }
-    .empty-icon svg { width: 26px; height: 26px; color: var(--ink-faint); }
+    .empty-icon svg { width: 26px; height: 26px; color: var(--color-ink-faint); }
 
     .empty-title {
         font-family: var(--font-serif);
@@ -960,7 +960,7 @@
         transition: all 0.25s ease;
     }
     .add-card:hover .add-card-icon { border-color: var(--oxblood-border); background: var(--color-paper-elevated); }
-    .add-card-icon svg { width: 17px; height: 17px; color: var(--ink-faint); transition: color 0.25s ease; }
+    .add-card-icon svg { width: 17px; height: 17px; color: var(--color-ink-faint); transition: color 0.25s ease; }
     .add-card:hover .add-card-icon svg { color: var(--oxblood); }
 
     .add-card-text {
@@ -969,7 +969,7 @@
         font-weight: 600;
         letter-spacing: 0.5px;
         text-transform: uppercase;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         transition: color 0.25s ease;
     }
     .add-card:hover .add-card-text { color: var(--oxblood-ink); }
@@ -983,7 +983,7 @@
         flex-wrap: wrap; gap: 10px;
         font-family: var(--font-mono);
         font-size: 0.68rem;
-        color: var(--ink-faint);
+        color: var(--color-ink-faint);
         letter-spacing: 0.3px;
     }
     .dashboard-footer-strip strong { color: var(--color-ink-muted); font-weight: 600; }
