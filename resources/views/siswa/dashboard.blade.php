@@ -28,7 +28,6 @@
         --canvas-deep:    #F3EEE3;
         --surface:        #FFFFFF;
         --surface-sunk:   #F6F1E7;
-        --ink:            #191816;
         --ink-soft:       #4B463F;
         --ink-faint:      #756F65;
         --hairline:       rgba(25,24,22,0.10);
@@ -48,7 +47,7 @@
         height: 100%;
         font-family: var(--font-sans);
         background-color: var(--canvas);
-        color: var(--ink);
+        color: var(--color-ink);
         overflow-x: hidden;
     }
 
@@ -93,7 +92,7 @@
 
     .skip-link {
         position: fixed; top: -100px; left: 16px; z-index: 100;
-        background: var(--ink); color: var(--canvas);
+        background: var(--color-ink); color: var(--canvas);
         padding: 10px 18px; border-radius: 8px;
         font-family: var(--font-sans);
         font-size: 0.8rem; font-weight: 600;
@@ -124,7 +123,7 @@
         font-weight: 800;
         letter-spacing: 2.5px;
         text-transform: uppercase;
-        color: var(--ink);
+        color: var(--color-ink);
         display: flex; align-items: center; gap: 10px;
     }
 
@@ -180,7 +179,7 @@
         font-family: var(--font-sans);
         font-size: 0.85rem;
         font-weight: 700;
-        color: var(--ink);
+        color: var(--color-ink);
         line-height: 1.3;
         margin-bottom: 2px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -255,7 +254,7 @@
         width: 16px;
     }
 
-    .nav-item:hover { background: var(--surface-sunk); color: var(--ink); }
+    .nav-item:hover { background: var(--surface-sunk); color: var(--color-ink); }
 
     .nav-item.active {
         color: var(--oxblood-ink);
@@ -357,7 +356,7 @@
         font-family: var(--font-sans);
         font-size: 0.85rem;
         font-weight: 500;
-        color: var(--ink);
+        color: var(--color-ink);
         box-shadow: var(--shadow-paper);
     }
     .flash-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--oxblood); margin-top: 2px; }
@@ -416,7 +415,7 @@
         font-weight: 600;
         letter-spacing: -0.5px;
         line-height: 1.14;
-        color: var(--ink);
+        color: var(--color-ink);
         margin-bottom: 12px;
     }
     .studio-headline em {
@@ -465,7 +464,7 @@
     .btn-primary:hover .btn-icon-chip { transform: translate(2px,-2px) rotate(8deg); }
 
     /* Varian terang — dipakai di atas panel gelap (Hero Spotlight) */
-    .btn-primary.on-dark { background: var(--canvas); border-color: var(--canvas); color: var(--ink); }
+    .btn-primary.on-dark { background: var(--canvas); border-color: var(--canvas); color: var(--color-ink); }
     .btn-primary.on-dark:hover { background: #FFFFFF; box-shadow: 0 24px 48px -22px rgba(0,0,0,0.5); }
     .btn-primary.on-dark .btn-icon-chip { background: rgba(25,24,22,0.08); }
 
@@ -492,7 +491,7 @@
 
     /* ── HERO SPOTLIGHT — karya terbaru, dipajang seperti di dinding galeri ── */
     .hero-spotlight {
-        background: var(--ink);
+        background: var(--color-ink);
         border-radius: 24px;
         padding: 34px;
         margin-bottom: 40px;
@@ -622,7 +621,7 @@
         z-index: 70; pointer-events: none;
         transform: translate(var(--fx, -999px), var(--fy, -999px)) translate(-50%, -50%) scale(0.6);
         opacity: 0;
-        background: var(--ink);
+        background: var(--color-ink);
         color: var(--canvas);
         font-family: var(--font-mono);
         font-size: 0.68rem;
@@ -681,7 +680,7 @@
         font-size: 2.7rem;
         font-weight: 600;
         letter-spacing: -1px;
-        color: var(--ink);
+        color: var(--color-ink);
         line-height: 1;
         margin-bottom: 18px;
     }
@@ -714,7 +713,7 @@
         font-family: var(--font-serif);
         font-size: 1.2rem;
         font-weight: 600;
-        color: var(--ink);
+        color: var(--color-ink);
         letter-spacing: -0.2px;
     }
 
@@ -801,7 +800,7 @@
 
     .pdf-pill {
         position: absolute; top: 10px; left: 10px;
-        background: var(--ink);
+        background: var(--color-ink);
         color: var(--canvas);
         font-family: var(--font-mono);
         font-size: 0.6rem;
@@ -833,7 +832,7 @@
         font-family: var(--font-serif);
         font-size: 1rem;
         font-weight: 600;
-        color: var(--ink);
+        color: var(--color-ink);
         letter-spacing: -0.2px;
         line-height: 1.35;
         margin-bottom: 6px;
@@ -883,7 +882,7 @@
         text-decoration: none;
         transition: all 0.2s ease;
     }
-    .btn-action:hover { border-color: var(--ink); color: var(--ink); background: var(--surface-sunk); }
+    .btn-action:hover { border-color: var(--color-ink); color: var(--color-ink); background: var(--surface-sunk); }
     .btn-action svg { width: 13px; height: 13px; flex-shrink: 0; }
 
     .btn-action-delete {
@@ -928,7 +927,7 @@
         font-family: var(--font-serif);
         font-size: 1.15rem;
         font-weight: 600;
-        color: var(--ink);
+        color: var(--color-ink);
         margin-bottom: 10px;
     }
 
