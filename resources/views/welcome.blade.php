@@ -27,17 +27,18 @@
            DESIGN TOKENS — Editorial Light (ivory / charcoal / oxblood)
            Catatan: token ini ditulis sebagai CSS variable di file ini
            sendiri (seperti pola file aslinya), mengikuti palet yang
-           sudah dipakai di app.css & navbar (Tahap 1–2). Kalau app.css
-           sudah punya token Tailwind resmi untuk warna ini, nilai di
-           bawah tinggal diarahkan ke token itu.
+           sudah dipakai di app.css & navbar (Tahap 1–2). --ivory,
+           --charcoal, dan --oxblood kini diarahkan (alias) ke token
+           canonical --color-paper / --color-ink / --color-accent-600
+           di app.css (Fase 1).
         ========================================================== */
         :root {
-            --ivory: #FAF7F2;
+            --ivory: var(--color-paper);
 
-            --charcoal: #1C1A17;
+            --charcoal: var(--color-ink);
             --charcoal-soft: rgba(28, 26, 23, 0.62);
             --charcoal-faint: rgba(28, 26, 23, 0.66);
-            --oxblood: #7A2E2E;
+            --oxblood: var(--color-accent-600);
             --oxblood-dark: #5E2222;
             --oxblood-soft: rgba(122, 46, 46, 0.08);
             --oxblood-line: rgba(122, 46, 46, 0.24);
