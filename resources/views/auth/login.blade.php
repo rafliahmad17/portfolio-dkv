@@ -72,7 +72,7 @@
             font-weight: 500;
             letter-spacing: 0.16em;
             text-transform: uppercase;
-            color: var(--ink-faint);
+            color: var(--color-ink-faint);
             pointer-events: none;
             z-index: 2;
         }
@@ -194,7 +194,7 @@
             font-size: 0.72rem;
             letter-spacing: 0.04em;
             text-transform: uppercase;
-            color: var(--ink-soft);
+            color: var(--color-ink-muted);
             text-decoration: none;
             transition: color 0.2s ease;
         }
@@ -206,18 +206,18 @@
         .brandmark img {
             width: 26px; height: 26px;
             object-fit: contain;
-            border: 1px solid var(--line);
+            border: 1px solid var(--color-paper-border);
             border-radius: var(--radius-xs);
             padding: 3px;
             background: var(--color-paper-elevated);
         }
-        .brandmark-text { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-soft); }
+        .brandmark-text { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-muted); }
         .brandmark-text b { color: var(--color-ink); font-weight: 600; }
 
         /* ── headline form ── */
         .form-headline { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.18; color: var(--color-ink); }
         .form-headline em { font-style: italic; font-weight: 500; color: var(--color-accent-600); }
-        .form-sub { font-size: 0.88rem; color: var(--ink-soft); line-height: 1.6; margin-top: 10px; margin-bottom: 30px; }
+        .form-sub { font-size: 0.88rem; color: var(--color-ink-muted); line-height: 1.6; margin-top: 10px; margin-bottom: 30px; }
 
         /* ── status & error ── */
         .status-box, .error-alert {
@@ -228,13 +228,13 @@
             margin-bottom: 20px;
         }
         .status-box { background: var(--success-wash); border-left: 2px solid var(--success); color: var(--success); font-weight: 500; }
-        .error-alert { background: var(--oxblood-wash); border-left: 2px solid var(--color-accent-600); color: var(--oxblood-deep); font-weight: 500; }
+        .error-alert { background: var(--color-accent-50); border-left: 2px solid var(--color-accent-600); color: var(--color-accent-700); font-weight: 500; }
         .status-box svg, .error-alert svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
 
         /* ── divider ── */
         .form-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
-        .form-divider-line { flex: 1; height: 1px; background: var(--line); }
-        .form-divider-text { font-family: var(--font-mono); font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); }
+        .form-divider-line { flex: 1; height: 1px; background: var(--color-paper-border); }
+        .form-divider-text { font-family: var(--font-mono); font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ink-faint); }
 
         /* ── field ── */
         .field-wrap { margin-bottom: 18px; }
@@ -243,7 +243,7 @@
             font-family: var(--font-mono);
             font-size: 0.66rem; font-weight: 500;
             letter-spacing: 0.14em; text-transform: uppercase;
-            color: var(--ink-soft);
+            color: var(--color-ink-muted);
             margin-bottom: 8px;
         }
         .input-icon-wrap { position: relative; }
@@ -251,7 +251,7 @@
             position: absolute; top: 50%; left: 15px;
             transform: translateY(-50%);
             width: 16px; height: 16px;
-            color: var(--ink-faint);
+            color: var(--color-ink-faint);
             pointer-events: none;
             transition: color 0.2s ease;
         }
@@ -263,15 +263,15 @@
             font-size: 0.92rem; font-weight: 500;
             color: var(--color-ink);
             background: var(--color-paper-elevated);
-            border: 1.5px solid var(--line);
+            border: 1.5px solid var(--color-paper-border);
             border-radius: var(--radius-sm);
             padding: 13px 16px 13px 43px;
             outline: none;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
-        .input-field::placeholder { color: var(--ink-faint); font-weight: 400; }
-        .input-field:focus { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px var(--oxblood-ring); }
-        .input-field.is-error { border-color: var(--color-accent-600); background: var(--oxblood-wash); }
+        .input-field::placeholder { color: var(--color-ink-faint); font-weight: 400; }
+        .input-field:focus { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px var(--color-accent-200); }
+        .input-field.is-error { border-color: var(--color-accent-600); background: var(--color-accent-50); }
 
         .pw-toggle {
             position: absolute; top: 50%; right: 6px;
@@ -279,14 +279,14 @@
             width: 34px; height: 34px;
             display: flex; align-items: center; justify-content: center;
             background: none; border: none; cursor: pointer;
-            color: var(--ink-faint);
+            color: var(--color-ink-faint);
             border-radius: var(--radius-xs);
             transition: color 0.2s ease;
         }
         .pw-toggle:hover { color: var(--color-accent-600); }
         .pw-toggle svg { width: 16px; height: 16px; }
 
-        .field-error { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 0.74rem; font-weight: 500; color: var(--oxblood-deep); }
+        .field-error { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 0.74rem; font-weight: 500; color: var(--color-accent-700); }
         .field-error svg { width: 13px; height: 13px; flex-shrink: 0; }
 
         /* ── remember + forgot ── */
@@ -294,7 +294,7 @@
         .remember-label { display: flex; align-items: center; gap: 9px; cursor: pointer; user-select: none; }
         .remember-checkbox {
             width: 16px; height: 16px;
-            border: 1.5px solid var(--line);
+            border: 1.5px solid var(--color-paper-border);
             border-radius: 4px;
             background: var(--color-paper-elevated);
             appearance: none; -webkit-appearance: none;
@@ -311,15 +311,15 @@
             border-top: none; border-left: none;
             transform: rotate(45deg);
         }
-        .remember-text { font-size: 0.82rem; color: var(--ink-soft); font-weight: 500; }
+        .remember-text { font-size: 0.82rem; color: var(--color-ink-muted); font-weight: 500; }
 
-        .forgot-link { font-size: 0.8rem; font-weight: 500; color: var(--ink-soft); text-decoration: none; }
+        .forgot-link { font-size: 0.8rem; font-weight: 500; color: var(--color-ink-muted); text-decoration: none; }
         .forgot-link-disabled { display: inline-flex; align-items: center; gap: 6px; opacity: 0.6; cursor: not-allowed; }
         .badge-soon {
             font-family: var(--font-mono);
             font-size: 0.56rem; font-weight: 600; letter-spacing: 0.05em;
-            color: var(--oxblood-deep);
-            background: var(--oxblood-wash);
+            color: var(--color-accent-700);
+            background: var(--color-accent-50);
             border: 1px solid rgba(122,46,46,0.18);
             padding: 2px 7px; border-radius: 20px;
             white-space: nowrap;
@@ -360,7 +360,7 @@
         @keyframes spin { to { transform: rotate(360deg); } }
 
         /* ── bottom link + footer ── */
-        .bottom-link { margin-top: 26px; text-align: center; font-size: 0.82rem; color: var(--ink-faint); }
+        .bottom-link { margin-top: 26px; text-align: center; font-size: 0.82rem; color: var(--color-ink-faint); }
         .bottom-link a { color: var(--color-ink); font-weight: 600; text-decoration: none; }
         .bottom-link a:hover { color: var(--color-accent-600); }
 
@@ -370,7 +370,7 @@
             font-family: var(--font-mono);
             font-size: 0.66rem;
             letter-spacing: 0.02em;
-            color: var(--ink-faint);
+            color: var(--color-ink-faint);
             line-height: 1.8;
         }
         .page-footer .accent { color: var(--color-accent-600); }
@@ -393,7 +393,7 @@
             .form-panel { padding: 32px 20px 44px; min-height: auto; }
             .form-shell {
                 background: var(--color-paper-elevated);
-                border: 1px solid var(--line);
+                border: 1px solid var(--color-paper-border);
                 border-radius: var(--radius-lg);
                 padding: 30px 26px;
                 box-shadow: 0 28px 60px -34px rgba(28,25,23,0.35);
