@@ -36,9 +36,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
         :root {
-            --paper:        #FAF7F2;
+
             --paper-raised: #FFFEFB;
-            --ink:          #191816;
+
             --ink-soft:     #3A3733;
             --muted:        #57534E;
             --faint:        #8C857D;
@@ -72,8 +72,8 @@
 
         body {
             font-family: 'Public Sans', sans-serif;
-            background-color: var(--paper);
-            color: var(--ink);
+            background-color: var(--color-paper);
+            color: var(--color-ink);
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             text-wrap: pretty;
@@ -100,7 +100,7 @@
         }
 
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--paper); }
+        ::-webkit-scrollbar-track { background: var(--color-paper); }
         ::-webkit-scrollbar-thumb { background: var(--oxblood); border-radius: 10px; }
 
         a:focus-visible, .share-copy-btn:focus-visible, button:focus-visible, .to-top-btn:focus-visible {
@@ -192,7 +192,7 @@
         .nav-brand-text {
             font-family: 'IBM Plex Mono', monospace;
             font-size: 0.68rem; font-weight: 500; letter-spacing: 2.5px;
-            text-transform: uppercase; color: var(--ink);
+            text-transform: uppercase; color: var(--color-ink);
             white-space: nowrap;
         }
         .nav-brand-text span { color: var(--oxblood); }
@@ -210,7 +210,7 @@
             padding: 8px 14px; border-radius: var(--r-sm);
             white-space: nowrap; transition: all 0.25s var(--ease);
         }
-        .nav-link:hover { color: var(--ink); background: rgba(120,113,108,0.08); }
+        .nav-link:hover { color: var(--color-ink); background: rgba(120,113,108,0.08); }
         .nav-link.active { color: var(--oxblood-ink); background: var(--oxblood-08); }
 
         .nav-badge {
@@ -273,7 +273,7 @@
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
             font-weight: 700;
             font-size: clamp(2.3rem, 7vw, 4.3rem);
-            letter-spacing: -0.015em; line-height: 1.05; color: var(--ink);
+            letter-spacing: -0.015em; line-height: 1.05; color: var(--color-ink);
             margin-bottom: 14px; word-break: break-word;
         }
         .hero-tagline {
@@ -292,12 +292,12 @@
             text-decoration: none; transition: all 0.3s var(--ease);
             border: 1px solid transparent;
         }
-        .btn-primary { background: var(--ink); color: var(--paper); }
+        .btn-primary { background: var(--color-ink); color: var(--color-paper); }
         .btn-primary:hover { background: var(--oxblood-ink); transform: translateY(-2px); box-shadow: 0 12px 26px -10px rgba(122,46,46,0.4); }
         .btn-primary:hover svg { transform: translate(2px, -2px); }
         .btn-primary:active, .btn-outline:active { transform: scale(0.98); }
-        .btn-outline { background: transparent; color: var(--ink); border-color: var(--line); }
-        .btn-outline:hover { border-color: var(--ink); background: rgba(25,24,22,0.03); transform: translateY(-2px); }
+        .btn-outline { background: transparent; color: var(--color-ink); border-color: var(--line); }
+        .btn-outline:hover { border-color: var(--color-ink); background: rgba(25,24,22,0.03); transform: translateY(-2px); }
         .btn-primary svg, .btn-outline svg { width: 15px; height: 15px; flex-shrink: 0; transition: transform .3s var(--ease); }
 
         @media (max-width: 480px) {
@@ -342,7 +342,7 @@
         .karya-heading {
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
             font-weight: 700; font-size: clamp(2.1rem, 5.5vw, 3.3rem);
-            letter-spacing: -0.01em; line-height: 1.05; color: var(--ink);
+            letter-spacing: -0.01em; line-height: 1.05; color: var(--color-ink);
             margin-bottom: 34px;
         }
 
@@ -363,13 +363,12 @@
             margin-bottom: 26px;
         }
         .info-item-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); margin-bottom: 7px; }
-        .info-item-value { font-size: 0.92rem; font-weight: 600; color: var(--ink); word-break: break-word; }
-
+        .info-item-value { font-size: 0.92rem; font-weight: 600; color: var(--color-ink); word-break: break-word; }
         .stat-row { display: flex; gap: 36px; padding-top: 26px; border-top: 1px solid var(--line-soft); }
         .stat-box { text-align: left; }
         .stat-num {
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
-            font-weight: 700; font-size: 2.1rem; color: var(--ink); line-height: 1;
+            font-weight: 700; font-size: 2.1rem; color: var(--color-ink); line-height: 1;
             font-variant-numeric: tabular-nums;
         }
         .stat-label {
@@ -425,7 +424,7 @@
         .work-title {
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
             font-weight: 500; font-style: italic; font-size: 1.08rem; line-height: 1.35;
-            padding-bottom: 2px; color: var(--ink);
+            padding-bottom: 2px; color: var(--color-ink);
         }
 
         .empty-state {
@@ -461,7 +460,7 @@
         .achv-type svg { width: 10px; height: 10px; }
         .achv-title {
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
-            font-weight: 500; font-size: 1.02rem; color: var(--ink); line-height: 1.35; margin-bottom: 9px;
+            font-weight: 500; font-size: 1.02rem; color: var(--color-ink); line-height: 1.35; margin-bottom: 9px;
         }
         .achv-issuer {
             display: flex; align-items: center; gap: 6px; font-size: 0.78rem;
@@ -478,7 +477,7 @@
             color: var(--oxblood-ink); text-decoration: none; padding-top: 12px;
             border-top: 1px solid var(--line-soft); width: 100%; transition: color 0.2s var(--ease);
         }
-        .achv-link:hover { color: var(--ink); }
+        .achv-link:hover { color: var(--color-ink); }
         .achv-link svg { width: 12px; height: 12px; transition: transform .25s var(--ease); }
         .achv-link:hover svg { transform: translateX(2px); }
 
@@ -502,7 +501,7 @@
         }
         .footer-cta-title {
             font-family: 'Bodoni Moda', serif; font-optical-sizing: auto;
-            font-weight: 700; font-size: 1.7rem; color: var(--ink); margin-bottom: 10px;
+            font-weight: 700; font-size: 1.7rem; color: var(--color-ink); margin-bottom: 10px;
         }
         .footer-cta-sub { font-size: 0.86rem; color: var(--muted); margin-bottom: 30px; }
         .footer-contact-row {
@@ -537,9 +536,9 @@
         .toast {
             position: fixed; bottom: 24px; right: 24px; left: 24px; z-index: 9999;
             max-width: 320px; margin-left: auto;
-            background: var(--ink); border: 1px solid rgba(255,255,255,0.08);
+            background: var(--color-ink); border: 1px solid rgba(255,255,255,0.08);
             border-radius: var(--r-sm); padding: 13px 18px; display: flex; align-items: center; gap: 10px;
-            font-size: 0.8rem; font-weight: 600; color: var(--paper);
+            font-size: 0.8rem; font-weight: 600; color: var(--color-paper);
             opacity: 0; transform: translateY(10px); transition: all 0.35s var(--ease); pointer-events: none;
         }
         .toast.show { opacity: 1; transform: translateY(0); }
