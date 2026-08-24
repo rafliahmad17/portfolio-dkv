@@ -11,10 +11,21 @@
 @push('styles')
 <style>
     :root {
-        /* --red, --red-bright, --red-glow, --red-soft, --border dipindahkan
-           ke resources/css/app.css (Tahap 1 refactor CSS) — nilai identik,
-           tidak berubah. --green & --green-glow unik untuk halaman ini,
-           tidak dipindah. */
+        /* Fase 2.1 File 2 — reskin ke sistem editorial "Kertas & Oxblood".
+           Token lokal berikut menyalin PERSIS nama & nilai yang sudah dipakai
+           di resources/views/guru/dashboard.blade.php (Fase 2.1 File 1) supaya
+           konsisten lintas halaman guru. --red/--red-bright/--red-glow/
+           --red-soft/--border (app.css) TIDAK dipakai lagi di halaman ini. */
+        --surface-sunk:    #F6F1E7;
+        --hairline:        rgba(25,24,22,0.10);
+        --hairline-strong: rgba(25,24,22,0.18);
+        --oxblood-soft:    rgba(122,46,46,0.08);
+        --oxblood-border:  rgba(122,46,46,0.26);
+        --oxblood-ink:     #6E2A2A;
+
+        /* --green & --green-glow unik untuk halaman ini (banner sukses avatar
+           & indikator status akun), tidak dipindah ke app.css. Nilai TIDAK
+           berubah dari sebelumnya. */
         --green:      #22c55e;
         --green-glow: rgba(34,197,94,0.35);
     }
@@ -23,9 +34,9 @@
 
     html, body {
         height: 100%;
-        font-family: 'Inter', sans-serif;
-        background-color: #080808;
-        color: #f5f5f5;
+        font-family: var(--font-sans);
+        background-color: var(--color-paper);
+        color: var(--color-ink);
         overflow-x: hidden;
     }
 
@@ -69,13 +80,13 @@
 
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #080808; }
-    ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 10px; }
 
     /* ── FOCUS RING (aksesibilitas keyboard) ── */
     button:focus-visible,
     a:focus-visible {
-        outline: 2px solid var(--red);
+        outline: 2px solid var(--color-accent-500);
         outline-offset: 3px;
         border-radius: 8px;
     }
@@ -86,10 +97,10 @@
     .sidebar {
         position: fixed; top: 0; left: 0;
         width: 260px; height: 100vh;
-        background: rgba(8,8,8,0.9);
+        background: var(--color-paper-elevated);
         backdrop-filter: blur(28px);
         -webkit-backdrop-filter: blur(28px);
-        border-right: 1px solid var(--border);
+        border-right: 1px solid var(--hairline);
         display: flex; flex-direction: column;
         z-index: 70; overflow-y: auto;
         transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease;
@@ -97,19 +108,19 @@
     .sidebar::before {
         content: '';
         position: absolute; top: 0; left: 0; right: 0; height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
+        background: linear-gradient(90deg, transparent, rgba(122,46,46,0.4), transparent);
     }
-    .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--border); }
+    .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--hairline); }
     .sidebar-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
     .logo-wordmark {
         font-size: 0.78rem; font-weight: 900; letter-spacing: 3px;
-        text-transform: uppercase; color: rgba(255,255,255,0.85);
+        text-transform: uppercase; color: var(--color-ink);
         display: flex; align-items: center; gap: 9px; min-width: 0;
     }
     .logo-icon {
-        width: 26px; height: 26px; background: var(--red); border-radius: 7px;
+        width: 26px; height: 26px; background: var(--color-accent-600); border-radius: 7px;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0;
+        box-shadow: 0 0 14px rgba(122,46,46,0.45); flex-shrink: 0;
     }
     .logo-icon svg { width: 13px; height: 13px; }
 
@@ -118,67 +129,68 @@
         display: none;
         width: 36px; height: 36px; flex-shrink: 0;
         align-items: center; justify-content: center;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid var(--border);
+        background: var(--surface-sunk);
+        border: 1px solid var(--hairline);
         border-radius: 9px;
-        color: rgba(255,255,255,0.45);
+        color: var(--color-ink-faint);
         cursor: pointer;
         transition: all 0.2s ease;
     }
-    .sidebar-close-btn:hover { color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); }
+    .sidebar-close-btn:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
     .sidebar-close-btn svg { width: 16px; height: 16px; }
 
-    .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+    .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--hairline); }
     .profile-avatar {
         width: 42px; height: 42px; border-radius: 12px;
-        background: linear-gradient(135deg, #dc2626, #7c3aed);
+        background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-700));
         display: flex; align-items: center; justify-content: center;
-        font-size: 1rem; font-weight: 900; color: white; flex-shrink: 0;
-        box-shadow: 0 0 18px rgba(220,38,38,0.3);
+        font-size: 1rem; font-weight: 900; color: var(--color-paper); flex-shrink: 0;
+        box-shadow: 0 0 18px rgba(122,46,46,0.3);
     }
     .profile-name {
-        font-size: 0.78rem; font-weight: 700; color: #f5f5f5;
+        font-size: 0.78rem; font-weight: 700; color: var(--color-ink);
         line-height: 1.3; margin-bottom: 2px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
-    .profile-nip { font-size: 0.68rem; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
+    .profile-nip { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); margin-bottom: 7px; }
     .badge-role {
+        font-family: var(--font-mono);
         display: inline-flex; align-items: center; gap: 5px;
-        background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
-        color: #fca5a5; padding: 2px 9px; border-radius: 30px;
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        color: var(--oxblood-ink); padding: 2px 9px; border-radius: 30px;
         font-size: 0.63rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
     }
     .live-dot {
-        width: 5px; height: 5px; background: var(--red); border-radius: 50%;
-        box-shadow: 0 0 6px var(--red-glow);
+        width: 5px; height: 5px; background: var(--color-accent-600); border-radius: 50%;
+        box-shadow: 0 0 6px rgba(122,46,46,0.45);
         animation: livePulse 1.5s ease-in-out infinite;
     }
     .sidebar-nav { flex: 1; padding: 20px 14px; }
     .nav-label {
         font-size: 0.62rem; font-weight: 700; letter-spacing: 2px;
-        text-transform: uppercase; color: rgba(255,255,255,0.18);
+        text-transform: uppercase; color: var(--color-ink-faint);
         padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
     }
     .nav-item {
         display: flex; align-items: center; gap: 11px;
         padding: 10px 12px; border-radius: 10px;
-        font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.35);
+        font-size: 0.82rem; font-weight: 600; color: var(--color-ink-muted);
         text-decoration: none; transition: all 0.22s ease;
         border: 1px solid transparent; margin-bottom: 3px; position: relative;
     }
-    .nav-item:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); border-color: var(--border); }
-    .nav-item.active { color: #fca5a5; background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2); }
+    .nav-item:hover { color: var(--color-ink); background: var(--surface-sunk); border-color: var(--hairline); }
+    .nav-item.active { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
     .nav-item.active::before {
         content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-        width: 3px; height: 18px; background: var(--red);
-        border-radius: 0 3px 3px 0; box-shadow: 0 0 10px var(--red-glow);
+        width: 3px; height: 18px; background: var(--color-accent-600);
+        border-radius: 0 3px 3px 0; box-shadow: 0 0 10px rgba(122,46,46,0.45);
     }
-    .nav-item.active svg { color: var(--red); }
+    .nav-item.active svg { color: var(--color-accent-600); }
     .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
     /* Menu nonaktif — fitur belum tersedia (persiapan sidang) */
     .nav-item-disabled { opacity: 0.5; cursor: not-allowed; }
     .nav-item.nav-item-disabled:hover {
-        color: rgba(255,255,255,0.35);
+        color: var(--color-ink-muted);
         background: transparent;
         border-color: transparent;
     }
@@ -187,22 +199,23 @@
         gap: 6px; row-gap: 2px;
     }
     .badge-soon {
+        font-family: var(--font-mono);
         font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3px;
-        color: rgba(255,255,255,0.4);
-        background: rgba(255,255,255,0.06);
-        border: 1px solid rgba(255,255,255,0.09);
+        color: var(--color-ink-muted);
+        background: var(--surface-sunk);
+        border: 1px solid var(--hairline-strong);
         padding: 1px 6px; border-radius: 20px;
         white-space: nowrap;
     }
-    .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
+    .sidebar-footer { padding: 14px; border-top: 1px solid var(--hairline); }
     .btn-logout {
         width: 100%; display: flex; align-items: center; gap: 11px;
         padding: 10px 12px; border-radius: 10px; background: none;
-        border: 1px solid transparent; color: rgba(255,255,255,0.28);
-        font-size: 0.82rem; font-weight: 600; font-family: 'Inter', sans-serif;
+        border: 1px solid transparent; color: var(--color-ink-muted);
+        font-size: 0.82rem; font-weight: 600; font-family: var(--font-sans);
         cursor: pointer; transition: all 0.22s ease;
     }
-    .btn-logout:hover { color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.18); }
+    .btn-logout:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
     .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
 
     /* ── Overlay drawer (mobile) ── */
@@ -223,16 +236,16 @@
         display: none;
         width: 44px; height: 44px; flex-shrink: 0;
         align-items: center; justify-content: center; flex-direction: column; gap: 5px;
-        background: rgba(255,255,255,0.04);
-        border: 1px solid var(--border);
+        background: var(--surface-sunk);
+        border: 1px solid var(--hairline);
         border-radius: 10px;
         cursor: pointer;
         transition: background 0.2s ease, border-color 0.2s ease;
     }
-    .hamburger-btn:hover { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.2); }
+    .hamburger-btn:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); }
     .hamburger-bar {
         display: block; width: 18px; height: 2px; border-radius: 2px;
-        background: rgba(255,255,255,0.75);
+        background: var(--color-ink);
         transition: transform 0.3s ease, opacity 0.3s ease;
     }
     .hamburger-btn.is-active .hamburger-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
@@ -245,17 +258,18 @@
     .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
     .topbar {
         position: sticky; top: 0; z-index: 30;
-        background: rgba(8,8,8,0.88); backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--border);
+        background: rgba(250,247,242,0.88); backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px); border-bottom: 1px solid var(--hairline);
         padding: 16px 36px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
     }
-    .topbar-title { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.22); letter-spacing: 0.5px; min-width: 0; }
-    .topbar-title span { color: rgba(255,255,255,0.5); margin-left: 6px; }
+    .topbar-title { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--color-ink-faint); letter-spacing: 0.5px; min-width: 0; }
+    .topbar-title span { color: var(--color-ink-muted); margin-left: 6px; }
     .topbar-pill {
+        font-family: var(--font-mono);
         display: flex; align-items: center; gap: 6px; flex-shrink: 0;
-        background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
         border-radius: 30px; padding: 5px 13px;
-        font-size: 0.68rem; font-weight: 700; color: rgba(220,38,38,0.65); letter-spacing: 0.5px;
+        font-size: 0.68rem; font-weight: 700; color: var(--oxblood-ink); letter-spacing: 0.5px;
     }
     .page-inner { padding: 40px 36px 60px; }
 
@@ -263,13 +277,13 @@
        PROFILE PAGE — Glass Card
     ================================================================ */
     .glass-card {
-        background: rgba(255,255,255,0.025);
-        border: 1px solid var(--border);
+        background: var(--color-paper-elevated);
+        border: 1px solid var(--hairline);
         border-radius: 24px; position: relative; overflow: hidden;
     }
     .glass-card::before {
         content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent);
+        background: linear-gradient(90deg, transparent, var(--hairline-strong), transparent);
     }
     .profile-card-left  { padding: 30px 24px; }
     .profile-card-right { padding: 32px; }
@@ -281,22 +295,22 @@
     .avatar-outer-ring {
         width: 130px; height: 130px; border-radius: 50%;
         padding: 3px;
-        background: linear-gradient(135deg, var(--red) 0%, #7c3aed 55%, var(--red) 100%);
-        box-shadow: 0 0 36px rgba(220,38,38,0.3), 0 0 70px rgba(124,58,237,0.15);
+        background: linear-gradient(135deg, var(--color-accent-500) 0%, var(--color-accent-700) 55%, var(--color-accent-500) 100%);
+        box-shadow: 0 0 36px rgba(122,46,46,0.3), 0 0 50px rgba(122,46,46,0.12);
         display: block; margin: 0 auto;
         position: relative; cursor: pointer;
         transition: box-shadow 0.3s ease;
     }
     .avatar-outer-ring:hover {
-        box-shadow: 0 0 50px rgba(220,38,38,0.5), 0 0 90px rgba(124,58,237,0.25);
+        box-shadow: 0 0 50px rgba(122,46,46,0.5), 0 0 65px rgba(122,46,46,0.2);
     }
     .avatar-outer-ring:focus-visible {
-        outline: 2px solid var(--red); outline-offset: 4px;
+        outline: 2px solid var(--color-accent-600); outline-offset: 4px;
     }
     .avatar-inner {
         width: 100%; height: 100%; border-radius: 50%;
         overflow: hidden; position: relative;
-        background: #111;
+        background: var(--color-paper-muted);
     }
     .avatar-img {
         position: absolute; inset: 0;
@@ -305,8 +319,8 @@
     .avatar-initials-lg {
         position: absolute; inset: 0;
         display: flex; align-items: center; justify-content: center;
-        font-size: 2.5rem; font-weight: 900; color: white;
-        background: linear-gradient(135deg, #dc2626, #7c3aed);
+        font-size: 2.5rem; font-weight: 900; color: var(--color-paper);
+        background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-700));
         border-radius: 50%;
         letter-spacing: -1px;
     }
@@ -327,15 +341,16 @@
 
     /* ── Profile Card Info ── */
     .pc-name {
-        font-size: 1.15rem; font-weight: 900; color: #f5f5f5;
+        font-size: 1.15rem; font-weight: 900; color: var(--color-ink);
         letter-spacing: -0.5px; text-align: center;
         margin-top: 18px; line-height: 1.2;
     }
-    .pc-nip { font-size: 0.7rem; color: rgba(255,255,255,0.28); font-weight: 600; text-align: center; margin-top: 3px; }
+    .pc-nip { font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-ink-faint); font-weight: 600; text-align: center; margin-top: 3px; }
     .badge-guru {
+        font-family: var(--font-mono);
         display: inline-flex; align-items: center; gap: 6px;
-        background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
-        color: #fca5a5; padding: 5px 14px; border-radius: 30px;
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        color: var(--oxblood-ink); padding: 5px 14px; border-radius: 30px;
         font-size: 0.62rem; font-weight: 800; letter-spacing: 0.9px; text-transform: uppercase;
     }
     .green-dot {
@@ -343,61 +358,62 @@
         box-shadow: 0 0 8px var(--green-glow);
         animation: livePulse 1.8s ease-in-out infinite;
     }
-    .card-divider { height: 1px; background: var(--border); margin: 22px 0; }
+    .card-divider { height: 1px; background: var(--hairline); margin: 22px 0; }
     .info-row {
         display: flex; align-items: flex-start; gap: 12px;
         padding: 9px 0;
     }
-    .info-row + .info-row { border-top: 1px solid rgba(255,255,255,0.04); }
+    .info-row + .info-row { border-top: 1px solid var(--hairline); }
     .info-row-icon {
         width: 30px; height: 30px; border-radius: 8px;
-        background: var(--red-soft); border: 1px solid rgba(220,38,38,0.15);
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
         display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .info-row-icon svg { width: 13px; height: 13px; color: rgba(220,38,38,0.65); }
-    .info-row-lbl { font-size: 0.59rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
-    .info-row-val { font-size: 0.74rem; font-weight: 600; color: rgba(255,255,255,0.5); word-break: break-all; }
+    .info-row-icon svg { width: 13px; height: 13px; color: var(--color-accent-600); }
+    .info-row-lbl { font-family: var(--font-mono); font-size: 0.59rem; font-weight: 800; color: var(--color-ink-faint); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+    .info-row-val { font-size: 0.74rem; font-weight: 600; color: var(--color-ink-muted); word-break: break-all; }
     .member-badge {
+        font-family: var(--font-mono);
         display: inline-flex; align-items: center; gap: 6px;
-        background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+        background: var(--surface-sunk); border: 1px solid var(--hairline);
         border-radius: 20px; padding: 5px 12px;
-        font-size: 0.62rem; font-weight: 700; color: rgba(255,255,255,0.22);
+        font-size: 0.62rem; font-weight: 700; color: var(--color-ink-muted);
     }
-    .member-badge svg { width: 10px; height: 10px; color: rgba(220,38,38,0.45); }
+    .member-badge svg { width: 10px; height: 10px; color: rgba(122,46,46,0.5); }
 
     /* ================================================================
        PROFILE PAGE — Tab System
     ================================================================ */
     .tab-nav {
         display: flex; gap: 4px;
-        background: rgba(255,255,255,0.03);
-        border: 1px solid var(--border);
+        background: var(--surface-sunk);
+        border: 1px solid var(--hairline);
         border-radius: 14px; padding: 5px;
         margin-bottom: 28px;
     }
     .tab-btn {
         flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
         padding: 10px 16px; border-radius: 10px;
-        font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.3);
+        font-size: 0.78rem; font-weight: 700; color: var(--color-ink-muted);
         background: none; border: 1px solid transparent;
-        cursor: pointer; font-family: 'Inter', sans-serif;
+        cursor: pointer; font-family: var(--font-sans);
         transition: all 0.22s ease; white-space: nowrap;
     }
     .tab-btn svg { width: 15px; height: 15px; flex-shrink: 0; transition: color 0.22s ease; }
-    .tab-btn:hover { color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.04); }
+    .tab-btn:hover { color: var(--color-ink); background: var(--color-paper-elevated); }
     .tab-btn.active {
-        color: #fca5a5; background: rgba(220,38,38,0.12);
-        border-color: rgba(220,38,38,0.22);
-        box-shadow: 0 0 20px rgba(220,38,38,0.1);
+        color: var(--oxblood-ink); background: var(--oxblood-soft);
+        border-color: var(--oxblood-border);
+        box-shadow: 0 0 20px rgba(122,46,46,0.1);
     }
-    .tab-btn.active svg { color: var(--red); }
+    .tab-btn.active svg { color: var(--color-accent-600); }
     .tab-panel { transition: opacity 0.2s ease; opacity: 1; }
     .tab-panel.hidden { display: none; }
 
     /* ── Panel Header ── */
-    .panel-eyebrow { font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: rgba(220,38,38,0.6); margin-bottom: 5px; }
-    .panel-title { font-size: 1rem; font-weight: 800; color: #f5f5f5; letter-spacing: -0.3px; }
-    .panel-sub { font-size: 0.75rem; color: rgba(255,255,255,0.2); margin-top: 4px; font-weight: 400; }
+    .panel-eyebrow { font-family: var(--font-mono); font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--oxblood-ink); margin-bottom: 5px; }
+    .panel-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 800; color: var(--color-ink); letter-spacing: -0.3px; }
+    .panel-sub { font-size: 0.75rem; color: var(--color-ink-faint); margin-top: 4px; font-weight: 400; }
 
     /* ================================================================
        PROFILE PAGE — Form Elements
@@ -421,12 +437,12 @@
         border: 1.5px solid rgba(255,255,255,0.08);
         border-radius: 11px; padding: 12px 14px 12px 42px;
         font-size: 0.82rem; font-weight: 500; font-family: 'Inter', sans-serif;
-        color: #f5f5f5; outline: none; caret-color: var(--red);
+        color: var(--color-ink); outline: none; caret-color: var(--color-accent-600);
         transition: all 0.25s ease;
     }
     .form-input::placeholder { color: rgba(255,255,255,0.14); }
     .form-input:focus {
-        border-color: var(--red);
+        border-color: var(--color-accent-600);
         background: rgba(220,38,38,0.05);
         box-shadow: 0 0 0 3px rgba(220,38,38,0.14), 0 0 22px rgba(220,38,38,0.08);
     }
@@ -464,12 +480,12 @@
     .form-actions { display: flex; align-items: center; gap: 14px; padding-top: 6px; }
     .btn-red {
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        background: var(--red); color: white; border: none;
+        background: var(--color-accent-600); color: var(--color-paper); border: none;
         border-radius: 11px; padding: 13px 24px;
         font-size: 0.82rem; font-weight: 800; font-family: 'Inter', sans-serif;
         cursor: pointer; letter-spacing: 0.2px; transition: all 0.3s ease;
     }
-    .btn-red:hover { background: #b91c1c; box-shadow: 0 8px 28px var(--red-glow); transform: translateY(-2px); }
+    .btn-red:hover { background: var(--color-accent-700); box-shadow: 0 8px 28px rgba(122,46,46,0.35); transform: translateY(-2px); }
     .btn-red:active { transform: translateY(0); }
     .btn-red svg { width: 15px; height: 15px; }
     .btn-ghost {
@@ -520,7 +536,7 @@
 
     /* ── Security Tips ── */
     .tips-box {
-        background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+        background: rgba(255,255,255,0.025); border: 1px solid var(--hairline);
         border-radius: 11px; padding: 14px 16px; margin-bottom: 24px;
     }
     .tips-box-title { font-size: 0.6rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
@@ -535,7 +551,7 @@
 
     /* ── Section Header ── */
     .section-eyebrow { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(220,38,38,0.65); margin-bottom: 8px; }
-    .section-headline { font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 900; letter-spacing: -0.8px; color: #f5f5f5; line-height: 1.2; margin-bottom: 6px; }
+    .section-headline { font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 900; letter-spacing: -0.8px; color: var(--color-ink); line-height: 1.2; margin-bottom: 6px; }
     .section-sub { font-size: 0.82rem; color: rgba(255,255,255,0.24); font-weight: 400; }
 
     /* ================================================================
@@ -644,10 +660,10 @@
     <div class="sidebar-logo">
         <div class="sidebar-logo-row">
             <div class="logo-wordmark">
-                <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
+                <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--hairline); box-shadow: none;">
                     <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
                 </div>
-                DKV<span style="color:var(--red);">.</span>SMEKDA
+                DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
             </div>
             <button type="button" class="sidebar-close-btn" id="sidebarClose" aria-label="Tutup menu navigasi">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -776,7 +792,7 @@
         <div style="margin-bottom:36px;">
             <div class="section-eyebrow">&#9654; Manajemen Akun</div>
             <h1 class="section-headline">
-                Profil <span style="color:var(--red);text-shadow:0 0 28px rgba(220,38,38,0.4);">Saya</span>
+                Profil <span style="color:var(--color-accent-600);text-shadow:0 0 28px rgba(122,46,46,0.4);">Saya</span>
             </h1>
             <p class="section-sub">Kelola informasi pribadi dan keamanan akun Anda.</p>
         </div>
@@ -1179,7 +1195,7 @@
         </div>{{-- /grid --}}
 
         {{-- ── Footer ── --}}
-        <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--hairline);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
             <span style="font-size:0.7rem;color:rgba(255,255,255,0.14);">
                 &copy; {{ date('Y') }}
                 <strong style="color:rgba(255,255,255,0.26);">DKV SMEKDA</strong>
