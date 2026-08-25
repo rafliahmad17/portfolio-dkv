@@ -388,9 +388,9 @@
                                     <div class="text-[0.72rem] text-[color:var(--color-ink-faint)] mt-1.5 leading-relaxed">Klik area ini atau seret file untuk mengunggah</div>
                                 </div>
                                 <div id="tkImageFormatHint" class="flex gap-1.5 flex-wrap justify-center">
-                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-white/[0.25]">JPG</span>
-                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-white/[0.25]">PNG</span>
-                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-white/[0.25]">Maks 2MB</span>
+                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">JPG</span>
+                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">PNG</span>
+                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">Maks 2MB</span>
                                 </div>
                             </div>
 
