@@ -56,25 +56,25 @@
     }
     .tk-dropzone:hover,
     .tk-dropzone:focus-visible {
-        border-color: var(--tk-red);
-        background-color: rgba(220,38,38,0.045);
-        box-shadow: 0 0 0 3px var(--tk-red-glow-1);
+        border-color: var(--color-accent-600);
+        background-color: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent);
         outline: none;
     }
     .tk-dropzone.has-error {
-        border-color: rgba(239,68,68,0.6) !important;
-        background-color: rgba(239,68,68,0.05) !important;
+        border-color: color-mix(in srgb, var(--color-accent-500) 60%, transparent) !important;
+        background-color: color-mix(in srgb, var(--color-accent-500) 5%, transparent) !important;
     }
     .tk-dropzone.has-preview {
         border-style: solid;
-        border-color: rgba(220,38,38,0.4);
+        border-color: color-mix(in srgb, var(--color-accent-600) 40%, transparent);
     }
     .tk-dropzone.is-dragover {
         animation: tk-border-pulse 1.4s ease-in-out infinite;
     }
     @keyframes tk-border-pulse {
-        0%, 100% { border-color: var(--tk-red); box-shadow: 0 0 0 3px var(--tk-red-glow-1); }
-        50%      { border-color: var(--tk-red-bright); box-shadow: 0 0 0 4px var(--tk-red-glow-2); }
+        0%, 100% { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent); }
+        50%      { border-color: var(--color-accent-500); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 18%, transparent); }
     }
 
     .tk-drop-icon-box { transition: background-color .3s ease, border-color .3s ease; }
@@ -82,13 +82,13 @@
     .tk-drop-title { transition: color .3s ease; }
     .tk-dropzone:hover .tk-drop-icon-box,
     .tk-dropzone:focus-visible .tk-drop-icon-box {
-        background-color: var(--tk-red-glow-1);
-        border-color: var(--tk-red-glow-3);
+        background-color: color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+        border-color: color-mix(in srgb, var(--color-accent-600) 25%, transparent);
     }
     .tk-dropzone:hover .tk-drop-icon-box svg,
-    .tk-dropzone:focus-visible .tk-drop-icon-box svg { color: var(--tk-red); }
+    .tk-dropzone:focus-visible .tk-drop-icon-box svg { color: var(--color-accent-600); }
     .tk-dropzone:hover .tk-drop-title,
-    .tk-dropzone:focus-visible .tk-drop-title { color: rgba(255,255,255,0.75); }
+    .tk-dropzone:focus-visible .tk-drop-title { color: var(--color-ink); }
 
     .tk-preview-overlay { opacity: 0; transition: opacity .3s ease; }
     .tk-dropzone:hover .tk-preview-overlay,
@@ -209,6 +209,30 @@
     .tk-category-select option {
         background-color: var(--color-paper-elevated);
         color: var(--color-ink);
+    }
+
+    /* ── FIELD: DESKRIPSI (Batch 4.3 — migrasi token editorial) ── */
+    .tk-description-textarea {
+        color: var(--color-ink);
+        background-color: var(--color-paper-elevated);
+        border-color: var(--color-paper-border);
+        transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+    }
+    .tk-description-textarea::placeholder {
+        color: var(--color-ink-faint);
+    }
+    .tk-description-textarea:hover {
+        border-color: var(--color-accent-700);
+    }
+    .tk-description-textarea:focus {
+        outline: none;
+        border-color: var(--color-accent-600);
+        background-color: var(--color-paper-elevated);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+    }
+    .tk-description-textarea.has-error {
+        border-color: var(--color-accent-500);
+        background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -605,10 +629,10 @@
                     {{-- DESKRIPSI --}}
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <label for="description" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45]">
-                                Deskripsi <span class="text-red-600 ml-0.5">*</span>
+                            <label for="description" class="block text-[0.7rem] font-bold tracking-wider uppercase" style="color: var(--color-ink-muted);">
+                                Deskripsi <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
                             </label>
-                            <span id="tkDescCount" class="text-[0.65rem] text-white/[0.15] tabular-nums" aria-hidden="true">0 karakter</span>
+                            <span id="tkDescCount" class="text-[0.65rem] tabular-nums" style="color: var(--color-ink-faint);" aria-hidden="true">0 karakter</span>
                         </div>
                         <textarea
                             id="description"
@@ -618,10 +642,10 @@
                             required
                             aria-required="true"
                             @if ($errors->has('description')) aria-invalid="true" aria-describedby="description-error" @endif
-                            class="w-full min-h-[140px] rounded-[11px] border-[1.5px] {{ $errors->has('description') ? 'border-red-500 bg-red-500/[0.05]' : 'border-white/[0.08]' }} bg-white/[0.04] px-3.5 py-3 text-[0.85rem] font-medium leading-relaxed text-[#f5f5f5] placeholder-white/[0.2] outline-none resize-y transition-all duration-200 hover:border-white/[0.15] focus:border-red-600 focus:bg-red-600/[0.05] focus:ring-2 focus:ring-red-600/[0.2]"
+                            class="tk-description-textarea {{ $errors->has('description') ? 'has-error' : '' }} w-full min-h-[140px] rounded-[11px] border-[1.5px] px-3.5 py-3 text-[0.85rem] font-medium leading-relaxed outline-none resize-y"
                         >{{ old('description') }}</textarea>
                         @error('description')
-                            <p id="description-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
+                            <p id="description-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                                 <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
