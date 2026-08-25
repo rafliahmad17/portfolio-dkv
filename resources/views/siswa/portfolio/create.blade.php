@@ -365,13 +365,13 @@
 
                     {{-- IMAGE DROPZONE --}}
                     <div>
-                        <label for="image" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45] mb-2">
-                            Thumbnail Gambar <span class="text-red-600 ml-0.5">*</span>
+                        <label for="image" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                            Thumbnail Gambar <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
                         </label>
 
                         <div
                             id="tkImageDropzone"
-                            class="tk-dropzone {{ $errors->has('image') ? 'has-error' : '' }} relative w-full max-w-full min-h-[260px] sm:min-h-[300px] rounded-2xl border-2 border-dashed border-white/[0.1] bg-white/[0.02] flex flex-col items-center justify-center cursor-pointer overflow-hidden"
+                            class="tk-dropzone {{ $errors->has('image') ? 'has-error' : '' }} relative w-full max-w-full min-h-[260px] sm:min-h-[300px] rounded-2xl border-2 border-dashed border-[color:var(--color-paper-border)] bg-[color:var(--color-paper-elevated)] flex flex-col items-center justify-center cursor-pointer overflow-hidden"
                             role="button"
                             tabindex="0"
                             aria-required="true"
