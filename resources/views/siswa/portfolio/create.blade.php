@@ -5,33 +5,24 @@
 
 @push('styles')
 <style>
-    /* ── DESIGN TOKENS (Premium Black × Red — DKV) ── */
+    /* ── DESIGN TOKENS (migrasi Fase 2.2: --tk-* → token editorial resmi) ── */
+    /* --tk-border-3 sudah selesai dimigrasikan & dihapus di Batch 2 (dipakai
+       langsung sebagai var(--color-paper-border) di .tk-card::before).
+       --tk-red, --tk-red-bright, --tk-red-glow-1/2/3 masih dipertahankan
+       namanya karena masih dipakai rule dropzone/PDF di bawah — akan
+       dimigrasikan & dihapus pada Batch 5. Nilainya sudah menunjuk ke token
+       resmi/pola oxblood editorial. */
     :root {
-        --tk-bg:              #080808;
-        --tk-bg-alt:          #0a0a0a;
-        --tk-surface-1:       #0f0f0f;
-        --tk-surface-2:       #121212;
-        --tk-surface-3:       #151515;
-        --tk-input-bg:        #111111;
-        --tk-input-bg-alt:    #141414;
-        --tk-red:             #dc2626;
-        --tk-red-bright:      #ef4444;
-        --tk-red-dark:        #991b1b;
-        --tk-text:            #f5f5f5;
-        --tk-text-secondary:  rgba(255,255,255,0.55);
-        --tk-text-muted:      rgba(255,255,255,0.30);
-        --tk-border-1:        rgba(255,255,255,0.06);
-        --tk-border-2:        rgba(255,255,255,0.08);
-        --tk-border-3:        rgba(255,255,255,0.10);
-        --tk-red-glow-1:      rgba(220,38,38,0.12);
-        --tk-red-glow-2:      rgba(220,38,38,0.18);
-        --tk-red-glow-3:      rgba(220,38,38,0.25);
+        --tk-red:             var(--color-accent-600);
+        --tk-red-bright:      var(--color-accent-500);
+        --tk-red-glow-1:      rgba(122,46,46,0.12);
+        --tk-red-glow-2:      rgba(122,46,46,0.18);
+        --tk-red-glow-3:      rgba(122,46,46,0.25);
     }
 
-    
- body {
-        background-color: var(--tk-bg);
-        color: var(--tk-text);
+    body {
+        background-color: var(--color-paper);
+        color: var(--color-ink);
     }
     
     .tk-page {
@@ -55,7 +46,7 @@
     .tk-card::before {
         content: '';
         position: absolute; top: 0; left: 0; right: 0; height: 1px;
-        background: linear-gradient(90deg, transparent, var(--tk-border-3), transparent);
+        background: linear-gradient(90deg, transparent, var(--color-paper-border), transparent);
         pointer-events: none;
     }
 
@@ -147,6 +138,79 @@
         background-color: var(--tk-red-glow-1) !important;
     }
 
+    /* ── FIELD: JUDUL KARYA (Batch 4.1 — migrasi token editorial) ── */
+    .tk-title-icon {
+        color: var(--color-ink-faint);
+        transition: color .2s ease;
+    }
+    .group:focus-within .tk-title-icon {
+        color: var(--color-accent-600);
+    }
+    .tk-title-input {
+        color: var(--color-ink);
+        background-color: var(--color-paper-elevated);
+        border-color: var(--color-paper-border);
+        transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+    }
+    .tk-title-input::placeholder {
+        color: var(--color-ink-faint);
+    }
+    .tk-title-input:hover {
+        border-color: var(--color-accent-700);
+    }
+    .tk-title-input:focus {
+        outline: none;
+        border-color: var(--color-accent-600);
+        background-color: var(--color-paper-elevated);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+    }
+    .tk-title-input.has-error {
+        border-color: var(--color-accent-500);
+        background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
+    }
+
+    /* ── FIELD: KATEGORI (Batch 4.2 — migrasi token editorial) ── */
+    .tk-category-icon {
+        color: var(--color-ink-faint);
+        transition: color .2s ease;
+    }
+    .group:focus-within .tk-category-icon {
+        color: var(--color-accent-600);
+    }
+    .tk-category-chevron {
+        color: var(--color-ink-faint);
+    }
+    .tk-category-select {
+        color: var(--color-ink);
+        background-color: var(--color-paper-elevated);
+        border-color: var(--color-paper-border);
+        transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+    }
+    .tk-category-select:invalid {
+        color: var(--color-ink-faint);
+    }
+    .tk-category-select:hover:not(:disabled) {
+        border-color: var(--color-accent-700);
+    }
+    .tk-category-select:focus:not(:disabled) {
+        outline: none;
+        border-color: var(--color-accent-600);
+        background-color: var(--color-paper-elevated);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+    }
+    .tk-category-select.has-error {
+        border-color: var(--color-accent-500);
+        background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
+    }
+    .tk-category-select:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .tk-category-select option {
+        background-color: var(--color-paper-elevated);
+        color: var(--color-ink);
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .tk-page *, .tk-page *::before, .tk-page *::after {
             animation-duration: 0.01ms !important;
@@ -159,7 +223,7 @@
 @endpush
 
 @section('content')
-<div class="tk-page w-full max-w-6xl mx-auto pb-16" style="font-family:'Inter',ui-sans-serif,system-ui,sans-serif;">
+<div class="tk-page w-full max-w-6xl mx-auto pb-16" style="font-family:var(--font-sans);">
 
     {{-- BREADCRUMB --}}
     <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs font-semibold text-white/[0.3]">
@@ -187,7 +251,7 @@
                 <span aria-hidden="true">&#9654;</span> Portofolio Digital
             </div>
             <h1 class="text-2xl sm:text-3xl lg:text-[2rem] font-black tracking-tight leading-tight text-[#f5f5f5]">
-                Tambah <span class="text-red-600" style="text-shadow:0 0 26px rgba(220,38,38,0.35);">Karya</span>
+                Tambah <span class="text-red-600" style="text-shadow:0 0 26px rgba(122,46,46,0.35);">Karya</span>
             </h1>
             <p class="mt-2 text-sm text-white/[0.3] max-w-xl">
                 Unggah karya terbarumu dan lengkapi detailnya untuk ditampilkan di portofolio digital.
@@ -458,11 +522,11 @@
 
                         {{-- JUDUL --}}
                         <div>
-                            <label for="title" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45] mb-2">
-                                Judul Karya <span class="text-red-600 ml-0.5">*</span>
+                            <label for="title" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                                Judul Karya <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
                             </label>
                             <div class="relative group">
-                                <svg class="pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-white/[0.2] transition-colors group-focus-within:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <svg class="tk-title-icon pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                 </svg>
                                 <input
@@ -476,11 +540,11 @@
                                     maxlength="255"
                                     aria-required="true"
                                     @if ($errors->has('title')) aria-invalid="true" aria-describedby="title-error" @endif
-                                    class="w-full min-h-[44px] rounded-[11px] border-[1.5px] {{ $errors->has('title') ? 'border-red-500 bg-red-500/[0.05]' : 'border-white/[0.08]' }} bg-white/[0.04] pl-[42px] pr-3.5 py-3 text-[0.85rem] font-medium text-[#f5f5f5] placeholder-white/[0.2] outline-none transition-all duration-200 hover:border-white/[0.15] focus:border-red-600 focus:bg-red-600/[0.05] focus:ring-2 focus:ring-red-600/[0.2]"
+                                    class="tk-title-input {{ $errors->has('title') ? 'has-error' : '' }} w-full min-h-[44px] rounded-[11px] border-[1.5px] pl-[42px] pr-3.5 py-3 text-[0.85rem] font-medium outline-none"
                                 >
                             </div>
                             @error('title')
-                                <p id="title-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
+                                <p id="title-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                                     <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                     </svg>
@@ -492,11 +556,11 @@
                         {{-- KATEGORI --}}
                                 {{-- KATEGORI --}}
         <div>
-            <label for="category_id" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45] mb-2">
-                Kategori <span class="text-red-600 ml-0.5">*</span>
+            <label for="category_id" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                Kategori <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
             </label>
             <div class="relative group">
-                <svg class="pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px] text-white/[0.2] transition-colors group-focus-within:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg class="tk-category-icon pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                 </svg>
                 <select
@@ -506,10 +570,9 @@
                     aria-required="true"
                     @if ($categoriesEmpty) disabled @endif
                     @if ($errors->has('category_id')) aria-invalid="true" aria-describedby="category-error" @endif
-                    class="w-full min-h-[44px] appearance-none rounded-[11px] border-[1.5px] {{ $errors->has('category_id') ? 'border-red-500 bg-red-500/[0.05]' : 'border-white/[0.08]' }} bg-white/[0.04] pl-[42px] pr-10 py-3 text-[0.85rem] font-medium text-white/[0.7] outline-none cursor-pointer transition-all duration-200 hover:border-white/[0.15] focus:border-red-600 focus:bg-red-600/[0.05] focus:ring-2 focus:ring-red-600/[0.2] focus:text-[#f5f5f5] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-white/[0.08]"
+                    class="tk-category-select {{ $errors->has('category_id') ? 'has-error' : '' }} w-full min-h-[44px] appearance-none rounded-[11px] border-[1.5px] pl-[42px] pr-10 py-3 text-[0.85rem] font-medium outline-none cursor-pointer"
                 >
-                    {{-- TAMBAHKAN STYLING GELAP PADA OPTION INI --}}
-                    <option value="" disabled {{ old('category_id') ? '' : 'selected' }} class="bg-[#18181b] text-white" style="background-color: #18181b; color: #ffffff;">
+                    <option value="" disabled {{ old('category_id') ? '' : 'selected' }}>
                         @if($categoriesEmpty)
                             &#9888; Belum ada kategori
                         @else
@@ -518,19 +581,18 @@
                     </option>
                     @if(isset($categories))
                         @foreach($categories as $category)
-                            {{-- TAMBAHKAN STYLING GELAP PADA OPTION INI JUGA --}}
-                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }} class="bg-[#18181b] text-white" style="background-color: #18181b; color: #ffffff;">
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                         @endforeach
                     @endif
                 </select>
-                <svg class="pointer-events-none absolute right-[13px] top-1/2 -translate-y-1/2 w-[14px] h-[14px] text-white/[0.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg class="tk-category-chevron pointer-events-none absolute right-[13px] top-1/2 -translate-y-1/2 w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                 </svg>
             </div>
             @error('category_id')
-                <p id="category-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
+                <p id="category-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                     <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                     </svg>
