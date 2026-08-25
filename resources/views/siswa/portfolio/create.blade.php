@@ -378,14 +378,14 @@
                             aria-label="Pilih atau seret gambar thumbnail karya untuk diunggah. Format JPG, JPEG, atau PNG, maksimal 2MB."
                         >
                             <div id="tkImagePrompt" class="flex flex-col items-center justify-center gap-3.5 px-6 py-9 text-center pointer-events-none">
-                                <div class="tk-drop-icon-box w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-white/[0.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <div class="tk-drop-icon-box w-16 h-16 rounded-2xl bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] flex items-center justify-center">
+                                    <svg class="w-7 h-7 text-[color:var(--color-ink-faint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                     </svg>
                                 </div>
                                 <div>
-                                    <div class="tk-drop-title text-[0.88rem] font-extrabold text-white/[0.5]">Pilih atau letakkan gambar di sini</div>
-                                    <div class="text-[0.72rem] text-white/[0.2] mt-1.5 leading-relaxed">Klik area ini atau seret file untuk mengunggah</div>
+                                    <div class="tk-drop-title text-[0.88rem] font-extrabold text-[color:var(--color-ink-muted)]">Pilih atau letakkan gambar di sini</div>
+                                    <div class="text-[0.72rem] text-[color:var(--color-ink-faint)] mt-1.5 leading-relaxed">Klik area ini atau seret file untuk mengunggah</div>
                                 </div>
                                 <div id="tkImageFormatHint" class="flex gap-1.5 flex-wrap justify-center">
                                     <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-white/[0.25]">JPG</span>
