@@ -90,9 +90,39 @@
     .tk-dropzone:hover .tk-drop-title,
     .tk-dropzone:focus-visible .tk-drop-title { color: var(--color-ink); }
 
-    .tk-preview-overlay { opacity: 0; transition: opacity .3s ease; }
+    .tk-preview-overlay {
+        opacity: 0;
+        background-color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+        transition: opacity .3s ease;
+    }
     .tk-dropzone:hover .tk-preview-overlay,
     .tk-dropzone:focus-within .tk-preview-overlay { opacity: 1; }
+
+    /* ── IMAGE PREVIEW CONTROLS: tombol Hapus (Batch 5.1d-2 — migrasi token editorial) ── */
+    #tkRemoveImageBtn {
+        background-color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+        border-color: color-mix(in srgb, var(--color-paper) 15%, transparent);
+        color: color-mix(in srgb, var(--color-paper) 60%, transparent);
+    }
+    #tkRemoveImageBtn:hover {
+        color: var(--color-accent-500);
+        border-color: color-mix(in srgb, var(--color-accent-500) 40%, transparent);
+    }
+    #tkRemoveImageBtn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
+
+    /* ── IMAGE PREVIEW CONTROLS: tombol Ganti Gambar (Batch 5.1d-4 ── migrasi token editorial) ── */
+    #tkChangeImageBtn {
+        background-color: color-mix(in srgb, var(--color-accent-600) 90%, transparent);
+        color: var(--color-paper);
+        box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
+    #tkChangeImageBtn:focus-visible {
+        outline: none;
+        box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 40%, transparent), 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
 
     /* ── PREVIEW REVEAL ANIMATION ── */
     @keyframes tk-fade-in {
@@ -395,40 +425,40 @@
                             </div>
 
                             {{-- Processing state (saat FileReader membaca gambar) --}}
-                            <div id="tkImageProcessing" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/[0.7]">
-                                <svg class="w-8 h-8 animate-spin text-red-500" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                            <div id="tkImageProcessing" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center gap-3" style="background-color: color-mix(in srgb, var(--color-ink) 70%, transparent);">
+                                <svg class="w-8 h-8 animate-spin" style="color: var(--color-accent-500);" fill="none" viewBox="0 0 24 24" aria-hidden="true">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                                 </svg>
-                                <span role="status" class="text-[0.75rem] font-semibold text-white/[0.6]">Memproses gambar&hellip;</span>
+                                <span role="status" class="text-[0.75rem] font-semibold" style="color: color-mix(in srgb, var(--color-paper) 60%, transparent);">Memproses gambar&hellip;</span>
                             </div>
 
                             <div id="tkImagePreviewWrap" class="absolute inset-0 hidden">
                                 <img src="#" alt="Pratinjau gambar karya" id="tkImagePreviewImg" class="w-full h-full object-cover">
 
                                 <button type="button" id="tkRemoveImageBtn"
-                                        class="hidden absolute top-3 right-3 z-10 w-7 h-7 rounded-full bg-black/[0.7] border border-white/[0.15] text-white/[0.6] items-center justify-center transition-colors duration-200 hover:text-red-400 hover:border-red-500/[0.4] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4]"
+                                        class="hidden absolute top-3 right-3 z-10 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"
                                         aria-label="Hapus gambar yang dipilih">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
                                 </button>
 
-                                <div class="tk-preview-overlay absolute inset-0 bg-black/[0.55] flex flex-col items-center justify-center gap-2.5">
+                                <div class="tk-preview-overlay absolute inset-0 flex flex-col items-center justify-center gap-2.5">
                                     <button type="button" id="tkChangeImageBtn"
-                                            class="inline-flex items-center gap-1.5 bg-red-600/[0.9] text-white px-4 py-2 rounded-[10px] text-[0.78rem] font-extrabold shadow-[0_4px_20px_rgba(220,38,38,0.4)] transition-transform duration-150 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4]">
+                                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[0.78rem] font-extrabold transition-transform duration-150 active:scale-95 focus-visible:outline-none">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                         </svg>
                                         Ganti Gambar
                                     </button>
                                     <div class="flex items-center gap-1.5 px-4 max-w-full">
-                                        <div id="tkImageFileName" class="text-[0.72rem] text-white/[0.6] font-semibold truncate"></div>
-                                        <span id="tkImageFileSize" class="text-[0.68rem] text-white/[0.35] flex-shrink-0"></span>
+                                        <div id="tkImageFileName" class="text-[0.72rem] font-semibold truncate" style="color: color-mix(in srgb, var(--color-paper) 60%, transparent);"></div>
+                                        <span id="tkImageFileSize" class="text-[0.68rem] flex-shrink-0" style="color: color-mix(in srgb, var(--color-paper) 35%, transparent);"></span>
                                     </div>
                                 </div>
 
-                                <div class="absolute top-3 left-3 bg-black/[0.75] backdrop-blur border border-red-500/[0.4] text-red-300 px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold tracking-wider uppercase" aria-hidden="true">
+                                <div class="absolute top-3 left-3 backdrop-blur px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold tracking-wider uppercase" style="background-color: color-mix(in srgb, var(--color-ink) 75%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent-500) 40%, transparent); color: var(--color-accent-500);" aria-hidden="true">
                                     &#10003; Terpilih
                                 </div>
                             </div>
