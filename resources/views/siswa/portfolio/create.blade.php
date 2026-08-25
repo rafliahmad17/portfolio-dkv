@@ -13,11 +13,8 @@
        dimigrasikan & dihapus pada Batch 5. Nilainya sudah menunjuk ke token
        resmi/pola oxblood editorial. */
     :root {
-        --tk-red:             var(--color-accent-600);
         --tk-red-bright:      var(--color-accent-500);
-        --tk-red-glow-1:      rgba(122,46,46,0.12);
         --tk-red-glow-2:      rgba(122,46,46,0.18);
-        --tk-red-glow-3:      rgba(122,46,46,0.25);
     }
 
     body {
@@ -144,28 +141,28 @@
     .tk-pdf-area { transition: border-color .25s ease, background-color .25s ease; }
     .tk-pdf-area:hover,
     .tk-pdf-area:focus-visible {
-        border-color: rgba(220,38,38,0.3);
-        background-color: rgba(220,38,38,0.035);
+        border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+        background-color: color-mix(in srgb, var(--color-accent-600) 3.5%, transparent);
         outline: none;
     }
     .tk-pdf-area.has-error {
-        border-color: rgba(239,68,68,0.55) !important;
-        background-color: rgba(239,68,68,0.05) !important;
+        border-color: color-mix(in srgb, var(--color-accent-500) 55%, transparent) !important;
+        background-color: color-mix(in srgb, var(--color-accent-500) 5%, transparent) !important;
     }
     .tk-pdf-area.has-file {
         border-style: solid;
-        border-color: rgba(220,38,38,0.35);
-        background-color: rgba(220,38,38,0.05);
+        border-color: color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+        background-color: color-mix(in srgb, var(--color-accent-600) 5%, transparent);
     }
-    .tk-pdf-area.has-file .tk-pdf-text { color: #fca5a5; }
+    .tk-pdf-area.has-file .tk-pdf-text { color: var(--color-accent-500); }
     .tk-pdf-area.has-file .tk-pdf-icon-box {
-        color: var(--tk-red);
-        border-color: var(--tk-red-glow-3);
-        background-color: var(--tk-red-glow-1);
+        color: var(--color-accent-600);
+        border-color: color-mix(in srgb, var(--color-accent-600) 25%, transparent);
+        background-color: color-mix(in srgb, var(--color-accent-600) 12%, transparent);
     }
     .tk-pdf-area.is-dragover {
-        border-color: var(--tk-red) !important;
-        background-color: var(--tk-red-glow-1) !important;
+        border-color: var(--color-accent-600) !important;
+        background-color: color-mix(in srgb, var(--color-accent-600) 12%, transparent) !important;
     }
 
     /* ── PDF PREVIEW CONTROLS: tombol Hapus PDF (Batch 5.2f — migrasi token editorial) ── */
