@@ -168,6 +168,21 @@
         background-color: var(--tk-red-glow-1) !important;
     }
 
+    /* ── PDF PREVIEW CONTROLS: tombol Hapus PDF (Batch 5.2f — migrasi token editorial) ── */
+    #tkRemovePdfBtn {
+        background-color: color-mix(in srgb, var(--color-ink) 5%, transparent);
+        border-color: color-mix(in srgb, var(--color-ink) 10%, transparent);
+        color: var(--color-ink-faint);
+    }
+    #tkRemovePdfBtn:hover {
+        color: var(--color-accent-500);
+        border-color: color-mix(in srgb, var(--color-accent-500) 30%, transparent);
+    }
+    #tkRemovePdfBtn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
+
     /* ── FIELD: JUDUL KARYA (Batch 4.1 — migrasi token editorial) ── */
     .tk-title-icon {
         color: var(--color-ink-faint);
@@ -495,30 +510,30 @@
 
                     {{-- PDF UPLOAD --}}
                     <div>
-                        <label for="file_pdf" class="block text-[0.7rem] font-bold tracking-wider uppercase text-white/[0.45] mb-2">
+                        <label for="file_pdf" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
                             Dokumen PDF
-                            <span class="text-white/[0.2] font-medium normal-case tracking-normal text-[0.65rem] ml-1">(Opsional)</span>
+                            <span class="font-medium normal-case tracking-normal text-[0.65rem] ml-1" style="color: var(--color-ink-faint);">(Opsional)</span>
                         </label>
 
                         <div
                             id="tkPdfArea"
-                            class="tk-pdf-area flex items-center gap-3.5 rounded-xl border border-dashed border-white/[0.08] bg-white/[0.02] px-4 py-4 cursor-pointer min-h-[44px]"
+                            class="tk-pdf-area flex items-center gap-3.5 rounded-xl border border-dashed border-[color:var(--color-paper-border)] bg-[color:var(--color-paper-elevated)] px-4 py-4 cursor-pointer min-h-[44px]"
                             role="button"
                             tabindex="0"
                             aria-label="Pilih atau seret file PDF dokumen pendukung, opsional. Maksimal 5MB."
                         >
-                            <div class="tk-pdf-icon-box w-10 h-10 rounded-[10px] bg-white/[0.04] border border-white/[0.07] flex items-center justify-center flex-shrink-0">
-                                <svg class="w-[18px] h-[18px] text-white/[0.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <div class="tk-pdf-icon-box w-10 h-10 rounded-[10px] bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] flex items-center justify-center flex-shrink-0">
+                                <svg class="w-[18px] h-[18px] text-[color:var(--color-ink-faint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div id="tkPdfText" class="tk-pdf-text text-[0.8rem] font-bold text-white/[0.4] truncate">Klik atau seret file PDF ke sini</div>
-                                <div id="tkPdfSub" class="text-[0.68rem] text-white/[0.25] mt-0.5">Format PDF &bull; Maksimal 5MB</div>
+                                <div id="tkPdfText" class="tk-pdf-text text-[0.8rem] font-bold text-[color:var(--color-ink-muted)] truncate">Klik atau seret file PDF ke sini</div>
+                                <div id="tkPdfSub" class="text-[0.68rem] text-[color:var(--color-ink-faint)] mt-0.5">Format PDF &bull; Maksimal 5MB</div>
                             </div>
-                            <span id="tkPdfBrowsePill" class="flex-shrink-0 text-[0.65rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md bg-white/[0.04] border border-white/[0.07] text-white/[0.2]">Browse</span>
+                            <span id="tkPdfBrowsePill" class="flex-shrink-0 text-[0.65rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">Browse</span>
                             <button type="button" id="tkRemovePdfBtn"
-                                    class="hidden flex-shrink-0 w-7 h-7 rounded-full bg-white/[0.05] border border-white/[0.1] text-white/[0.4] items-center justify-center transition-colors duration-200 hover:text-red-400 hover:border-red-500/[0.3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4]"
+                                    class="hidden flex-shrink-0 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"
                                     aria-label="Hapus file PDF">
                                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -536,7 +551,7 @@
                             @if ($errors->has('file_pdf')) aria-invalid="true" @endif
                         >
 
-                        <p id="tkPdfClientError" role="alert" class="hidden mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
+                        <p id="tkPdfClientError" role="alert" class="hidden mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                             <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                             </svg>
@@ -544,7 +559,7 @@
                         </p>
 
                         @error('file_pdf')
-                            <p id="pdf-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold text-red-400">
+                            <p id="pdf-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                                 <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
