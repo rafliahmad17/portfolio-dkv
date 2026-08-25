@@ -433,113 +433,122 @@
 
         /* ── CONTENT CARD (panel form tambah kategori) ── */
         .content-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
+            background: var(--color-paper-elevated);
+            border: 1px solid var(--hairline);
             border-radius: 18px; padding: 24px;
             margin-bottom: 24px;
         }
-        .content-card-title { font-size: 0.95rem; font-weight: 800; color: #f5f5f5; margin-bottom: 4px; }
-        .content-card-sub { font-size: 0.75rem; color: rgba(255,255,255,0.28); margin-bottom: 18px; }
+        .content-card-title { font-size: 0.95rem; font-weight: 800; color: var(--color-ink); margin-bottom: 4px; }
+        .content-card-sub { font-size: 0.75rem; color: var(--color-ink-faint); margin-bottom: 18px; }
 
         .form-row { display: flex; align-items: flex-end; gap: 12px; }
         .form-field { flex: 1; min-width: 0; }
 
         .form-label {
             display: block; font-size: 0.72rem; font-weight: 700;
-            color: rgba(255,255,255,0.4); margin-bottom: 8px; letter-spacing: 0.3px;
+            color: var(--color-ink-muted); margin-bottom: 8px; letter-spacing: 0.3px;
         }
 
         .form-input {
             width: 100%;
-            background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08);
+            background: var(--surface-sunk);
+            border: 1.5px solid var(--hairline);
             border-radius: 10px;
             padding: 12px 14px;
             font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif;
-            color: #f5f5f5;
+            font-family: var(--font-sans);
+            color: var(--color-ink);
             outline: none;
-            caret-color: var(--red);
+            caret-color: var(--color-accent-600);
             transition: all 0.25s ease;
         }
-        .form-input::placeholder { color: rgba(255,255,255,0.18); }
+        .form-input::placeholder { color: var(--color-ink-faint); }
         .form-input:focus {
-            border-color: var(--red);
-            background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+            border-color: var(--color-accent-600);
+            background: var(--oxblood-soft);
+            box-shadow: 0 0 0 3px rgba(122,46,46,0.15);
         }
-        .form-input.has-error { border-color: #f87171; background: rgba(220,38,38,0.06); }
-        .form-input:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+        .form-input.has-error { border-color: var(--oxblood-ink); background: var(--oxblood-soft); }
+        .form-input:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }
 
         .form-error {
             margin-top: 8px; font-size: 0.72rem; font-weight: 600;
-            color: #fca5a5; display: flex; align-items: center; gap: 6px;
+            color: var(--oxblood-ink); display: flex; align-items: center; gap: 6px;
         }
         .form-error svg { width: 12px; height: 12px; flex-shrink: 0; }
 
         /* ── BUTTONS ── */
         .btn-primary {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            background: var(--red); color: white;
+            background: var(--color-accent-600); color: var(--color-paper);
             border: none; border-radius: 10px;
             padding: 12px 22px;
             font-size: 0.82rem; font-weight: 700;
-            font-family: 'Inter', sans-serif; cursor: pointer;
+            font-family: var(--font-sans); cursor: pointer;
             transition: all 0.3s ease; white-space: nowrap;
         }
-        .btn-primary:hover { background: #b91c1c; box-shadow: 0 6px 24px var(--red-glow); transform: translateY(-1px); }
+        .btn-primary:hover { background: var(--color-accent-700); box-shadow: 0 6px 24px rgba(122,46,46,0.4); transform: translateY(-1px); }
         .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
-        .btn-primary:focus-visible { outline: 2px solid #fca5a5; outline-offset: 2px; }
+        .btn-primary:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }
         .btn-primary svg { width: 15px; height: 15px; flex-shrink: 0; }
 
         .btn-secondary {
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.5);
+            background: var(--surface-sunk);
+            border: 1px solid var(--hairline-strong);
+            color: var(--color-ink-muted);
             border-radius: 10px; padding: 12px 20px;
             font-size: 0.82rem; font-weight: 700;
-            font-family: 'Inter', sans-serif; cursor: pointer;
+            font-family: var(--font-sans); cursor: pointer;
             transition: all 0.22s ease; white-space: nowrap;
         }
-        .btn-secondary:hover { background: rgba(255,255,255,0.08); color: #f5f5f5; }
-        .btn-secondary:focus-visible { outline: 2px solid rgba(255,255,255,0.4); outline-offset: 2px; }
+        .btn-secondary:hover { background: var(--hairline-strong); color: var(--color-ink); }
+        .btn-secondary:focus-visible { outline: 2px solid var(--color-ink-muted); outline-offset: 2px; }
 
-        /* ── TABLE PANEL ── */
+        /* ── TABLE PANEL (pola sama dengan guru/dashboard.blade.php) ── */
         .table-panel {
-            background: rgba(255,255,255,0.018);
-            border: 1px solid var(--border);
+            background: var(--color-paper-elevated);
+            border: 1px solid var(--hairline);
             border-radius: 20px; overflow: hidden;
         }
 
         .table-topbar {
             padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--hairline);
             display: flex; align-items: center; justify-content: space-between;
             flex-wrap: wrap; gap: 12px;
         }
 
-        .table-title { font-size: 0.92rem; font-weight: 800; color: #f5f5f5; letter-spacing: -0.2px; }
-        .table-sub { font-size: 0.72rem; color: rgba(255,255,255,0.22); margin-top: 2px; font-weight: 500; }
+        .table-title {
+            font-family: var(--font-serif);
+            font-size: 0.92rem; font-weight: 800;
+            color: var(--color-ink); letter-spacing: -0.2px;
+        }
+        .table-sub {
+            font-size: 0.72rem; color: var(--color-ink-faint);
+            margin-top: 2px; font-weight: 500;
+        }
 
         .results-badge {
+            font-family: var(--font-mono);
             display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
+            background: var(--surface-sunk);
+            border: 1px solid var(--hairline);
             border-radius: 20px; padding: 4px 12px;
             font-size: 0.68rem; font-weight: 700;
-            color: rgba(255,255,255,0.3);
+            color: var(--color-ink-muted);
         }
 
         .data-table { width: 100%; border-collapse: collapse; }
 
-        .data-table thead tr { background: #111111; border-bottom: 1px solid var(--border); }
+        .data-table thead tr { background: var(--surface-sunk); border-bottom: 1px solid var(--hairline); }
 
         .data-table thead th {
+            font-family: var(--font-mono);
             padding: 12px 20px;
             font-size: 0.62rem; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255,255,255,0.28);
+            color: var(--color-ink-faint);
             text-align: left; white-space: nowrap;
         }
 
@@ -547,7 +556,7 @@
         .data-table thead th:last-child  { padding-right: 24px; text-align: right; }
 
         .data-table tbody tr {
-            border-bottom: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid var(--hairline);
             transition: all 0.22s ease;
             position: relative;
             animation: rowIn 0.4s ease both;
@@ -555,73 +564,73 @@
         @keyframes rowIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
         .data-table tbody tr:last-child { border-bottom: none; }
-        .data-table tbody tr:hover { background: rgba(220,38,38,0.04); }
+        .data-table tbody tr:hover { background: var(--oxblood-soft); }
 
         .data-table tbody tr:hover td:first-child::before {
             content: '';
             position: absolute; left: 0; top: 0; bottom: 0;
-            width: 2px; background: var(--red);
-            box-shadow: 0 0 8px var(--red-glow);
+            width: 2px; background: var(--color-accent-600);
+            box-shadow: 0 0 8px rgba(122,46,46,0.45);
         }
 
         .data-table tbody td { padding: 14px 20px; vertical-align: middle; position: relative; }
         .data-table tbody td:first-child { padding-left: 24px; }
         .data-table tbody td:last-child  { padding-right: 24px; }
 
-        .cell-name { font-size: 0.85rem; font-weight: 700; color: #f5f5f5; }
-        .cell-slug { font-size: 0.68rem; color: rgba(255,255,255,0.22); margin-top: 2px; font-weight: 500; }
+        .cell-name { font-size: 0.85rem; font-weight: 700; color: var(--color-ink); }
+        .cell-slug { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); margin-top: 2px; font-weight: 500; }
 
         .badge-count {
             display: inline-flex; align-items: center; justify-content: center;
             min-width: 26px; height: 24px; padding: 0 9px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            background: var(--surface-sunk); border: 1px solid var(--hairline);
             border-radius: 20px; font-size: 0.72rem; font-weight: 800;
-            color: rgba(255,255,255,0.55);
+            color: var(--color-ink-muted);
         }
-        .badge-count.zero { background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.2); }
-        .badge-count.active { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2); color: #fca5a5; }
+        .badge-count.zero { background: var(--color-paper-elevated); color: var(--color-ink-faint); }
+        .badge-count.active { background: var(--oxblood-soft); border-color: var(--oxblood-border); color: var(--oxblood-ink); }
 
         .btn-icon {
             display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.5);
+            background: var(--surface-sunk);
+            border: 1px solid var(--hairline-strong);
+            color: var(--color-ink-muted);
             padding: 7px 13px; border-radius: 8px;
             font-size: 0.72rem; font-weight: 700;
-            cursor: pointer; font-family: 'Inter', sans-serif;
+            cursor: pointer; font-family: var(--font-sans);
             transition: all 0.22s ease; white-space: nowrap;
         }
-        .btn-icon:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.16); color: #f5f5f5; }
-        .btn-icon:focus-visible { outline: 2px solid rgba(255,255,255,0.4); outline-offset: 2px; }
+        .btn-icon:hover { background: var(--hairline-strong); border-color: var(--color-ink-faint); color: var(--color-ink); }
+        .btn-icon:focus-visible { outline: 2px solid var(--color-ink-muted); outline-offset: 2px; }
         .btn-icon svg { width: 13px; height: 13px; }
 
         .btn-icon-danger {
             display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.08);
-            border: 1px solid rgba(220,38,38,0.18);
-            color: #fca5a5;
+            background: var(--oxblood-soft);
+            border: 1px solid var(--oxblood-border);
+            color: var(--oxblood-ink);
             padding: 7px 13px; border-radius: 8px;
             font-size: 0.72rem; font-weight: 700;
-            cursor: pointer; font-family: 'Inter', sans-serif;
+            cursor: pointer; font-family: var(--font-sans);
             transition: all 0.22s ease; white-space: nowrap;
         }
-        .btn-icon-danger:hover { background: rgba(220,38,38,0.16); border-color: rgba(220,38,38,0.35); }
-        .btn-icon-danger:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+        .btn-icon-danger:hover { background: rgba(122,46,46,0.16); border-color: rgba(122,46,46,0.4); }
+        .btn-icon-danger:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }
         .btn-icon-danger svg { width: 13px; height: 13px; }
-        .btn-icon-danger.muted { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.06); color: rgba(255,255,255,0.22); }
-        .btn-icon-danger.muted:hover { background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.16); color: #fca5a5; }
+        .btn-icon-danger.muted { background: var(--surface-sunk); border-color: var(--hairline); color: var(--color-ink-faint); }
+        .btn-icon-danger.muted:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); color: var(--oxblood-ink); }
 
         .row-actions { display: flex; align-items: center; justify-content: flex-end; gap: 7px; }
 
-        /* ── PAGINATION ── */
+        /* ── PAGINATION (pola sama dengan guru/dashboard.blade.php) ── */
         .pagination-wrap {
             padding: 18px 24px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--hairline);
             display: flex; align-items: center; justify-content: space-between;
             flex-wrap: wrap; gap: 12px;
         }
-        .pagination-info { font-size: 0.72rem; color: rgba(255,255,255,0.22); font-weight: 500; }
-        .pagination-info strong { color: rgba(255,255,255,0.45); }
+        .pagination-info { font-family: var(--font-mono); font-size: 0.72rem; color: var(--color-ink-faint); font-weight: 500; }
+        .pagination-info strong { color: var(--color-ink-muted); }
 
         .page-btn {
             display: inline-flex; align-items: center; justify-content: center;
@@ -630,23 +639,23 @@
             text-decoration: none;
             transition: all 0.22s ease;
         }
-        .page-btn.inactive { background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: rgba(255,255,255,0.3); }
-        .page-btn.inactive:hover { background: rgba(255,255,255,0.08); color: #f5f5f5; }
-        .page-btn.active { background: var(--red); border: 1px solid var(--red); color: white; box-shadow: 0 0 14px rgba(220,38,38,0.4); }
-        .page-btn.disabled { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.12); cursor: not-allowed; pointer-events: none; }
+        .page-btn.inactive { background: var(--surface-sunk); border: 1px solid var(--hairline); color: var(--color-ink-muted); }
+        .page-btn.inactive:hover { background: var(--hairline-strong); color: var(--color-ink); }
+        .page-btn.active { background: var(--color-accent-600); border: 1px solid var(--color-accent-600); color: var(--color-paper); box-shadow: 0 0 14px rgba(122,46,46,0.4); }
+        .page-btn.disabled { background: var(--color-paper-elevated); border: 1px solid var(--hairline); color: var(--color-ink-faint); cursor: not-allowed; pointer-events: none; }
 
-        /* ── EMPTY TABLE ── */
+        /* ── EMPTY TABLE (pola sama dengan guru/dashboard.blade.php) ── */
         .table-empty { padding: 80px 40px; text-align: center; }
         .table-empty-icon {
             width: 64px; height: 64px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border); border-radius: 18px;
+            background: var(--surface-sunk);
+            border: 1px solid var(--hairline); border-radius: 18px;
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 20px;
         }
-        .table-empty-icon svg { width: 28px; height: 28px; color: rgba(255,255,255,0.15); }
-        .table-empty-title { font-size: 0.9rem; font-weight: 800; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
-        .table-empty-sub { font-size: 0.78rem; color: rgba(255,255,255,0.18); line-height: 1.6; max-width: 320px; margin: 0 auto; }
+        .table-empty-icon svg { width: 28px; height: 28px; color: var(--color-ink-faint); }
+        .table-empty-title { font-family: var(--font-serif); font-size: 0.9rem; font-weight: 800; color: var(--color-ink-muted); margin-bottom: 8px; }
+        .table-empty-sub { font-size: 0.78rem; color: var(--color-ink-faint); line-height: 1.6; max-width: 320px; margin: 0 auto; }
 
         /* ================================================================
            TABEL (DESKTOP) vs KARTU (MOBILE)
@@ -660,8 +669,8 @@
         .kategori-cards { display: none; flex-direction: column; gap: 12px; padding: 16px; }
 
         .kategori-card {
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--border);
+            background: var(--color-paper-elevated);
+            border: 1px solid var(--hairline);
             border-radius: 16px;
             padding: 16px;
             position: relative;
@@ -671,7 +680,7 @@
         .kategori-card::before {
             content: '';
             position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
-            background: var(--red); box-shadow: 0 0 8px var(--red-glow);
+            background: var(--color-accent-600); box-shadow: 0 0 8px rgba(122,46,46,0.45);
             opacity: 0; transition: opacity 0.2s ease;
         }
         .kategori-card:active::before,
@@ -682,13 +691,13 @@
             gap: 10px; margin-bottom: 12px;
         }
         .kategori-card-index {
-            font-size: 0.72rem; font-weight: 800; color: rgba(220,38,38,0.55);
+            font-size: 0.72rem; font-weight: 800; color: var(--oxblood-ink);
             letter-spacing: 0.3px;
         }
 
         .kategori-card-body {
             margin-bottom: 16px; padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--hairline);
         }
         .kategori-card-body .cell-name { font-size: 0.95rem; }
         .kategori-card-body .cell-slug { margin-top: 4px; }
@@ -719,10 +728,10 @@
 
         .modal-box {
             width: 100%; max-width: 440px;
-            background: #101010;
-            border: 1px solid var(--border);
+            background: var(--color-paper-elevated);
+            border: 1px solid var(--hairline-strong);
             border-radius: 20px;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(220,38,38,0.08);
+            box-shadow: 0 30px 80px rgba(28,26,23,0.3), 0 0 60px rgba(122,46,46,0.08);
             transform: translateY(14px) scale(0.98);
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -730,18 +739,18 @@
 
         .modal-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 20px 24px; border-bottom: 1px solid var(--border);
+            padding: 20px 24px; border-bottom: 1px solid var(--hairline);
         }
-        .modal-title { font-size: 1rem; font-weight: 800; color: #f5f5f5; }
+        .modal-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 800; color: var(--color-ink); }
         .modal-close {
             width: 30px; height: 30px; border-radius: 8px;
-            background: none; border: 1px solid var(--border);
-            color: rgba(255,255,255,0.4); cursor: pointer;
+            background: none; border: 1px solid var(--hairline);
+            color: var(--color-ink-faint); cursor: pointer;
             display: flex; align-items: center; justify-content: center;
             transition: all 0.2s ease;
         }
-        .modal-close:hover { color: #fca5a5; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.08); }
-        .modal-close:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+        .modal-close:hover { color: var(--oxblood-ink); border-color: var(--oxblood-border); background: var(--oxblood-soft); }
+        .modal-close:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }
         .modal-close svg { width: 14px; height: 14px; }
         .modal-body { padding: 22px 24px; }
         .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px 22px; }
@@ -805,12 +814,12 @@
     {{-- Logo --}}
     <div class="sidebar-logo">
         <div class="logo-wordmark">
-            <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
+            <div class="logo-icon" style="background: var(--surface-sunk); border: 1px solid var(--hairline); box-shadow: none;">
                 <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
             </div>
-            DKV<span style="color:var(--red);">.</span>SMEKDA
+            DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
         </div>
-        <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
+        <div style="font-size:0.62rem; color:var(--color-ink-faint); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
             Portal Guru
         </div>
     </div>
@@ -964,13 +973,13 @@
         @if(session('error'))
             <div class="flash-error" id="flashError">
                 <div class="flash-icon error">
-                    <svg width="18" height="18" fill="none" stroke="#fca5a5" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg width="18" height="18" fill="none" stroke="var(--oxblood-ink)" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div style="flex:1;">
-                    <div style="font-size:0.78rem;font-weight:800;color:#fca5a5;margin-bottom:3px;">Tidak Bisa Diproses</div>
-                    <div style="font-size:0.72rem;color:rgba(252,165,165,0.65);font-weight:500;">{{ session('error') }}</div>
+                    <div style="font-size:0.78rem;font-weight:800;color:var(--oxblood-ink);margin-bottom:3px;">Tidak Bisa Diproses</div>
+                    <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('error') }}</div>
                 </div>
                 <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1095,7 +1104,7 @@
                             @foreach($categories as $index => $category)
                             <tr style="animation-delay: {{ $loop->index * 0.03 }}s;">
                                 <td>
-                                    <span style="font-size:0.72rem; font-weight:800; color:rgba(220,38,38,0.55);">
+                                    <span style="font-size:0.72rem; font-weight:800; color:var(--oxblood-ink);">
                                         {{ $categories->firstItem() + $index }}
                                     </span>
                                 </td>
@@ -1248,13 +1257,13 @@
         </div>
 
         {{-- Footer Strip --}}
-        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.14);">
-                &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.26);">DKV SMEKDA</strong>
+        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--hairline); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:0.7rem; color:var(--color-ink-faint);">
+                &copy; {{ date('Y') }} <strong style="color:var(--color-ink-muted);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
             </span>
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.12);">
-                Dikembangkan untuk Skripsi oleh <strong style="color:rgba(255,255,255,0.22);">Rafli</strong> &mdash; 2026
+            <span style="font-size:0.7rem; color:var(--color-ink-faint);">
+                Dikembangkan untuk Skripsi oleh <strong style="color:var(--color-ink-muted);">Rafli</strong> &mdash; 2026
             </span>
         </div>
 
