@@ -8,14 +8,10 @@
     /* ── DESIGN TOKENS (migrasi Fase 2.2: --tk-* → token editorial resmi) ── */
     /* --tk-border-3 sudah selesai dimigrasikan & dihapus di Batch 2 (dipakai
        langsung sebagai var(--color-paper-border) di .tk-card::before).
-       --tk-red, --tk-red-bright, --tk-red-glow-1/2/3 masih dipertahankan
-       namanya karena masih dipakai rule dropzone/PDF di bawah — akan
-       dimigrasikan & dihapus pada Batch 5. Nilainya sudah menunjuk ke token
-       resmi/pola oxblood editorial. */
-    :root {
-        --tk-red-bright:      var(--color-accent-500);
-        --tk-red-glow-2:      rgba(122,46,46,0.18);
-    }
+       --tk-red, --tk-red-bright, --tk-red-glow-1/2/3 sudah selesai
+       dimigrasikan & dihapus pada Batch 5 — seluruh rule dropzone/PDF di
+       bawah sudah memakai var(--color-accent-*) langsung, sehingga custom
+       property lokal ini tidak lagi direferensikan di mana pun pada file ini. */
 
     body {
         background-color: var(--color-paper);
