@@ -322,6 +322,23 @@
         color: var(--color-ink-faint);
     }
 
+    /* ── SUCCESS FLASH BANNER (Batch 5.3e — migrasi token editorial) ── */
+    .tk-success-banner {
+        border-color: color-mix(in srgb, var(--color-accent-600) 25%, transparent);
+        border-left-color: var(--color-accent-600);
+        background-color: color-mix(in srgb, var(--color-accent-600) 6%, transparent);
+    }
+    .tk-success-icon-box {
+        background-color: color-mix(in srgb, var(--color-accent-600) 15%, transparent);
+        border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+    }
+    .tk-success-icon {
+        color: var(--color-accent-500);
+    }
+    .tk-success-text {
+        color: var(--color-ink);
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .tk-page *, .tk-page *::before, .tk-page *::after {
             animation-duration: 0.01ms !important;
@@ -372,13 +389,13 @@
 
     {{-- SUCCESS FLASH (jika backend menyediakan session flash, tampilkan secara elegan) --}}
     @if(session('success'))
-        <div role="status" class="mb-7 flex items-start gap-3 rounded-2xl border border-red-600/[0.25] border-l-[3px] border-l-red-600 bg-red-600/[0.06] px-5 py-4">
-            <div class="w-7 h-7 rounded-full bg-red-600/[0.15] border border-red-600/[0.3] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <div role="status" class="tk-success-banner mb-7 flex items-start gap-3 rounded-2xl border border-l-[3px] px-5 py-4">
+            <div class="tk-success-icon-box w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="tk-success-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                 </svg>
             </div>
-            <p class="text-[0.82rem] font-semibold text-white/[0.7] leading-relaxed">{{ session('success') }}</p>
+            <p class="tk-success-text text-[0.82rem] font-semibold leading-relaxed">{{ session('success') }}</p>
         </div>
     @endif
 
