@@ -355,6 +355,42 @@
         color: color-mix(in srgb, var(--color-ink) 80%, transparent);
     }
 
+    /* ── MEDIA KARYA CARD HEADER (Batch 5.3h — migrasi token editorial) ── */
+    .tk-media-header-border {
+        border-bottom-color: var(--color-paper-border);
+    }
+    .tk-media-icon-box {
+        background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+        border-color: color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+    }
+    .tk-media-icon {
+        color: var(--color-accent-600);
+    }
+    .tk-media-title {
+        color: var(--color-ink);
+    }
+    .tk-media-subtitle {
+        color: color-mix(in srgb, var(--color-ink-faint) 25%, transparent);
+    }
+
+    /* ── INFORMASI KARYA HEADER (Batch 5.3i — migrasi token editorial) ── */
+    .tk-info-header-border {
+        border-bottom-color: var(--color-paper-border);
+    }
+    .tk-info-icon-box {
+        background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+        border-color: color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+    }
+    .tk-info-icon {
+        color: var(--color-accent-600);
+    }
+    .tk-info-title {
+        color: var(--color-ink);
+    }
+    .tk-info-subtitle {
+        color: color-mix(in srgb, var(--color-ink-faint) 25%, transparent);
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .tk-page *, .tk-page *::before, .tk-page *::after {
             animation-duration: 0.01ms !important;
@@ -469,15 +505,15 @@
 
             {{-- ============ MEDIA ============ --}}
             <section aria-labelledby="tk-media-heading" class="tk-card relative rounded-[20px] border border-white/[0.07] bg-white/[0.03] overflow-hidden shadow-[0_25px_60px_-35px_rgba(0,0,0,0.8)]">
-                <div class="flex items-center gap-3 px-6 py-[18px] border-b border-white/[0.07]">
-                    <div class="w-9 h-9 rounded-[10px] bg-red-600/[0.1] border border-red-600/[0.2] flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <div class="tk-media-header-border flex items-center gap-3 px-6 py-[18px] border-b">
+                    <div class="tk-media-icon-box w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0">
+                        <svg class="tk-media-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                         </svg>
                     </div>
                     <div>
-                        <h2 id="tk-media-heading" class="text-[0.85rem] font-extrabold text-[#f5f5f5]">Media Karya</h2>
-                        <p class="text-[0.7rem] text-white/[0.25] mt-0.5">Thumbnail dan dokumen pendukung</p>
+                        <h2 id="tk-media-heading" class="tk-media-title text-[0.85rem] font-extrabold">Media Karya</h2>
+                        <p class="tk-media-subtitle text-[0.7rem] mt-0.5">Thumbnail dan dokumen pendukung</p>
                     </div>
                 </div>
 
@@ -648,15 +684,15 @@
 
             {{-- ============ INFORMASI KARYA ============ --}}
             <section aria-labelledby="tk-info-heading" class="tk-card relative rounded-[20px] border border-white/[0.07] bg-white/[0.03] overflow-hidden shadow-[0_25px_60px_-35px_rgba(0,0,0,0.8)]">
-                <div class="flex items-center gap-3 px-6 py-[18px] border-b border-white/[0.07]">
-                    <div class="w-9 h-9 rounded-[10px] bg-red-600/[0.1] border border-red-600/[0.2] flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <div class="tk-info-header-border flex items-center gap-3 px-6 py-[18px] border-b">
+                    <div class="tk-info-icon-box w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0">
+                        <svg class="tk-info-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                         </svg>
                     </div>
                     <div>
-                        <h2 id="tk-info-heading" class="text-[0.85rem] font-extrabold text-[#f5f5f5]">Informasi Karya</h2>
-                        <p class="text-[0.7rem] text-white/[0.25] mt-0.5">Lengkapi detail karya kamu</p>
+                        <h2 id="tk-info-heading" class="tk-info-title text-[0.85rem] font-extrabold">Informasi Karya</h2>
+                        <p class="tk-info-subtitle text-[0.7rem] mt-0.5">Lengkapi detail karya kamu</p>
                     </div>
                 </div>
 
