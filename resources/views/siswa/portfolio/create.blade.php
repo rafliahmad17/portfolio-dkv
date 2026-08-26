@@ -339,6 +339,22 @@
         color: var(--color-ink);
     }
 
+    /* ── GLOBAL ERROR ALERT (Batch 5.3f — migrasi token editorial) ── */
+    .tk-error-banner {
+        border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+        border-left-color: var(--color-accent-600);
+        background-color: color-mix(in srgb, var(--color-accent-600) 8%, transparent);
+    }
+    .tk-error-heading {
+        color: var(--color-accent-500);
+    }
+    .tk-error-bullet {
+        color: var(--color-accent-600);
+    }
+    .tk-error-text {
+        color: color-mix(in srgb, var(--color-ink) 80%, transparent);
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .tk-page *, .tk-page *::before, .tk-page *::after {
             animation-duration: 0.01ms !important;
@@ -401,8 +417,8 @@
 
     {{-- GLOBAL ERROR ALERT --}}
     @if ($errors->any())
-        <div id="tk-error-alert" role="alert" class="mb-7 rounded-2xl border border-red-600/[0.3] border-l-[3px] border-l-red-600 bg-red-600/[0.08] px-5 py-4">
-            <div class="flex items-center gap-2 text-[0.8rem] font-extrabold text-red-300 mb-2.5">
+        <div id="tk-error-alert" role="alert" class="tk-error-banner mb-7 rounded-2xl border border-l-[3px] px-5 py-4">
+            <div class="tk-error-heading flex items-center gap-2 text-[0.8rem] font-extrabold mb-2.5">
                 <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
                 </svg>
@@ -410,8 +426,8 @@
             </div>
             <ul class="space-y-1">
                 @foreach ($errors->all() as $error)
-                    <li class="flex items-start gap-2 text-[0.75rem] text-red-200/[0.8]">
-                        <span class="text-red-600 font-black text-[0.65rem] mt-0.5" aria-hidden="true">&#10005;</span>
+                    <li class="tk-error-text flex items-start gap-2 text-[0.75rem]">
+                        <span class="tk-error-bullet font-black text-[0.65rem] mt-0.5" aria-hidden="true">&#10005;</span>
                         <span>{{ $error }}</span>
                     </li>
                 @endforeach
