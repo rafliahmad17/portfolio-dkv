@@ -277,6 +277,18 @@
         background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
     }
 
+    /* ── BREADCRUMB (Batch 5.3b — migrasi token editorial) ── */
+    .tk-breadcrumb-link {
+        color: inherit;
+    }
+    .tk-breadcrumb-link:hover {
+        color: var(--color-accent-600);
+    }
+    .tk-breadcrumb-link:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .tk-page *, .tk-page *::before, .tk-page *::after {
             animation-duration: 0.01ms !important;
@@ -292,12 +304,12 @@
 <div class="tk-page w-full max-w-6xl mx-auto pb-16" style="font-family:var(--font-sans);">
 
     {{-- BREADCRUMB --}}
-    <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs font-semibold text-white/[0.3]">
-        <a href="{{ route('siswa.dashboard') }}" class="hover:text-red-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4] rounded">Dashboard</a>
-        <svg class="w-3 h-3 text-white/[0.15]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs font-semibold" style="color: var(--color-ink-faint);">
+        <a href="{{ route('siswa.dashboard') }}" class="tk-breadcrumb-link transition-colors rounded">Dashboard</a>
+        <svg class="w-3 h-3" style="color: var(--color-ink-faint);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
         </svg>
-        <span class="text-white/[0.55]" aria-current="page">Tambah Karya</span>
+        <span style="color: var(--color-ink-muted);" aria-current="page">Tambah Karya</span>
     </nav>
 
     {{-- PAGE HEADER --}}
