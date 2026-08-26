@@ -289,6 +289,39 @@
         box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
     }
 
+    /* ── PAGE HEADER (Batch 5.3c — migrasi token editorial) ── */
+    .tk-header-blur {
+        background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+    }
+    .tk-header-back-link {
+        border-color: var(--color-paper-border);
+        background-color: var(--color-paper-elevated);
+        color: var(--color-ink-muted);
+        transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .tk-header-back-link:hover {
+        color: var(--color-accent-500);
+        border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+        background-color: color-mix(in srgb, var(--color-accent-600) 6%, transparent);
+    }
+    .tk-header-back-link:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
+    .tk-header-eyebrow {
+        color: color-mix(in srgb, var(--color-accent-600) 70%, transparent);
+    }
+    .tk-header-title {
+        color: var(--color-ink);
+    }
+    .tk-header-title-accent {
+        color: var(--color-accent-600);
+        text-shadow: 0 0 26px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+    }
+    .tk-header-subtitle {
+        color: var(--color-ink-faint);
+    }
+
     @media (prefers-reduced-motion: reduce) {
         .tk-page *, .tk-page *::before, .tk-page *::after {
             animation-duration: 0.01ms !important;
@@ -314,24 +347,24 @@
 
     {{-- PAGE HEADER --}}
     <div class="relative mb-8 sm:mb-10">
-        <div class="pointer-events-none absolute -top-16 -right-10 w-72 h-72 bg-red-600/[0.1] rounded-full blur-3xl" aria-hidden="true"></div>
+        <div class="tk-header-blur pointer-events-none absolute -top-16 -right-10 w-72 h-72 rounded-full blur-3xl" aria-hidden="true"></div>
 
         <div class="relative z-10">
             <a href="{{ route('siswa.dashboard') }}"
-               class="group inline-flex items-center gap-2 mb-6 px-3.5 py-2 rounded-lg border border-white/[0.08] bg-white/[0.03] text-white/[0.4] text-xs font-bold transition-colors duration-200 hover:text-red-500 hover:border-red-600/[0.3] hover:bg-red-600/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4]">
+               class="tk-header-back-link group inline-flex items-center gap-2 mb-6 px-3.5 py-2 rounded-lg border text-xs font-bold">
                 <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                 </svg>
                 Kembali ke Dashboard
             </a>
 
-            <div class="text-[0.68rem] font-bold tracking-[3px] uppercase text-red-600/[0.7] mb-2.5">
+            <div class="tk-header-eyebrow text-[0.68rem] font-bold tracking-[3px] uppercase mb-2.5">
                 <span aria-hidden="true">&#9654;</span> Portofolio Digital
             </div>
-            <h1 class="text-2xl sm:text-3xl lg:text-[2rem] font-black tracking-tight leading-tight text-[#f5f5f5]">
-                Tambah <span class="text-red-600" style="text-shadow:0 0 26px rgba(122,46,46,0.35);">Karya</span>
+            <h1 class="tk-header-title text-2xl sm:text-3xl lg:text-[2rem] font-black tracking-tight leading-tight">
+                Tambah <span class="tk-header-title-accent">Karya</span>
             </h1>
-            <p class="mt-2 text-sm text-white/[0.3] max-w-xl">
+            <p class="tk-header-subtitle mt-2 text-sm max-w-xl">
                 Unggah karya terbarumu dan lengkapi detailnya untuk ditampilkan di portofolio digital.
             </p>
         </div>
