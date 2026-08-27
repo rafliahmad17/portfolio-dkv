@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class StudentController extends Controller
 {
@@ -75,13 +76,16 @@ class StudentController extends Controller
             'password.min'      => 'Password minimal 8 karakter.',
         ]);
 
-        User::create([
+        $siswa = User::create([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'nis_nip'  => $validated['nis_nip'] ?? null,
             'password' => Hash::make($validated['password']),
             'role'     => 'siswa',
         ]);
+
+        $siswa->portfolio_slug = $this->generateUniqueStudentSlug($validated['name']);
+        $siswa->save();
 
         return redirect()->route('guru.siswa.index')
             ->with('success', "Akun siswa '{$validated['name']}' berhasil didaftarkan!");
@@ -125,6 +129,14 @@ class StudentController extends Controller
 
         if (!empty($validated['password'])) {
             $siswa->password = Hash::make($validated['password']);
+        }
+
+        // Backfill saja untuk akun lama yang dibuat sebelum perbaikan ini
+        // (portfolio_slug masih NULL). Sengaja TIDAK meregenerasi slug yang
+        // sudah ada meski nama berubah, supaya URL publik/QR yang mungkin
+        // sudah dibagikan siswa tidak tiba-tiba berubah/rusak.
+        if (empty($siswa->portfolio_slug)) {
+            $siswa->portfolio_slug = $this->generateUniqueStudentSlug($validated['name']);
         }
 
         $siswa->save();
@@ -184,5 +196,23 @@ class StudentController extends Controller
 
         return redirect()->route('guru.siswa.index', ['trashed' => 1])
             ->with('success', "Akun siswa '{$namaSiswa}' beserta seluruh datanya dihapus permanen.");
+    }
+
+    /**
+     * Buat slug publik unik untuk portofolio siswa (dipakai oleh rute
+     * /u/{slug} dan /u/{slug}/print). Memakai pola yang sama dengan
+     * Portfolio::store() di PortfolioController — Str::slug() + suffix
+     * acak — supaya konsisten dengan konvensi slug yang sudah ada di
+     * project, terjamin unik, dan tidak membocorkan ID/urutan pendaftaran.
+     */
+    private function generateUniqueStudentSlug(string $name): string
+    {
+        $base = Str::slug($name) ?: 'siswa';
+
+        do {
+            $slug = $base . '-' . Str::random(6);
+        } while (User::withTrashed()->where('portfolio_slug', $slug)->exists());
+
+        return $slug;
     }
 }

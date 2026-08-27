@@ -17,6 +17,18 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
+        // Railway (dan PaaS sejenis) menempatkan aplikasi di belakang reverse
+        // proxy yang men-terminate HTTPS lalu meneruskan request ke container
+        // secara HTTP biasa. Tanpa mempercayai proxy ini, Laravel tidak tahu
+        // request asli memakai HTTPS (Request::isSecure() bernilai false),
+        // sehingga form/asset/URL bisa ter-generate sebagai http:// meski
+        // browser sudah di https:// -- ini penyebab peringatan "not secure"
+        // saat submit form login. IP proxy Railway dinamis dan tidak
+        // didokumentasikan tetap, jadi kita percayai seluruh proxy ('*'),
+        // pola standar untuk PaaS yang aplikasinya memang hanya bisa diakses
+        // lewat proxy platform (bukan diekspos langsung ke publik).
+        $middleware->trustProxies(at: '*');
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
