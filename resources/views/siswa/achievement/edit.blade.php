@@ -306,9 +306,12 @@
             </div>  
             DKV<span style="color:var(--red);">.</span>SMEKDA
         </div>
-        <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
-            Portal Siswa
+        <div class="logo-wordmark">
+                    <div class="logo-icon" style="background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); box-shadow: none;">
+            <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
         </div>
+                        DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
+            </div>
     </div>
 
     <div class="sidebar-profile">
