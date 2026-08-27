@@ -1,7 +1,12 @@
 {{-- resources/views/siswa/achievement/index.blade.php --}}
 {{-- Halaman "Prestasi & Sertifikat" milik siswa yang login.
-     Struktur & gaya mengikuti resources/views/siswa/dashboard.blade.php
-     (dark theme #080808, aksen merah #dc2626, Tailwind CDN). --}}
+     Struktur & gaya mengikuti resources/views/siswa/dashboard.blade.php.
+     Migrasi ke tema editorial ("Kertas & Oxblood") sudah berjalan sebagian:
+     sidebar, topbar, dan modal Tambah/Edit Prestasi sudah memakai token
+     resmi (var(--color-*)). Grid kartu prestasi, tombol di luar modal
+     (.btn-add, .btn-action-*), header sambutan, dan error alert MASIH
+     memakai sistem lama (dark theme, aksen merah #dc2626) dan menunggu
+     migrasi pada checkpoint berikutnya. --}}
 @extends('layouts.app')
 
 @section('title', 'Prestasi & Sertifikat — DKV SMEKDA Portal')
@@ -191,7 +196,7 @@
             display: inline-flex; align-items: center; gap: 8px;
             background: var(--red); border: 1px solid var(--red); color: white;
             padding: 9px 18px; border-radius: 10px; font-size: 0.78rem; font-weight: 700;
-            font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none;
+            cursor: pointer; text-decoration: none;
             transition: all 0.3s ease; position: relative; overflow: hidden;
         }
         .btn-add::before {
@@ -266,19 +271,19 @@
             padding: 8px; border-radius: 9px; background: rgba(220,38,38,0.06);
             border: 1px solid rgba(220,38,38,0.12); color: rgba(220,38,38,0.5);
             font-size: 0.73rem; font-weight: 700; cursor: pointer; width: 100%;
-            font-family: 'Inter', sans-serif; transition: all 0.22s ease;
+            transition: all 0.22s ease;
         }
         .btn-action-delete:hover { background: rgba(220,38,38,0.14); border-color: rgba(220,38,38,0.3); color: #f87171; }
         .btn-action-delete svg { width: 13px; height: 13px; }
 
         .empty-wrap { padding: 80px 40px; text-align: center; }
         .empty-icon {
-            width: 72px; height: 72px; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            width: 72px; height: 72px; background: var(--color-paper-muted); border: 1px solid var(--color-paper-border);
             border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;
         }
-        .empty-icon svg { width: 32px; height: 32px; color: rgba(255,255,255,0.12); }
-        .empty-title { font-size: 1rem; font-weight: 800; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
-        .empty-sub { font-size: 0.82rem; color: rgba(255,255,255,0.2); margin-bottom: 28px; line-height: 1.6; }
+        .empty-icon svg { width: 32px; height: 32px; color: var(--color-ink-faint); }
+        .empty-title { font-size: 1rem; font-weight: 800; color: var(--color-ink-muted); margin-bottom: 8px; }
+        .empty-sub { font-size: 0.82rem; color: var(--color-ink-faint); margin-bottom: 28px; line-height: 1.6; }
 
         /* ── MODAL TAMBAH ── */
         .modal-overlay {
@@ -291,76 +296,76 @@
         .modal-overlay.open { opacity: 1; pointer-events: auto; }
         .modal-box {
             width: 100%; max-width: 640px;
-            background: #0d0d0d; border: 1px solid var(--border); border-radius: 20px;
+            background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border); border-radius: 20px;
             overflow: hidden; position: relative;
             transform: translateY(-16px); transition: transform 0.25s ease;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            box-shadow: 0 30px 80px rgba(28,26,23,0.28);
         }
         .modal-overlay.open .modal-box { transform: translateY(0); }
         .modal-header {
-            padding: 20px 24px; border-bottom: 1px solid var(--border);
+            padding: 20px 24px; border-bottom: 1px solid var(--color-paper-border);
             display: flex; align-items: center; justify-content: space-between;
         }
-        .modal-header-title { font-size: 0.95rem; font-weight: 800; color: #f5f5f5; }
-        .modal-header-sub { font-size: 0.72rem; color: rgba(255,255,255,0.25); margin-top: 2px; }
+        .modal-header-title { font-size: 0.95rem; font-weight: 800; color: var(--color-ink); }
+        .modal-header-sub { font-size: 0.72rem; color: var(--color-ink-faint); margin-top: 2px; }
         .modal-close {
-            width: 32px; height: 32px; border-radius: 9px; background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border); color: rgba(255,255,255,0.4);
+            width: 32px; height: 32px; border-radius: 9px; background: var(--color-paper-muted);
+            border: 1px solid var(--color-paper-border); color: var(--color-ink-muted);
             display: flex; align-items: center; justify-content: center; cursor: pointer;
             transition: all 0.2s ease; flex-shrink: 0;
         }
-        .modal-close:hover { background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.25); color: #fca5a5; }
+        .modal-close:hover { background: var(--color-accent-50); border-color: var(--color-accent-200); color: var(--color-accent-700); }
         .modal-close svg { width: 15px; height: 15px; }
         .modal-body { padding: 24px; max-height: 70vh; overflow-y: auto; }
 
         .field-label {
             display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px;
+            text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 8px;
         }
-        .field-label .req { color: var(--red); margin-left: 3px; }
+        .field-label .req { color: var(--color-accent-600); margin-left: 3px; }
         .field-wrap { margin-bottom: 18px; }
         .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .form-input, .form-select, .form-textarea {
-            width: 100%; background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08); border-radius: 11px;
+            width: 100%; background: var(--color-paper);
+            border: 1.5px solid var(--color-paper-border); border-radius: 11px;
             padding: 11px 14px; font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif; color: #f5f5f5; outline: none;
-            caret-color: var(--red); transition: all 0.25s ease;
+            color: var(--color-ink); outline: none;
+            caret-color: var(--color-accent-600); transition: all 0.25s ease;
         }
-        .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; color: rgba(255,255,255,0.7); }
-        .form-select option { background: #1a1a1a; color: #f5f5f5; }
+        .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; color: var(--color-ink-muted); }
+        .form-select option { background: var(--color-paper-elevated); color: var(--color-ink); }
         .form-textarea { resize: none; line-height: 1.6; }
-        .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.18); }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--color-ink-faint); }
         .form-input:focus, .form-select:focus, .form-textarea:focus {
-            border-color: var(--red); background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15); color: #f5f5f5;
+            border-color: var(--color-accent-600); background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent); color: var(--color-ink);
         }
         .form-input.is-error, .form-select.is-error, .form-textarea.is-error {
-            border-color: var(--red-bright) !important; background: rgba(239,68,68,0.06) !important;
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14) !important;
+            border-color: var(--color-accent-500) !important; background: color-mix(in srgb, var(--color-accent-500) 5%, transparent) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-500) 14%, transparent) !important;
         }
-        .field-hint { font-size: 0.68rem; color: rgba(255,255,255,0.2); margin-top: 6px; }
+        .field-hint { font-size: 0.68rem; color: var(--color-ink-faint); margin-top: 6px; }
         .field-error {
-            margin-top: 7px; font-size: 0.73rem; font-weight: 600; color: #f87171;
+            margin-top: 7px; font-size: 0.73rem; font-weight: 600; color: var(--color-accent-700);
             display: flex; align-items: center; gap: 6px;
         }
         .field-error svg { width: 12px; height: 12px; flex-shrink: 0; }
 
         .file-drop {
-            border: 1.5px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px;
+            border: 1.5px dashed var(--color-paper-border); border-radius: 12px; padding: 14px 16px;
             display: flex; align-items: center; gap: 12px; cursor: pointer;
-            background: rgba(255,255,255,0.02); transition: all 0.25s ease;
+            background: var(--color-paper-muted); transition: all 0.25s ease;
         }
-        .file-drop:hover { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.04); }
+        .file-drop:hover { border-color: var(--color-accent-600); background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent); }
         .file-drop-icon {
-            width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            width: 38px; height: 38px; border-radius: 10px; background: var(--color-paper-elevated);
+            border: 1px solid var(--color-paper-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .file-drop-icon svg { width: 16px; height: 16px; color: rgba(255,255,255,0.2); }
-        .file-drop:hover .file-drop-icon { background: var(--red-soft); border-color: rgba(220,38,38,0.25); }
-        .file-drop:hover .file-drop-icon svg { color: var(--red); }
-        .file-drop-text { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.4); }
-        .file-drop-sub { font-size: 0.66rem; color: rgba(255,255,255,0.18); margin-top: 1px; }
+        .file-drop-icon svg { width: 16px; height: 16px; color: var(--color-ink-faint); }
+        .file-drop:hover .file-drop-icon { background: var(--color-accent-50); border-color: var(--color-accent-200); }
+        .file-drop:hover .file-drop-icon svg { color: var(--color-accent-600); }
+        .file-drop-text { font-size: 0.78rem; font-weight: 700; color: var(--color-ink-muted); }
+        .file-drop-sub { font-size: 0.66rem; color: var(--color-ink-faint); margin-top: 1px; }
 
         .error-alert {
             background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.3);
@@ -373,15 +378,15 @@
         .error-alert-list li::before { content: '✕'; color: var(--red); font-weight: 900; font-size: 0.65rem; margin-top: 1px; flex-shrink: 0; }
 
         .btn-submit {
-            width: 100%; background: var(--red); color: white; border: none;
+            width: 100%; background: var(--color-accent-600); color: var(--color-paper); border: none;
             border-radius: 12px; padding: 14px 24px; font-size: 0.88rem; font-weight: 800;
-            font-family: 'Inter', sans-serif; letter-spacing: 0.3px; cursor: pointer;
+            letter-spacing: 0.3px; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 10px;
             position: relative; overflow: hidden; transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(220,38,38,0.3); margin-top: 4px;
+            box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent); margin-top: 4px;
         }
-        .btn-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #b91c1c, #ef4444); opacity: 0; transition: opacity 0.3s ease; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px var(--red-glow), 0 0 0 4px rgba(220,38,38,0.15); }
+        .btn-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-500)); opacity: 0; transition: opacity 0.3s ease; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px color-mix(in srgb, var(--color-accent-600) 45%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 15%, transparent); }
         .btn-submit:hover::before { opacity: 1; }
         .btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
         .btn-submit svg { width: 17px; height: 17px; }
@@ -445,8 +450,8 @@
             overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
         }
         .file-drop:focus-within {
-            border-color: var(--red); background: rgba(220,38,38,0.04);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
+            border-color: var(--color-accent-600); background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent);
         }
 
         /* Focus ring lembut untuk navigasi keyboard */
@@ -460,6 +465,13 @@
         .hamburger-btn:focus-visible,
         .sidebar-close-btn:focus-visible {
             outline: none; box-shadow: 0 0 0 3px rgba(220,38,38,0.35);
+        }
+        /* Override aditif: modal-close dipisah dari rule gabungan di atas
+           karena bagian dalam modal sudah dimigrasikan ke token editorial.
+           Elemen lain di rule gabungan (.nav-item, .btn-add, dst) belum
+           dimigrasi & sengaja TIDAK disentuh — menunggu checkpoint lanjutan. */
+        .modal-close:focus-visible {
+            outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
         }
 
         /* Modal tidak pernah keluar layar, di layar sependek apapun */
