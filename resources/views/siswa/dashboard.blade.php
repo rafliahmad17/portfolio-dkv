@@ -163,7 +163,7 @@
     .profile-avatar {
         width: 44px; height: 44px;
         border-radius: 14px;
-        background: var(--oxblood);
+        background: var(--color-accent-600);
         display: flex; align-items: center; justify-content: center;
         font-family: var(--font-serif);
         font-size: 1.05rem; font-weight: 700; color: var(--color-paper);
@@ -205,7 +205,7 @@
 
     .badge-role-dot {
         width: 5px; height: 5px;
-        background: var(--oxblood);
+        background: var(--color-accent-600);
         border-radius: 50%;
         flex-shrink: 0;
     }
@@ -258,14 +258,14 @@
         border-color: var(--oxblood-border);
     }
 
-    .nav-item.active .nav-index { color: var(--oxblood); }
+    .nav-item.active .nav-index { color: var(--color-accent-600); }
 
     .nav-item.active::before {
         content: '';
         position: absolute; left: 0; top: 50%;
         transform: translateY(-50%);
         width: 3px; height: 20px;
-        background: var(--oxblood);
+        background: var(--color-accent-600);
         border-radius: 0 3px 3px 0;
     }
 
@@ -345,7 +345,7 @@
         display: flex; align-items: flex-start; gap: 14px;
         background: var(--color-paper-elevated);
         border: 1px solid var(--hairline);
-        border-left: 3px solid var(--oxblood);
+        border-left: 3px solid var(--color-accent-600);
         border-radius: 10px;
         padding: 16px 20px;
         margin-bottom: 32px;
@@ -355,7 +355,7 @@
         color: var(--color-ink);
         box-shadow: var(--shadow-paper);
     }
-    .flash-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--oxblood); margin-top: 2px; }
+    .flash-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--color-accent-600); margin-top: 2px; }
 
     /* ── STUDIO HEADER ── */
     .studio-header {
@@ -397,7 +397,7 @@
     }
     .studio-eyebrow-row .sep { color: var(--hairline-strong); }
     .studio-eyebrow-row a {
-        color: var(--oxblood);
+        color: var(--color-accent-600);
         text-decoration: none;
         border-bottom: 1px solid var(--oxblood-border);
         padding-bottom: 1px;
@@ -417,7 +417,7 @@
     .studio-headline em {
         font-style: italic;
         font-weight: 500;
-        color: var(--oxblood);
+        color: var(--color-accent-600);
     }
 
     .studio-sub {
@@ -431,8 +431,8 @@
     /* ── TOMBOL ── */
     .btn-primary {
         display: inline-flex; align-items: center; gap: 12px;
-        background: var(--oxblood);
-        border: 1px solid var(--oxblood);
+        background: var(--color-accent-600);
+        border: 1px solid var(--color-accent-600);
         color: var(--color-paper);
         padding: 8px 8px 8px 22px;
         min-height: 44px;
@@ -444,7 +444,7 @@
         cursor: pointer;
         transition: background 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
     }
-    .btn-primary:hover { background: var(--oxblood-deep); transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+    .btn-primary:hover { background: var(--color-accent-700); transform: translateY(-1px); box-shadow: var(--shadow-lift); }
     .btn-primary:active { transform: translateY(0) scale(0.98); }
 
     /* Ikon bersarang dalam chip bulat — detail tactile, bergerak halus saat hover */
@@ -668,7 +668,7 @@
         color: var(--color-ink-faint);
         margin-bottom: 20px;
     }
-    .stat-label .idx { color: var(--oxblood); }
+    .stat-label .idx { color: var(--color-accent-600); }
 
     .stat-number {
         font-family: var(--font-mono);
@@ -687,7 +687,7 @@
         border-radius: 2px;
         overflow: hidden;
     }
-    .stat-bar { height: 100%; background: var(--oxblood); }
+    .stat-bar { height: 100%; background: var(--color-accent-600); }
 
     /* ── PANEL ETALASE KARYA ── */
     .showcase-panel {
@@ -897,7 +897,7 @@
         width: 100%;
         transition: all 0.2s ease;
     }
-    .btn-action-delete:hover { background: var(--oxblood); border-color: var(--oxblood); color: var(--color-paper); }
+    .btn-action-delete:hover { background: var(--color-accent-600); border-color: var(--color-accent-600); color: var(--color-paper); }
     .btn-action-delete svg { width: 13px; height: 13px; flex-shrink: 0; }
 
     .empty-wrap {
@@ -957,7 +957,7 @@
     }
     .add-card:hover .add-card-icon { border-color: var(--oxblood-border); background: var(--color-paper-elevated); }
     .add-card-icon svg { width: 17px; height: 17px; color: var(--color-ink-faint); transition: color 0.25s ease; }
-    .add-card:hover .add-card-icon svg { color: var(--oxblood); }
+    .add-card:hover .add-card-icon svg { color: var(--color-accent-600); }
 
     .add-card-text {
         font-family: var(--font-mono);

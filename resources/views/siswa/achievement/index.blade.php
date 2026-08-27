@@ -6,6 +6,9 @@
 
 @section('title', 'Prestasi & Sertifikat — DKV SMEKDA Portal')
 
+@section('navbar')@endsection
+@section('footer')@endsection
+
 @section('content')
 
 {{-- Font Inter dipertahankan di sini sebagai pengaman ganda — idempotent,
