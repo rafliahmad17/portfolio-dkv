@@ -719,7 +719,8 @@
         </div>
         <div class="skills-wrap reveal">
             @foreach($user->skills as $skill)
-                <span class="skill-tag">{{ $skill }}</span>
+                {{-- $user->skills kini berupa array asosiatif ['name','level','type'] --}}
+                <span class="skill-tag">{{ is_array($skill) ? ($skill['name'] ?? '') : $skill }}</span>
             @endforeach
         </div>
     </section>

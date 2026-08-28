@@ -1,725 +1,1047 @@
 {{-- resources/views/siswa/profile/edit.blade.php --}}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profil Saya — DKV SMEKDA Portal</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
+@extends('layouts.app')
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@section('title', 'Profil Saya — DKV SMEKDA Portal')
 
-        html, body {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #f5f5f5;
-            overflow-x: hidden;
-        }
+{{-- Halaman ini punya sidebar + topbar sendiri (pola yang sama dengan
+     siswa/dashboard.blade.php), jadi navbar/footer bawaan layout tidak
+     dipakai di sini. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
 
-        body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 0;
-        }
+@push('styles')
+<style>
+    :root {
+        --hairline:        rgba(25,24,22,0.10);
+        --hairline-strong: rgba(25,24,22,0.18);
+        --surface-sunk:    #F6F1E7;
+        --oxblood-soft:    rgba(122,46,46,0.08);
+        --oxblood-border:  rgba(122,46,46,0.26);
+        --oxblood-ink:     #6E2A2A;
+        --shadow-paper:    0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
+    }
 
-        .bg-grid {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none; z-index: 0;
-        }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-        .blob-1 {
-            top: -160px; right: 80px; width: 560px; height: 560px;
-            background: radial-gradient(circle, rgba(220,38,38,0.09) 0%, transparent 65%);
-            animation: blobF 10s ease-in-out infinite alternate;
-        }
-        .blob-2 {
-            bottom: -140px; left: -80px; width: 460px; height: 460px;
-            background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
-            animation: blobF 13s ease-in-out infinite alternate-reverse;
-        }
-        @keyframes blobF {
-            0%   { transform: scale(1)    translate(0,0); }
-            100% { transform: scale(1.14) translate(18px,14px); }
-        }
+    html, body {
+        height: 100%;
+        font-family: var(--font-sans);
+        background-color: var(--color-paper);
+        color: var(--color-ink);
+        overflow-x: hidden;
+    }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
+    body::before {
+        content: '';
+        position: fixed; inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+        mix-blend-mode: multiply;
+    }
 
-        /* ── SIDEBAR ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--oxblood-border); }
+
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+        outline: 2px solid var(--color-accent-600);
+        outline-offset: 3px;
+        border-radius: 6px;
+    }
+
+    .skip-link {
+        position: fixed; top: -100px; left: 16px; z-index: 100;
+        background: var(--color-ink); color: var(--color-paper);
+        padding: 10px 18px; border-radius: 8px;
+        font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;
+        text-decoration: none; transition: top 0.2s ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    /* ── SIDEBAR — sama seperti siswa/dashboard.blade.php, agar terasa
+       satu sistem navigasi di seluruh Portal Siswa. ── */
+    .sidebar {
+        position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
+        background: var(--color-paper-elevated);
+        border-right: 1px solid var(--hairline);
+        display: flex; flex-direction: column;
+        z-index: 50; overflow-y: auto;
+    }
+    .sidebar-logo { padding: 30px 26px 22px; border-bottom: 1px solid var(--hairline); }
+    .logo-wordmark {
+        font-family: var(--font-sans); font-size: 0.82rem; font-weight: 800;
+        letter-spacing: 2.5px; text-transform: uppercase; color: var(--color-ink);
+        display: flex; align-items: center; gap: 10px;
+    }
+    .logo-wordmark .dot { color: var(--color-accent-600); }
+    .logo-mark {
+        width: 34px; height: 34px; border-radius: 50%;
+        border: 1px solid var(--hairline-strong); background: var(--surface-sunk);
+        display: flex; align-items: center; justify-content: center;
+        flex-shrink: 0; overflow: hidden; position: relative;
+    }
+    .logo-mark img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
+    .logo-sub {
+        font-family: var(--font-mono); font-size: 0.62rem; color: var(--color-ink-faint);
+        margin-top: 6px; letter-spacing: 1.6px; text-transform: uppercase; padding-left: 40px;
+    }
+
+    .sidebar-profile { padding: 22px 26px; border-bottom: 1px solid var(--hairline); }
+    .profile-avatar {
+        width: 44px; height: 44px; border-radius: 14px;
+        background: var(--color-accent-600);
+        display: flex; align-items: center; justify-content: center;
+        font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; color: var(--color-paper);
+        flex-shrink: 0; overflow: hidden;
+    }
+    .profile-name {
+        font-family: var(--font-sans); font-size: 0.85rem; font-weight: 700; color: var(--color-ink);
+        line-height: 1.3; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .profile-nis { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); margin-bottom: 8px; letter-spacing: 0.3px; }
+    .badge-role {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        color: var(--oxblood-ink); padding: 3px 10px; border-radius: 20px;
+        font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+    }
+    .badge-role-dot { width: 5px; height: 5px; background: var(--color-accent-600); border-radius: 50%; flex-shrink: 0; }
+
+    .sidebar-nav { flex: 1; padding: 22px 16px; }
+    .nav-label {
+        font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 2px;
+        text-transform: uppercase; color: var(--color-ink-faint); padding: 0 10px; margin-bottom: 10px; margin-top: 4px;
+    }
+    .nav-item {
+        display: flex; align-items: center; gap: 14px; padding: 11px 12px; min-height: 44px;
+        border-radius: 10px; font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600;
+        color: var(--color-ink-muted); text-decoration: none;
+        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+        border: 1px solid transparent; margin-bottom: 2px; position: relative;
+    }
+    .nav-index { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500; color: var(--color-ink-faint); flex-shrink: 0; width: 16px; }
+    .nav-item:hover { background: var(--surface-sunk); color: var(--color-ink); }
+    .nav-item.active { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
+    .nav-item.active .nav-index { color: var(--color-accent-600); }
+    .nav-item.active::before {
+        content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+        width: 3px; height: 20px; background: var(--color-accent-600); border-radius: 0 3px 3px 0;
+    }
+
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--hairline); }
+    .btn-logout {
+        width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px; min-height: 44px;
+        border-radius: 10px; background: none; border: 1px solid transparent; color: var(--color-ink-muted);
+        font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
+    }
+    .btn-logout:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
+    .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .main-content { margin-left: 280px; min-height: 100vh; position: relative; z-index: 1; }
+
+    .topbar {
+        position: sticky; top: 0; z-index: 30;
+        background: rgba(250,247,242,0.86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+        border-bottom: 1px solid var(--hairline); padding: 18px 40px;
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .topbar-title { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; color: var(--color-ink-faint); letter-spacing: 1px; text-transform: uppercase; }
+    .topbar-crumb-sep { margin-left: 8px; color: var(--color-ink-faint); }
+    .topbar-crumb-current { margin-left: 8px; color: var(--color-ink-muted); }
+    .badge-pill {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--hairline-strong); border-radius: 30px; padding: 6px 14px;
+        font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.5px; white-space: nowrap;
+    }
+
+    .page-inner { padding: 44px 40px 64px; max-width: 780px; }
+
+    .flash-note {
+        display: flex; align-items: flex-start; gap: 14px;
+        background: var(--color-paper-elevated); border: 1px solid var(--hairline); border-left: 3px solid var(--color-accent-600);
+        border-radius: 10px; padding: 16px 20px; margin-bottom: 32px;
+        font-family: var(--font-sans); font-size: 0.85rem; font-weight: 500; color: var(--color-ink);
+        box-shadow: var(--shadow-paper);
+    }
+    .flash-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--color-accent-600); margin-top: 2px; }
+
+    /* ── HEADER ── */
+    .profile-header { margin-bottom: 40px; }
+    .profile-eyebrow-row {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px;
+        font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 1.4px; text-transform: uppercase; color: var(--color-ink-faint);
+    }
+    .profile-eyebrow-row .sep { color: var(--hairline-strong); }
+    .profile-headline {
+        font-family: var(--font-serif); font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 600;
+        letter-spacing: -0.4px; line-height: 1.16; color: var(--color-ink); margin-bottom: 10px;
+    }
+    .profile-headline em { font-style: italic; font-weight: 500; color: var(--color-accent-600); }
+    .profile-sub { font-family: var(--font-sans); font-size: 0.92rem; color: var(--color-ink-muted); line-height: 1.65; max-width: 52ch; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+        background: var(--color-paper-elevated); border: 1px solid var(--hairline);
+        border-radius: 18px; overflow: hidden; margin-bottom: 24px; box-shadow: var(--shadow-paper);
+    }
+    .form-card-header { padding: 20px 26px; border-bottom: 1px solid var(--hairline); display: flex; align-items: center; gap: 14px; }
+    .card-icon-chip {
+        width: 38px; height: 38px; border-radius: 11px; background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .card-icon-chip svg { width: 17px; height: 17px; color: var(--color-accent-600); }
+    .card-title { font-family: var(--font-serif); font-size: 1.05rem; font-weight: 600; color: var(--color-ink); letter-spacing: -0.1px; }
+    .card-sub { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); margin-top: 3px; letter-spacing: 0.2px; }
+    .form-card-body { padding: 26px; }
+
+    /* ── FIELD ── */
+    .field-wrap { margin-bottom: 22px; }
+    .field-wrap:last-child { margin-bottom: 0; }
+    .field-label {
+        display: block; font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+        letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 9px;
+    }
+    .field-label .req { color: var(--color-accent-600); margin-left: 3px; }
+    .field-hint { font-family: var(--font-sans); font-size: 0.76rem; color: var(--color-ink-faint); margin-top: 7px; line-height: 1.5; }
+
+    .input-icon-wrap { position: relative; }
+    .input-icon {
+        position: absolute; top: 50%; left: 15px; transform: translateY(-50%);
+        width: 16px; height: 16px; color: var(--color-ink-faint); pointer-events: none; transition: color 0.2s ease;
+    }
+    .input-icon-wrap:focus-within .input-icon { color: var(--color-accent-600); }
+
+    .input-field, .textarea-field {
+        width: 100%; font-family: var(--font-sans); font-size: 0.92rem; font-weight: 500; color: var(--color-ink);
+        background: var(--color-paper); border: 1.5px solid var(--color-paper-border); border-radius: var(--radius-sm);
+        padding: 13px 16px 13px 43px; outline: none; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .input-field.no-icon, .textarea-field { padding-left: 16px; }
+    .input-field::placeholder, .textarea-field::placeholder { color: var(--color-ink-faint); font-weight: 400; }
+    .input-field:focus, .textarea-field:focus { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px var(--color-accent-200); }
+    .input-field.is-error, .textarea-field.is-error { border-color: var(--color-accent-600); background: var(--color-accent-50); }
+    .textarea-field { resize: vertical; min-height: 104px; line-height: 1.65; }
+
+    .pw-toggle {
+        position: absolute; top: 50%; right: 6px; transform: translateY(-50%);
+        width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+        background: none; border: none; cursor: pointer; color: var(--color-ink-faint);
+        border-radius: var(--radius-xs); transition: color 0.2s ease;
+    }
+    .pw-toggle:hover { color: var(--color-accent-600); }
+    .pw-toggle svg { width: 16px; height: 16px; }
+
+    .field-error {
+        display: flex; align-items: center; gap: 6px; margin-top: 8px;
+        font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600; color: var(--color-accent-700);
+    }
+    .field-error svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+    /* ── PHOTO UPLOAD ── */
+    .photo-row { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; margin-bottom: 22px; }
+    .photo-preview {
+        width: 88px; height: 88px; border-radius: 18px; flex-shrink: 0;
+        background: var(--color-accent-600); border: 1px solid var(--hairline-strong);
+        display: flex; align-items: center; justify-content: center; overflow: hidden;
+        font-family: var(--font-serif); font-size: 1.9rem; font-weight: 700; color: var(--color-paper);
+    }
+    .photo-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-actions { display: flex; flex-direction: column; gap: 8px; }
+    .btn-photo-upload {
+        display: inline-flex; align-items: center; gap: 9px; width: fit-content;
+        background: var(--color-paper-elevated); border: 1px solid var(--hairline-strong); color: var(--color-ink-muted);
+        font-family: var(--font-sans); font-size: 0.8rem; font-weight: 700;
+        padding: 10px 18px; min-height: 40px; border-radius: 9px; cursor: pointer; transition: all 0.22s ease;
+    }
+    .btn-photo-upload:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); background: var(--oxblood-soft); }
+    .btn-photo-upload svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .photo-hint { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); }
+    .sr-only-input { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* ── SKILL ── */
+    .skill-group { margin-bottom: 26px; }
+    .skill-group:last-of-type { margin-bottom: 0; }
+    .skill-group-title {
+        font-family: var(--font-mono); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 14px;
+    }
+    .skill-rows { display: flex; flex-direction: column; gap: 4px; }
+    .skill-row {
+        display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+        align-items: center; gap: 18px; padding: 12px 10px; border-radius: 10px; transition: background 0.2s ease, opacity 0.2s ease;
+    }
+    .skill-row:hover { background: var(--surface-sunk); }
+    .skill-row.is-inactive .skill-slider-wrap { opacity: 0.4; pointer-events: none; }
+    .skill-check { display: flex; align-items: center; gap: 11px; cursor: pointer; user-select: none; min-width: 0; }
+    .skill-checkbox {
+        width: 17px; height: 17px; flex-shrink: 0; border: 1.5px solid var(--color-paper-border); border-radius: 5px;
+        background: var(--color-paper); appearance: none; -webkit-appearance: none; cursor: pointer; position: relative; transition: all 0.2s ease;
+    }
+    .skill-checkbox:checked { background: var(--color-accent-600); border-color: var(--color-accent-600); }
+    .skill-checkbox:checked::after {
+        content: ''; position: absolute; top: 2px; left: 5px; width: 4px; height: 8px;
+        border: 2px solid var(--color-paper); border-top: none; border-left: none; transform: rotate(45deg);
+    }
+    .skill-name { font-family: var(--font-sans); font-size: 0.87rem; font-weight: 600; color: var(--color-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .skill-slider-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; transition: opacity 0.2s ease; }
+    .skill-slider {
+        flex: 1; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 4px;
+        background: var(--color-paper-border); outline: none; cursor: pointer;
+    }
+    .skill-slider::-webkit-slider-thumb {
+        -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%;
+        background: var(--color-accent-600); border: 2px solid var(--color-paper-elevated);
+        box-shadow: 0 0 0 1px var(--color-accent-600); cursor: pointer;
+    }
+    .skill-slider::-moz-range-thumb {
+        width: 16px; height: 16px; border-radius: 50%; background: var(--color-accent-600);
+        border: 2px solid var(--color-paper-elevated); box-shadow: 0 0 0 1px var(--color-accent-600); cursor: pointer;
+    }
+    .skill-slider-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; flex-shrink: 0; width: 84px; }
+    .skill-level-label { font-family: var(--font-mono); font-size: 0.66rem; font-weight: 600; color: var(--oxblood-ink); white-space: nowrap; }
+    .skill-percent { font-family: var(--font-mono); font-size: 0.66rem; color: var(--color-ink-faint); }
+
+    .custom-skill-list { display: flex; flex-direction: column; gap: 12px; }
+    .custom-skill-row {
+        display: grid; grid-template-columns: minmax(0,0.9fr) minmax(0,1.3fr) auto;
+        align-items: center; gap: 14px; padding: 4px 0;
+    }
+    .custom-skill-name { padding: 10px 14px; font-size: 0.85rem; }
+    .btn-remove-skill {
+        width: 34px; height: 34px; flex-shrink: 0; border-radius: 9px; border: 1px solid var(--hairline-strong);
+        background: var(--color-paper-elevated); color: var(--color-ink-faint); cursor: pointer;
+        display: flex; align-items: center; justify-content: center; transition: all 0.2s ease;
+    }
+    .btn-remove-skill:hover { border-color: var(--oxblood-border); color: var(--color-accent-600); background: var(--oxblood-soft); }
+    .btn-remove-skill svg { width: 14px; height: 14px; }
+
+    .btn-add-skill {
+        display: inline-flex; align-items: center; gap: 8px; margin-top: 16px;
+        background: none; border: 1px dashed var(--hairline-strong); color: var(--color-ink-muted);
+        font-family: var(--font-sans); font-size: 0.8rem; font-weight: 700;
+        padding: 10px 18px; border-radius: 9px; cursor: pointer; transition: all 0.22s ease;
+    }
+    .btn-add-skill:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); background: var(--oxblood-soft); }
+    .btn-add-skill svg { width: 14px; height: 14px; }
+
+    /* ── ACTIONS ── */
+    .form-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+    .btn-primary {
+        display: inline-flex; align-items: center; gap: 12px; background: var(--color-accent-600);
+        border: 1px solid var(--color-accent-600); color: var(--color-paper); padding: 8px 8px 8px 22px;
+        min-height: 46px; border-radius: 10px; font-family: var(--font-sans); font-size: 0.86rem; font-weight: 700;
+        text-decoration: none; cursor: pointer; transition: background 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+    }
+    .btn-primary:hover { background: var(--color-accent-700); transform: translateY(-1px); box-shadow: 0 22px 44px -20px rgba(122,46,46,0.22); }
+    .btn-primary:active { transform: translateY(0) scale(0.98); }
+    .btn-icon-chip {
+        width: 28px; height: 28px; border-radius: 50%; background: rgba(250,247,242,0.2);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .btn-icon-chip svg { width: 14px; height: 14px; }
+
+    .btn-ghost {
+        display: inline-flex; align-items: center; gap: 9px; background: var(--color-paper-elevated);
+        border: 1px solid var(--hairline-strong); color: var(--color-ink-muted); padding: 10px 20px;
+        min-height: 46px; border-radius: 10px; font-family: var(--font-sans); font-size: 0.82rem; font-weight: 700;
+        text-decoration: none; cursor: pointer; transition: all 0.22s ease;
+    }
+    .btn-ghost:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); background: var(--oxblood-soft); }
+    .btn-ghost svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+    /* ── OFF-CANVAS DRAWER (MOBILE) ── */
+    .sidebar-overlay {
+        position: fixed; inset: 0; background: rgba(25,24,22,0.35);
+        -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px); z-index: 45;
+        opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .sidebar-overlay.active { opacity: 1; visibility: visible; }
+    .hamburger-btn {
+        display: none; align-items: center; justify-content: center; width: 44px; height: 44px;
+        border-radius: 10px; background: var(--color-paper-elevated); border: 1px solid var(--hairline-strong);
+        color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0; transition: all 0.22s ease;
+    }
+    .hamburger-btn:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); background: var(--oxblood-soft); }
+    .hamburger-btn svg { width: 19px; height: 19px; }
+    .sidebar-close-btn {
+        display: none; align-items: center; justify-content: center; width: 40px; height: 40px;
+        border-radius: 9px; background: var(--surface-sunk); border: 1px solid var(--hairline);
+        color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0; transition: all 0.22s ease;
+    }
+    .sidebar-close-btn:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); }
+    .sidebar-close-btn svg { width: 16px; height: 16px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
         .sidebar {
-            position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-            background: rgba(8,8,8,0.9);
-            backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            z-index: 50; overflow-y: auto;
+            transform: translateX(-100%); width: min(300px, 86vw);
+            box-shadow: 20px 0 60px rgba(25,24,22,0.18);
+            transition: transform 0.34s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .sidebar::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
-        }
-        .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--border); }
-        .logo-wordmark {
-            font-size: 0.78rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;
-            color: rgba(255,255,255,0.85); display: flex; align-items: center; gap: 9px;
-        }
-        .logo-icon {
-            width: 26px; height: 26px; background: var(--red); border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0;
-        }
-        .logo-icon svg { width: 13px; height: 13px; }
+        .sidebar.sidebar-open { transform: translateX(0); }
+        .sidebar-close-btn { display: flex; }
+        .hamburger-btn { display: inline-flex; }
+        .main-content { margin-left: 0; }
+        .topbar { padding: 16px 20px; gap: 12px; }
+        .topbar-crumb-sep, .badge-pill { display: none; }
+        .page-inner { padding: 26px 18px 50px; }
+        .form-card-header { padding: 18px 20px; }
+        .form-card-body { padding: 20px; }
+        .photo-row { gap: 16px; }
+    }
 
-        .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--border); }
-        .profile-avatar {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: white;
-            flex-shrink: 0; box-shadow: 0 0 18px rgba(220,38,38,0.3);
-            overflow: hidden;
-        }
-        .profile-name {
-            font-size: 0.78rem; font-weight: 700; color: #f5f5f5;
-            line-height: 1.3; margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .profile-nis { font-size: 0.68rem; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
-        .badge-role {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
-            color: #fca5a5; padding: 2px 9px; border-radius: 30px;
-            font-size: 0.63rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
-        }
-        .badge-role-dot {
-            width: 5px; height: 5px; background: var(--red);
-            border-radius: 50%; box-shadow: 0 0 6px var(--red-glow);
-        }
+    @media (max-width: 560px) {
+        .skill-row { grid-template-columns: 1fr; gap: 10px; align-items: flex-start; }
+        .skill-slider-wrap { width: 100%; }
+        .custom-skill-row { grid-template-columns: 1fr; gap: 10px; }
+        .btn-remove-skill { justify-self: flex-end; }
+        .form-actions { flex-direction: column; align-items: stretch; }
+        .form-actions .btn-primary, .form-actions .btn-ghost { justify-content: center; }
+    }
 
-        .sidebar-nav { flex: 1; padding: 20px 14px; }
-        .nav-label {
-            font-size: 0.62rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255,255,255,0.18); padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
         }
-        .nav-item {
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600;
-            color: rgba(255,255,255,0.35); text-decoration: none;
-            transition: all 0.22s ease; border: 1px solid transparent;
-            margin-bottom: 3px; position: relative;
-        }
-        .nav-item:hover {
-            color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.04); border-color: var(--border);
-        }
-        .nav-item.active {
-            color: #fca5a5; background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2);
-        }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 18px; background: var(--red);
-            border-radius: 0 3px 3px 0; box-shadow: 0 0 10px var(--red-glow);
-        }
-        .nav-item.active svg { color: var(--red); }
-        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+    }
+</style>
+@endpush
 
-        .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
-        .btn-logout {
-            width: 100%; display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            background: none; border: 1px solid transparent;
-            color: rgba(255,255,255,0.28); font-size: 0.82rem; font-weight: 600;
-            font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.22s ease;
-        }
-        .btn-logout:hover {
-            color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.18);
-        }
-        .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
+@section('content')
+<a href="#konten-utama" class="skip-link">Lompat ke konten utama</a>
+<div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
 
-        /* ── MAIN ── */
-        .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
-        .topbar {
-            position: sticky; top: 0; z-index: 30;
-            background: rgba(8,8,8,0.88);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 36px; display: flex; align-items: center; justify-content: space-between;
-        }
-        .topbar-title { font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.22); letter-spacing: 0.5px; }
-        .topbar-title span { color: rgba(255,255,255,0.5); margin-left: 6px; }
-        .topbar-pill {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
-            border-radius: 30px; padding: 5px 13px;
-            font-size: 0.68rem; font-weight: 700; color: rgba(220,38,38,0.65); letter-spacing: 0.5px;
-        }
+{{-- ================================================================
+     SIDEBAR
+================================================================ --}}
+<aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
 
-        .page-inner { padding: 40px 36px 60px; max-width: 760px; }
-
-        .form-headline {
-            font-size: clamp(1.5rem, 2.2vw, 2rem); font-weight: 900; letter-spacing: -1px; line-height: 1.15;
-            color: #f5f5f5; margin-bottom: 6px;
-        }
-        .form-headline .hl { color: var(--red); text-shadow: 0 0 26px rgba(220,38,38,0.4); }
-        .form-sub { font-size: 0.875rem; color: rgba(255,255,255,0.28); font-weight: 400; margin-bottom: 32px; }
-
-        .flash-success {
-            display: flex; align-items: center; gap: 12px;
-            background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
-            border-radius: 12px; padding: 14px 18px; margin-bottom: 28px;
-            font-size: 0.82rem; font-weight: 600; color: #86efac;
-        }
-        .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: #4ade80; }
-
-        .field-label {
-            display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-            color: rgba(255,255,255,0.35); margin-bottom: 8px;
-        }
-        .field-label .req { color: var(--red); margin-left: 3px; }
-        .field-hint { font-size: 0.68rem; color: rgba(255,255,255,0.2); margin-top: 6px; }
-
-        .input-wrap { position: relative; }
-        .input-icon {
-            position: absolute; top: 50%; left: 14px; transform: translateY(-50%);
-            width: 15px; height: 15px; color: rgba(255,255,255,0.2);
-            pointer-events: none; transition: color 0.22s ease;
-        }
-        .form-input {
-            width: 100%; background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08); border-radius: 11px;
-            padding: 12px 14px 12px 42px; font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif; color: #f5f5f5; outline: none;
-            caret-color: var(--red); transition: all 0.25s ease;
-        }
-        .form-input.no-icon { padding-left: 14px; }
-        .form-input::placeholder { color: rgba(255,255,255,0.18); }
-        .form-input:focus {
-            border-color: var(--red); background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15), 0 0 18px rgba(220,38,38,0.08);
-        }
-        .input-wrap:focus-within .input-icon { color: var(--red); }
-        .form-input.is-error {
-            border-color: var(--red-bright); background: rgba(239,68,68,0.06);
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14);
-        }
-
-        .form-textarea {
-            width: 100%; resize: none; background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08); border-radius: 11px;
-            padding: 12px 14px; font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif; color: #f5f5f5; outline: none;
-            caret-color: var(--red); transition: all 0.25s ease; line-height: 1.6;
-        }
-        .form-textarea::placeholder { color: rgba(255,255,255,0.18); }
-        .form-textarea:focus {
-            border-color: var(--red); background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15), 0 0 18px rgba(220,38,38,0.08);
-        }
-
-        .field-error {
-            margin-top: 7px; font-size: 0.73rem; font-weight: 600; color: #f87171;
-            display: flex; align-items: center; gap: 6px;
-        }
-        .field-error svg { width: 12px; height: 12px; flex-shrink: 0; }
-        .field-wrap { margin-bottom: 20px; }
-
-        .form-card {
-            background: rgba(255,255,255,0.025); border: 1px solid var(--border);
-            border-radius: 20px; overflow: hidden; position: relative; margin-bottom: 24px;
-        }
-        .form-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-        }
-        .form-card-header {
-            padding: 18px 24px; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 12px;
-        }
-        .card-header-icon {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: var(--red-soft); border: 1px solid rgba(220,38,38,0.18);
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-        .card-header-icon svg { width: 16px; height: 16px; color: var(--red); }
-        .card-header-title { font-size: 0.85rem; font-weight: 800; color: #f5f5f5; }
-        .card-header-sub { font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-top: 1px; }
-        .form-card-body { padding: 24px; }
-
-        /* ── PHOTO UPLOAD ── */
-        .photo-row { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; }
-        .photo-preview {
-            width: 84px; height: 84px; border-radius: 16px; flex-shrink: 0;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; font-weight: 900; color: white; overflow: hidden;
-            border: 2px solid var(--border);
-        }
-        .photo-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .photo-upload-btn {
-            display: inline-flex; align-items: center; gap: 8px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            color: rgba(255,255,255,0.6); font-size: 0.78rem; font-weight: 700;
-            padding: 9px 16px; border-radius: 10px; cursor: pointer;
-            transition: all 0.22s ease;
-        }
-        .photo-upload-btn:hover { border-color: rgba(220,38,38,0.3); color: #fca5a5; }
-        .photo-upload-btn svg { width: 14px; height: 14px; }
-        .photo-filename { font-size: 0.72rem; color: rgba(255,255,255,0.25); margin-top: 8px; }
-
-        .btn-submit {
-            width: 100%; background: var(--red); color: white; border: none;
-            border-radius: 12px; padding: 15px 24px; font-size: 0.9rem; font-weight: 800;
-            font-family: 'Inter', sans-serif; letter-spacing: 0.3px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            position: relative; overflow: hidden; transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(220,38,38,0.3);
-        }
-        .btn-submit::before {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, #b91c1c, #ef4444);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px var(--red-glow), 0 0 0 4px rgba(220,38,38,0.15); }
-        .btn-submit:hover::before { opacity: 1; }
-        .btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
-        .btn-submit svg { width: 18px; height: 18px; }
-        .btn-submit:active { transform: translateY(0); }
-    </style>
-</head>
-<body>
-    <div class="bg-grid"></div>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    {{-- ── SIDEBAR ── --}}
-    <aside class="sidebar">
-        <div class="sidebar-logo">
-            <div class="logo-wordmark">
-               <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
-                    <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+    <div class="sidebar-logo">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+                <div class="logo-wordmark">
+                    <div class="logo-mark">
+                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                    </div>
+                    DKV<span class="dot">.</span>SMEKDA
                 </div>
-                DKV<span style="color:var(--red);">.</span>SMEKDA
+                <div class="logo-sub">Portal Siswa</div>
             </div>
-            <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
-                Portal Siswa
+            <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="sidebar-profile">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <div class="profile-avatar" id="sidebarAvatar">
+                @if($user->photo)
+                    <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
+                @else
+                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                @endif
+            </div>
+            <div style="flex:1; min-width:0;">
+                <div class="profile-name">{{ $user->name }}</div>
+                <div class="profile-nis">NIS {{ $user->nis_nip ?? '—' }}</div>
             </div>
         </div>
-
-        <div class="sidebar-profile">
-            <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-                <div class="profile-avatar">
-                    @if($user->photo)
-                        <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}">
-                    @else
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                    @endif
-                </div>
-                <div style="flex:1; min-width:0;">
-                    <div class="profile-name">{{ $user->name }}</div>
-                    <div class="profile-nis">NIS: {{ $user->nis_nip ?? '—' }}</div>
-                </div>
-            </div>
-            <div class="badge-role">
-                <div class="badge-role-dot"></div>
-                Siswa DKV
-            </div>
+        <div class="badge-role">
+            <span class="badge-role-dot" aria-hidden="true"></span>
+            Siswa DKV
         </div>
+    </div>
 
-        <nav class="sidebar-nav">
-            <div class="nav-label">Menu Utama</div>
+    <nav class="sidebar-nav" aria-label="Menu utama">
+        <div class="nav-label">Menu Utama</div>
 
-            <a href="{{ route('siswa.dashboard') }}" class="nav-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+        <a href="{{ route('siswa.dashboard') }}" class="nav-item">
+            <span class="nav-index">01</span><span>Dashboard</span>
+        </a>
+        <a href="{{ route('siswa.portfolio.create') }}" class="nav-item">
+            <span class="nav-index">02</span><span>Tambah Karya</span>
+        </a>
+        <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
+            <span class="nav-index">03</span><span>Cetak Portfolio</span>
+        </a>
+        <a href="{{ route('siswa.achievement.index') }}" class="nav-item">
+            <span class="nav-index">04</span><span>Prestasi &amp; Sertifikat</span>
+        </a>
+
+        <div class="nav-label" style="margin-top:22px;">Akun</div>
+
+        <a href="{{ route('siswa.profile.edit') }}" class="nav-item active" aria-current="page">
+            <span class="nav-index">05</span><span>Profil Saya</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn-logout">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
-                Dashboard
-            </a>
+                Keluar dari Portal
+            </button>
+        </form>
+    </div>
+</aside>
 
-            <a href="{{ route('siswa.portfolio.create') }}" class="nav-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+{{-- ================================================================
+     MAIN CONTENT
+================================================================ --}}
+<main class="main-content" id="konten-utama">
+
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+            <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
+                    aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 7h16M4 12h16M4 17h16"/>
                 </svg>
-                Tambah Karya
-            </a>
-
-            <a href="{{ route('siswa.portfolio.print') }}" target="_blank" class="nav-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-                </svg>
-                Cetak Katalog Portofolio
-            </a>
-
-            <div class="nav-label" style="margin-top:20px;">Akun</div>
-
-            <a href="#" class="nav-item">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
-                Profil Saya
-            </a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn-logout">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                    </svg>
-                    Keluar dari Portal
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    {{-- ── MAIN ── --}}
-    <div class="main-content">
-        <div class="topbar">
-            <div class="topbar-title">Akun <span>/ Profil Saya</span></div>
-            <div class="topbar-pill">
-                <div class="badge-role-dot"></div>
-                Siswa DKV
+            </button>
+            <div class="topbar-title">
+                <span>Akun</span>
+                <span class="topbar-crumb-sep">/</span>
+                <span class="topbar-crumb-current">Profil Saya</span>
             </div>
         </div>
+        <div class="badge-pill">
+            <span class="badge-role-dot" aria-hidden="true"></span>
+            Siswa DKV
+        </div>
+    </header>
 
-        <div class="page-inner">
+    <div class="page-inner">
 
-            @if(session('success'))
-                <div class="flash-success">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    {{ session('success') }}
+        @if(session('success'))
+            <div class="flash-note" role="status">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <div class="profile-header">
+            <div class="profile-eyebrow-row">
+                <span>Akun &middot; NIS {{ $user->nis_nip ?? '—' }}</span>
+                <span class="sep">&middot;</span>
+                <span>Siswa DKV</span>
+            </div>
+            <h1 class="profile-headline">Profil <em>Saya</em></h1>
+            <p class="profile-sub">Kelola informasi pribadi dan tampilan profil portofolio publik Anda.</p>
+        </div>
+
+        <form method="POST" action="{{ route('siswa.profile.update') }}" enctype="multipart/form-data" novalidate>
+            @csrf
+            @method('PUT')
+
+            {{-- ══════════════ IDENTITAS & PROFIL ══════════════ --}}
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon-chip">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="card-title">Identitas &amp; Profil</div>
+                        <div class="card-sub">Tampil di halaman portofolio publik Anda</div>
+                    </div>
                 </div>
-            @endif
+                <div class="form-card-body">
 
-            <div class="form-headline">Profil <span class="hl">Saya</span></div>
-            <div class="form-sub">Kelola informasi akun dan tampilan portofolio publik Anda.</div>
-
-            <form method="POST" action="{{ route('siswa.profile.update') }}" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-
-                {{-- Foto Profil --}}
-                <div class="form-card">
-                    <div class="form-card-header">
-                        <div class="card-header-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
+                    <div class="photo-row">
+                        <div class="photo-preview" id="photoPreview">
+                            @if($user->photo)
+                                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}">
+                            @else
+                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                            @endif
                         </div>
-                        <div>
-                            <div class="card-header-title">Foto Profil</div>
-                            <div class="card-header-sub">Tampil di halaman portofolio publik Anda</div>
+                        <div class="photo-actions">
+                            <label for="photo" class="btn-photo-upload">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                </svg>
+                                Ganti Foto
+                            </label>
+                            <input type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png" class="sr-only-input">
+                            <div class="photo-hint">JPG atau PNG, maksimal 2MB</div>
                         </div>
                     </div>
-                    <div class="form-card-body">
-                        <div class="photo-row">
-                            <div class="photo-preview" id="photoPreview">
-                                @if($user->photo)
-                                    <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}">
-                                @else
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                @endif
-                            </div>
-                            <div>
-                                <label for="photo" class="photo-upload-btn">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                    </svg>
-                                    Ganti Foto
-                                </label>
-                                <input type="file" id="photo" name="photo" accept=".jpg,.jpeg,.png" style="display:none;">
-                                <div class="photo-filename">JPG/PNG, maks 2MB</div>
-                            </div>
+                    @error('photo')
+                        <div class="field-error">
+                            <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            {{ $message }}
                         </div>
-                        @error('photo')
+                    @enderror
+
+                    <div class="field-wrap" style="margin-top:24px;">
+                        <label for="name" class="field-label">Nama Lengkap <span class="req">*</span></label>
+                        <div class="input-icon-wrap">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                            <input type="text" id="name" name="name" required
+                                   value="{{ old('name', $user->name) }}"
+                                   class="input-field {{ $errors->has('name') ? 'is-error' : '' }}">
+                        </div>
+                        @error('name')
                             <div class="field-error">
-                                <svg fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                </svg>
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                                 {{ $message }}
                             </div>
                         @enderror
                     </div>
-                </div>
 
-                {{-- Informasi Akun --}}
-                <div class="form-card">
-                    <div class="form-card-header">
-                        <div class="card-header-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    <div class="field-wrap">
+                        <label for="nis_nip" class="field-label">NIS</label>
+                        <div class="input-icon-wrap">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
                             </svg>
+                            <input type="text" id="nis_nip" name="nis_nip"
+                                   value="{{ old('nis_nip', $user->nis_nip) }}"
+                                   class="input-field {{ $errors->has('nis_nip') ? 'is-error' : '' }}">
                         </div>
-                        <div>
-                            <div class="card-header-title">Informasi Akun</div>
-                            <div class="card-header-sub">Nama dan NIS akan tampil di portofolio publik</div>
-                        </div>
+                        @error('nis_nip')
+                            <div class="field-error">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
-                    <div class="form-card-body">
 
-                        <div class="field-wrap">
-                            <label for="name" class="field-label">Nama Lengkap <span class="req">*</span></label>
-                            <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                </svg>
-                                <input type="text" id="name" name="name"
-                                       value="{{ old('name', $user->name) }}"
-                                       class="form-input {{ $errors->has('name') ? 'is-error' : '' }}">
+                    <div class="field-wrap">
+                        <label for="bio" class="field-label">Bio Singkat</label>
+                        <textarea id="bio" name="bio" rows="4"
+                                  placeholder="Ceritakan singkat tentang minat desain Anda (opsional)"
+                                  class="textarea-field {{ $errors->has('bio') ? 'is-error' : '' }}">{{ old('bio', $user->bio) }}</textarea>
+                        <div class="field-hint">Akan tampil di halaman portofolio publik Anda. Maksimal 500 karakter.</div>
+                        @error('bio')
+                            <div class="field-error">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                {{ $message }}
                             </div>
-                            @error('name')
-                                <div class="field-error">
-                                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+                        @enderror
+                    </div>
 
-                        <div class="field-wrap">
-                            <label for="nis_nip" class="field-label">NIS</label>
-                            <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"/>
-                                </svg>
-                                <input type="text" id="nis_nip" name="nis_nip"
-                                       value="{{ old('nis_nip', $user->nis_nip) }}"
-                                       class="form-input {{ $errors->has('nis_nip') ? 'is-error' : '' }}">
-                            </div>
-                            @error('nis_nip')
-                                <div class="field-error">
-                                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
+                </div>
+            </div>
 
-                        <div class="field-wrap">
-                            <label for="bio" class="field-label">Bio Singkat</label>
-                            <textarea id="bio" name="bio" rows="3"
-                                      placeholder="Ceritakan singkat tentang minat desain Anda (opsional)"
-                                      class="form-textarea {{ $errors->has('bio') ? 'is-error' : '' }}">{{ old('bio', $user->bio) }}</textarea>
-                            <div class="field-hint">Akan tampil di halaman portofolio publik Anda. Maks 500 karakter.</div>
-                            @error('bio')
-                                <div class="field-error">
-                                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-
-                        <div class="field-wrap" style="margin-bottom:0;">
-                            <label for="contact" class="field-label">Kontak (WA / Instagram / Email)</label>
-                            <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
-                                </svg>
-                                <input type="text" id="contact" name="contact"
-                                       placeholder="Contoh: 0812xxxxxxx atau @username"
-                                       value="{{ old('contact', $user->contact) }}"
-                                       class="form-input {{ $errors->has('contact') ? 'is-error' : '' }}">
-                            </div>
-                            <div class="field-hint">Opsional — memudahkan pihak industri menghubungi Anda dari portofolio publik.</div>
-                            @error('contact')
-                                <div class="field-error">
-                                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    {{ $message }}
-                                </div>
-                            @enderror
-                        </div>
-
+            {{-- ══════════════ KONTAK ══════════════ --}}
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon-chip">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                                  d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="card-title">Kontak</div>
+                        <div class="card-sub">Memudahkan pihak industri menghubungi Anda</div>
                     </div>
                 </div>
+                <div class="form-card-body">
 
-                {{-- Skill & Kompetensi --}}
-                <div class="form-card">
-                    <div class="form-card-header">
-                        <div class="card-header-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    <div class="field-wrap">
+                        <label for="contact" class="field-label">Kontak (WA / Email)</label>
+                        <div class="input-icon-wrap">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
                             </svg>
+                            <input type="text" id="contact" name="contact"
+                                   placeholder="Contoh: 0812xxxxxxx atau nama@email.com"
+                                   value="{{ old('contact', $user->contact) }}"
+                                   class="input-field {{ $errors->has('contact') ? 'is-error' : '' }}">
                         </div>
-                        <div>
-                            <div class="card-header-title">Skill & Kompetensi</div>
-                            <div class="card-header-sub">Akan tampil sebagai halaman tersendiri di katalog PDF portofolio Anda</div>
-                        </div>
+                        <div class="field-hint">Opsional — ditampilkan sebagai tautan WhatsApp di halaman portofolio publik.</div>
+                        @error('contact')
+                            <div class="field-error">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
                     </div>
-                    <div class="form-card-body">
 
-                        @foreach($skillOptions as $group => $options)
-                            @php
-                                $existingByName = collect(old('skills_active') ? [] : ($user->skills ?? []))->keyBy('name');
-                            @endphp
-                            <div class="field-wrap">
-                                <label class="field-label">{{ $group }}</label>
-                                <div style="display:flex; flex-direction:column; gap:12px; margin-top:6px;">
-                                    @foreach($options as $skillName)
-                                        @php
-                                            $isChecked = old('skills_active')
-                                                ? in_array($skillName, old('skills_active', []))
-                                                : $existingByName->has($skillName);
-                                            $level = old("skills_level.$skillName", $existingByName->get($skillName)['level'] ?? 50);
-                                        @endphp
-                                        <div style="display:flex; align-items:center; gap:10px;" class="skill-row">
+                    <div class="field-wrap">
+                        <label for="instagram" class="field-label">Instagram</label>
+                        <div class="input-icon-wrap">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <rect x="3.5" y="3.5" width="17" height="17" rx="5"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.5 8.5h.01"/>
+                                <circle cx="12" cy="12" r="4"/>
+                            </svg>
+                            <input type="text" id="instagram" name="instagram"
+                                   placeholder="@username atau tautan profil"
+                                   value="{{ old('instagram', $user->instagram) }}"
+                                   class="input-field {{ $errors->has('instagram') ? 'is-error' : '' }}">
+                        </div>
+                        <div class="field-hint">Username atau tautan Instagram. Opsional.</div>
+                        @error('instagram')
+                            <div class="field-error">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- ══════════════ KEAHLIAN ══════════════ --}}
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon-chip">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="card-title">Keahlian &amp; Kompetensi</div>
+                        <div class="card-sub">Geser slider untuk menandai tingkat penguasaan Anda</div>
+                    </div>
+                </div>
+                <div class="form-card-body">
+
+                    @foreach($skillOptions as $group => $options)
+                        @php
+                            $existingByName = collect(old('skills_active') ? [] : ($user->skills ?? []))->keyBy('name');
+                        @endphp
+                        <div class="skill-group">
+                            <div class="skill-group-title">{{ $group }}</div>
+                            <div class="skill-rows">
+                                @foreach($options as $skillName)
+                                    @php
+                                        $isChecked = old('skills_active')
+                                            ? in_array($skillName, old('skills_active', []))
+                                            : $existingByName->has($skillName);
+                                        $level = (int) old("skills_level.$skillName", $existingByName->get($skillName)['level'] ?? 50);
+                                        $levelLabelText = $level <= 20 ? 'Pemula' : ($level <= 40 ? 'Dasar' : ($level <= 60 ? 'Menengah' : ($level <= 80 ? 'Mahir' : 'Sangat Mahir')));
+                                    @endphp
+                                    <div class="skill-row {{ $isChecked ? '' : 'is-inactive' }}" data-skill-row>
+                                        <label class="skill-check">
                                             <input type="checkbox"
                                                    name="skills_active[]"
                                                    value="{{ $skillName }}"
                                                    class="skill-checkbox"
-                                                   data-target="skill-level-{{ Str::slug($skillName) }}"
                                                    {{ $isChecked ? 'checked' : '' }}>
-                                            <span style="flex:0 0 190px; font-size:0.85rem; color:#e5e5e5;">{{ $skillName }}</span>
+                                            <span class="skill-name">{{ $skillName }}</span>
+                                        </label>
+                                        <div class="skill-slider-wrap">
                                             <input type="range" min="0" max="100" step="5"
                                                    name="skills_level[{{ $skillName }}]"
-                                                   id="skill-level-{{ Str::slug($skillName) }}"
                                                    value="{{ $level }}"
-                                                   oninput="this.nextElementSibling.textContent = this.value + '%'"
-                                                   style="flex:1;">
-                                            <span style="flex:0 0 40px; font-size:0.75rem; color:#a3a3a3; text-align:right;">{{ $level }}%</span>
+                                                   class="skill-slider"
+                                                   oninput="handleSkillSliderInput(this)"
+                                                   aria-label="Tingkat penguasaan {{ $skillName }}">
+                                            <div class="skill-slider-meta">
+                                                <span class="skill-level-label">{{ $levelLabelText }}</span>
+                                                <span class="skill-percent">{{ $level }}%</span>
+                                            </div>
                                         </div>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach
-
-                        {{-- Skill Custom --}}
-                        <div class="field-wrap" style="margin-bottom:0;">
-                            <label class="field-label">Skill Lainnya (Custom)</label>
-                            <div id="customSkillList" style="display:flex; flex-direction:column; gap:10px; margin-top:6px;">
-                                @php $existingCustom = collect($user->skills ?? [])->where('type', 'Custom')->values(); @endphp
-                                @forelse($existingCustom as $custom)
-                                    <div class="custom-skill-row" style="display:flex; align-items:center; gap:10px;">
-                                        <input type="text" name="custom_skill_name[]" value="{{ $custom['name'] }}"
-                                               placeholder="Nama skill" class="form-input" style="flex:0 0 190px;">
-                                        <input type="range" min="0" max="100" step="5" name="custom_skill_level[]"
-                                               value="{{ $custom['level'] }}"
-                                               oninput="this.nextElementSibling.textContent = this.value + '%'" style="flex:1;">
-                                        <span style="flex:0 0 40px; font-size:0.75rem; color:#a3a3a3; text-align:right;">{{ $custom['level'] }}%</span>
-                                        <button type="button" onclick="this.closest('.custom-skill-row').remove()"
-                                                style="color:#f87171; background:none; border:none; cursor:pointer; font-size:1rem;">&times;</button>
                                     </div>
-                                @empty
-                                @endforelse
+                                @endforeach
                             </div>
-                            <button type="button" onclick="addCustomSkillRow()" class="btn-outline" style="margin-top:12px; font-size:0.8rem;">
-                                + Tambah Skill Custom
-                            </button>
-                            <div class="field-hint">Contoh: Blender 3D, Adobe Premiere, Sablon Manual, dsb.</div>
                         </div>
+                    @endforeach
 
-                    </div>
-                </div>
-
-                {{-- Ubah Password --}}
-                <div class="form-card">
-                    <div class="form-card-header">
-                        <div class="card-header-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                            </svg>
-                        </div>
-                        <div>
-                            <div class="card-header-title">Ubah Password</div>
-                            <div class="card-header-sub">Kosongkan jika tidak ingin mengganti password</div>
-                        </div>
-                    </div>
-                    <div class="form-card-body">
-                        <div class="field-wrap">
-                            <label for="password" class="field-label">Password Baru</label>
-                            <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                </svg>
-                                <input type="password" id="password" name="password"
-                                       placeholder="Minimal 8 karakter"
-                                       class="form-input {{ $errors->has('password') ? 'is-error' : '' }}">
-                            </div>
-                            @error('password')
-                                <div class="field-error">
-                                    <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
-                                    {{ $message }}
+                    {{-- Skill Custom --}}
+                    <div class="skill-group">
+                        <div class="skill-group-title">Skill Lainnya (Custom)</div>
+                        <div class="custom-skill-list" id="customSkillList">
+                            @php $existingCustom = collect($user->skills ?? [])->where('type', 'Custom')->values(); @endphp
+                            @forelse($existingCustom as $custom)
+                                @php
+                                    $customLevel = (int) $custom['level'];
+                                    $customLevelLabel = $customLevel <= 20 ? 'Pemula' : ($customLevel <= 40 ? 'Dasar' : ($customLevel <= 60 ? 'Menengah' : ($customLevel <= 80 ? 'Mahir' : 'Sangat Mahir')));
+                                @endphp
+                                <div class="custom-skill-row" data-custom-row>
+                                    <input type="text" name="custom_skill_name[]" value="{{ $custom['name'] }}"
+                                           placeholder="Nama skill" class="input-field custom-skill-name no-icon">
+                                    <div class="skill-slider-wrap">
+                                        <input type="range" min="0" max="100" step="5" name="custom_skill_level[]"
+                                               value="{{ $customLevel }}" class="skill-slider"
+                                               oninput="handleSkillSliderInput(this)" aria-label="Tingkat penguasaan skill custom">
+                                        <div class="skill-slider-meta">
+                                            <span class="skill-level-label">{{ $customLevelLabel }}</span>
+                                            <span class="skill-percent">{{ $customLevel }}%</span>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn-remove-skill" onclick="this.closest('.custom-skill-row').remove()" aria-label="Hapus skill custom">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
                                 </div>
-                            @enderror
+                            @empty
+                            @endforelse
                         </div>
-                        <div class="field-wrap" style="margin-bottom:0;">
-                            <label for="password_confirmation" class="field-label">Konfirmasi Password Baru</label>
-                            <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                </svg>
-                                <input type="password" id="password_confirmation" name="password_confirmation"
-                                       placeholder="Ulangi password baru"
-                                       class="form-input">
-                            </div>
-                        </div>
+                        <button type="button" onclick="addCustomSkillRow()" class="btn-add-skill">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                            Tambah Skill Custom
+                        </button>
+                        <div class="field-hint">Contoh: Blender 3D, Adobe Premiere, Sablon Manual, dsb.</div>
+                    </div>
+
+                </div>
+            </div>
+
+            {{-- ══════════════ KEAMANAN ══════════════ --}}
+            <div class="form-card">
+                <div class="form-card-header">
+                    <div class="card-icon-chip">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="card-title">Keamanan</div>
+                        <div class="card-sub">Kosongkan jika tidak ingin mengganti password</div>
                     </div>
                 </div>
+                <div class="form-card-body">
 
-                <button type="submit" class="btn-submit">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
+                    <div class="field-wrap">
+                        <label for="password" class="field-label">Password Baru</label>
+                        <div class="input-icon-wrap">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <input type="password" id="password" name="password"
+                                   placeholder="Minimal 8 karakter" autocomplete="new-password"
+                                   class="input-field {{ $errors->has('password') ? 'is-error' : '' }}"
+                                   style="padding-right:44px;">
+                            <button type="button" class="pw-toggle" id="pwTogglePassword" tabindex="-1" aria-label="Tampilkan atau sembunyikan password">
+                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
+                        @error('password')
+                            <div class="field-error">
+                                <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                                {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="field-wrap">
+                        <label for="password_confirmation" class="field-label">Konfirmasi Password Baru</label>
+                        <div class="input-icon-wrap">
+                            <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                            <input type="password" id="password_confirmation" name="password_confirmation"
+                                   placeholder="Ulangi password baru" autocomplete="new-password"
+                                   class="input-field" style="padding-right:44px;">
+                            <button type="button" class="pw-toggle" id="pwToggleConfirm" tabindex="-1" aria-label="Tampilkan atau sembunyikan password">
+                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">
                     <span>Simpan Perubahan</span>
+                    <span class="btn-icon-chip">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M5 13l4 4L19 7"/></svg>
+                    </span>
                 </button>
+                <a href="{{ route('siswa.dashboard') }}" class="btn-ghost">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                    Kembali ke Dashboard
+                </a>
+            </div>
 
-            </form>
-        </div>
+        </form>
     </div>
+</main>
+@endsection
 
-    <script>
-        // Live-preview foto profil sebelum di-upload
-        const photoInput = document.getElementById('photo');
-        const photoPreview = document.getElementById('photoPreview');
+@push('scripts')
+<script>
+    (function () {
+        var sidebar  = document.getElementById('siswaSidebar');
+        var overlay  = document.getElementById('siswaSidebarOverlay');
+        var openBtn  = document.getElementById('siswaSidebarOpen');
+        var closeBtn = document.getElementById('siswaSidebarClose');
+
+        if (!sidebar || !overlay || !openBtn) return;
+
+        function isMobile() { return window.innerWidth <= 860; }
+
+        function syncA11y() {
+            if (isMobile() && !sidebar.classList.contains('sidebar-open')) {
+                sidebar.setAttribute('aria-hidden', 'true');
+            } else {
+                sidebar.removeAttribute('aria-hidden');
+            }
+        }
+
+        function openSidebar() {
+            sidebar.classList.add('sidebar-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openBtn.setAttribute('aria-expanded', 'true');
+            syncA11y();
+            window.requestAnimationFrame(function () { if (closeBtn) closeBtn.focus(); });
+        }
+
+        function closeSidebar(returnFocus) {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            openBtn.setAttribute('aria-expanded', 'false');
+            syncA11y();
+            if (returnFocus !== false) openBtn.focus();
+        }
+
+        function trapFocus(e) {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('sidebar-open')) return;
+            var focusable = sidebar.querySelectorAll('a[href], button:not([disabled])');
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', function () { closeSidebar(); });
+        overlay.addEventListener('click', function () { closeSidebar(); });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) closeSidebar();
+            trapFocus(e);
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
+            el.addEventListener('click', function () { closeSidebar(false); });
+        });
+
+        window.addEventListener('resize', function () {
+            if (!isMobile()) closeSidebar(false); else syncA11y();
+        });
+
+        syncA11y();
+    })();
+</script>
+<script>
+    // Live-preview foto profil sebelum di-upload (sidebar & kartu identitas ikut diperbarui)
+    (function () {
+        var photoInput   = document.getElementById('photo');
+        var photoPreview = document.getElementById('photoPreview');
+        var sidebarAvatar = document.getElementById('sidebarAvatar');
+        if (!photoInput || !photoPreview) return;
+
         photoInput.addEventListener('change', function () {
-            const file = this.files[0];
+            var file = this.files[0];
             if (!file) return;
-            const reader = new FileReader();
-            reader.onload = e => {
-                photoPreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var markup = '<img src="' + e.target.result + '" alt="Preview">';
+                photoPreview.innerHTML = markup;
+                if (sidebarAvatar) sidebarAvatar.innerHTML = markup;
             };
             reader.readAsDataURL(file);
         });
+    })();
+</script>
+<script>
+    // Slider tingkat penguasaan skill: memperbarui label & persentase,
+    // TANPA mengubah mekanisme nilai 0–100 yang sudah dipakai controller.
+    function levelLabelText(v) {
+        if (v <= 20) return 'Pemula';
+        if (v <= 40) return 'Dasar';
+        if (v <= 60) return 'Menengah';
+        if (v <= 80) return 'Mahir';
+        return 'Sangat Mahir';
+    }
 
-        // Tambah baris skill custom secara dinamis
-        function addCustomSkillRow() {
-            const wrap = document.createElement('div');
-            wrap.className = 'custom-skill-row';
-            wrap.style = 'display:flex; align-items:center; gap:10px;';
-            wrap.innerHTML = `
-                <input type="text" name="custom_skill_name[]" placeholder="Nama skill" class="form-input" style="flex:0 0 190px;">
-                <input type="range" min="0" max="100" step="5" name="custom_skill_level[]" value="50"
-                       oninput="this.nextElementSibling.textContent = this.value + '%'" style="flex:1;">
-                <span style="flex:0 0 40px; font-size:0.75rem; color:#a3a3a3; text-align:right;">50%</span>
-                <button type="button" onclick="this.closest('.custom-skill-row').remove()"
-                        style="color:#f87171; background:none; border:none; cursor:pointer; font-size:1rem;">&times;</button>
-            `;
-            document.getElementById('customSkillList').appendChild(wrap);
+    function handleSkillSliderInput(el) {
+        var val = parseInt(el.value, 10) || 0;
+        var wrap = el.closest('.skill-slider-wrap');
+        if (!wrap) return;
+        var percentEl = wrap.querySelector('.skill-percent');
+        var labelEl = wrap.querySelector('.skill-level-label');
+        if (percentEl) percentEl.textContent = val + '%';
+        if (labelEl) labelEl.textContent = levelLabelText(val);
+    }
+
+    // Redupkan slider ketika skill bawaan tidak dicentang (murni visual,
+    // tidak mengubah field yang dikirim ke server).
+    document.querySelectorAll('.skill-checkbox').forEach(function (cb) {
+        function sync() {
+            var row = cb.closest('[data-skill-row]');
+            if (!row) return;
+            row.classList.toggle('is-inactive', !cb.checked);
         }
-    </script>
-</body>
-</html>
+        cb.addEventListener('change', sync);
+    });
+
+    // Tambah baris skill custom secara dinamis
+    function addCustomSkillRow() {
+        var wrap = document.createElement('div');
+        wrap.className = 'custom-skill-row';
+        wrap.setAttribute('data-custom-row', '');
+        wrap.innerHTML =
+            '<input type="text" name="custom_skill_name[]" placeholder="Nama skill" class="input-field custom-skill-name no-icon">' +
+            '<div class="skill-slider-wrap">' +
+                '<input type="range" min="0" max="100" step="5" name="custom_skill_level[]" value="50" class="skill-slider" oninput="handleSkillSliderInput(this)" aria-label="Tingkat penguasaan skill custom">' +
+                '<div class="skill-slider-meta">' +
+                    '<span class="skill-level-label">Menengah</span>' +
+                    '<span class="skill-percent">50%</span>' +
+                '</div>' +
+            '</div>' +
+            '<button type="button" class="btn-remove-skill" onclick="this.closest(\'.custom-skill-row\').remove()" aria-label="Hapus skill custom">' +
+                '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
+            '</button>';
+        document.getElementById('customSkillList').appendChild(wrap);
+    }
+</script>
+<script>
+    // Toggle tampil/sembunyi password — pola sama seperti auth/login.blade.php
+    function setupPasswordToggle(toggleId, inputId) {
+        var toggle = document.getElementById(toggleId);
+        var input  = document.getElementById(inputId);
+        if (!toggle || !input) return;
+        var eyeShow = toggle.querySelector('.eye-show');
+        var eyeHide = toggle.querySelector('.eye-hide');
+        toggle.addEventListener('click', function () {
+            var isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            if (eyeShow) eyeShow.style.display = isHidden ? 'none' : 'block';
+            if (eyeHide) eyeHide.style.display = isHidden ? 'block' : 'none';
+        });
+    }
+    setupPasswordToggle('pwTogglePassword', 'password');
+    setupPasswordToggle('pwToggleConfirm', 'password_confirmation');
+</script>
+@endpush
