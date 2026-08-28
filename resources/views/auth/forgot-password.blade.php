@@ -1,10 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Login — DKV SMEKDA Portal')
+@section('title', 'Lupa Password — DKV SMEKDA Portal')
 
-{{-- Halaman login punya komposisi sendiri (split-screen katalog + panel form)
-     yang menggantikan navbar/footer bawaan layout, sama seperti pola di
-     guru/dashboard.blade.php. --}}
 @section('navbar')@endsection
 @section('footer')@endsection
 
@@ -41,10 +38,9 @@
             padding: 14px;
         }
         @media (min-width: 768px) {
-            body { padding-left: 38px; } /* ruang untuk spine-label di sisi kiri */
+            body { padding-left: 38px; }
         }
 
-        /* ── GRAIN — tekstur kertas hangat, pengganti noise merah-gelap versi lama ── */
         .grain-overlay {
             position: fixed;
             inset: 0;
@@ -55,9 +51,6 @@
             z-index: 40;
         }
 
-        /* ── SPINE LABEL — label punggung katalog di area mat kiri, seperti label
-           punggung buku/plakat museum. Menyatukan motif "produksi cetak" jadi satu
-           elemen yang lebih kuat, bukan tersebar di empat sudut. ── */
         .spine-label {
             position: fixed;
             left: 6px; top: 14px; bottom: 14px;
@@ -78,7 +71,6 @@
         }
         @media (max-width: 767px) { .spine-label { display: none; } }
 
-        /* ── STAGE — split-screen di desktop, satu kolom di mobile ── */
         .stage {
             position: relative;
             min-height: calc(100dvh - 28px);
@@ -88,7 +80,6 @@
             z-index: 1;
         }
 
-        /* ── PANEL KIRI: "sampul katalog" — satu-satunya bidang oxblood penuh ── */
         .gallery-panel {
             position: relative;
             background: var(--color-accent-600);
@@ -153,7 +144,6 @@
             animation: livePulse 1.6s ease-in-out infinite;
         }
 
-        /* ── PANEL KANAN: meja informasi — form login ── */
         .form-panel {
             display: flex;
             align-items: center;
@@ -185,7 +175,6 @@
             50%      { opacity: 0.35; transform: scale(0.7); }
         }
 
-        /* ── back link ── */
         .back-link {
             display: inline-flex;
             align-items: center;
@@ -201,7 +190,6 @@
         .back-link:hover { color: var(--color-accent-600); }
         .back-link svg { width: 13px; height: 13px; }
 
-        /* ── brandmark kecil di panel form ── */
         .brandmark { display: flex; align-items: center; gap: 9px; margin-top: 26px; margin-bottom: 30px; }
         .brandmark img {
             width: 26px; height: 26px;
@@ -214,12 +202,10 @@
         .brandmark-text { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-muted); }
         .brandmark-text b { color: var(--color-ink); font-weight: 600; }
 
-        /* ── headline form ── */
         .form-headline { font-family: var(--font-display); font-size: 2rem; font-weight: 600; line-height: 1.18; color: var(--color-ink); }
         .form-headline em { font-style: italic; font-weight: 500; color: var(--color-accent-600); }
         .form-sub { font-size: 0.88rem; color: var(--color-ink-muted); line-height: 1.6; margin-top: 10px; margin-bottom: 30px; }
 
-        /* ── status & error ── */
         .status-box, .error-alert {
             display: flex; align-items: flex-start; gap: 10px;
             padding: 12px 14px;
@@ -231,12 +217,10 @@
         .error-alert { background: var(--color-accent-50); border-left: 2px solid var(--color-accent-600); color: var(--color-accent-700); font-weight: 500; }
         .status-box svg, .error-alert svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
 
-        /* ── divider ── */
         .form-divider { display: flex; align-items: center; gap: 12px; margin-bottom: 26px; }
         .form-divider-line { flex: 1; height: 1px; background: var(--color-paper-border); }
         .form-divider-text { font-family: var(--font-mono); font-size: 0.64rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ink-faint); }
 
-        /* ── field ── */
         .field-wrap { margin-bottom: 18px; }
         .field-label {
             display: block;
@@ -273,59 +257,9 @@
         .input-field:focus { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px var(--color-accent-200); }
         .input-field.is-error { border-color: var(--color-accent-600); background: var(--color-accent-50); }
 
-        .pw-toggle {
-            position: absolute; top: 50%; right: 6px;
-            transform: translateY(-50%);
-            width: 34px; height: 34px;
-            display: flex; align-items: center; justify-content: center;
-            background: none; border: none; cursor: pointer;
-            color: var(--color-ink-faint);
-            border-radius: var(--radius-xs);
-            transition: color 0.2s ease;
-        }
-        .pw-toggle:hover { color: var(--color-accent-600); }
-        .pw-toggle svg { width: 16px; height: 16px; }
-
         .field-error { display: flex; align-items: center; gap: 6px; margin-top: 7px; font-size: 0.74rem; font-weight: 500; color: var(--color-accent-700); }
         .field-error svg { width: 13px; height: 13px; flex-shrink: 0; }
 
-        /* ── remember + forgot ── */
-        .remember-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 26px; }
-        .remember-label { display: flex; align-items: center; gap: 9px; cursor: pointer; user-select: none; }
-        .remember-checkbox {
-            width: 16px; height: 16px;
-            border: 1.5px solid var(--color-paper-border);
-            border-radius: 4px;
-            background: var(--color-paper-elevated);
-            appearance: none; -webkit-appearance: none;
-            cursor: pointer; position: relative;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-        .remember-checkbox:checked { background: var(--color-accent-600); border-color: var(--color-accent-600); }
-        .remember-checkbox:checked::after {
-            content: '';
-            position: absolute; top: 2px; left: 5px;
-            width: 4px; height: 7px;
-            border: 2px solid var(--color-paper);
-            border-top: none; border-left: none;
-            transform: rotate(45deg);
-        }
-        .remember-text { font-size: 0.82rem; color: var(--color-ink-muted); font-weight: 500; }
-
-        .forgot-link { font-size: 0.8rem; font-weight: 500; color: var(--color-ink-muted); text-decoration: none; }
-        .forgot-link-disabled { display: inline-flex; align-items: center; gap: 6px; opacity: 0.6; cursor: not-allowed; }
-        .badge-soon {
-            font-family: var(--font-mono);
-            font-size: 0.56rem; font-weight: 600; letter-spacing: 0.05em;
-            color: var(--color-accent-700);
-            background: var(--color-accent-50);
-            border: 1px solid rgba(122,46,46,0.18);
-            padding: 2px 7px; border-radius: 20px;
-            white-space: nowrap;
-        }
-
-        /* ── submit ── */
         .btn-submit {
             width: 100%;
             display: flex; align-items: center; justify-content: space-between;
@@ -359,7 +293,6 @@
         .btn-submit.is-loading .icon-spinner { display: block; }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* ── bottom link + footer ── */
         .bottom-link { margin-top: 26px; text-align: center; font-size: 0.82rem; color: var(--color-ink-faint); }
         .bottom-link a { color: var(--color-ink); font-weight: 600; text-decoration: none; }
         .bottom-link a:hover { color: var(--color-accent-600); }
@@ -375,13 +308,11 @@
         }
         .page-footer .accent { color: var(--color-accent-600); }
 
-        /* ── fokus keyboard tetap kelihatan ── */
         a:focus-visible, button:focus-visible, input:focus-visible {
             outline: 2px solid var(--color-accent-600);
             outline-offset: 2px;
         }
 
-        /* ── RESPONSIVE — split-screen collapse jadi monolith card ── */
         @media (max-width: 967px) {
             .stage { grid-template-columns: 1fr; }
 
@@ -421,8 +352,8 @@
     <div class="gallery-panel">
         <div>
             <p class="gallery-eyebrow">SMK Negeri 2 Padang Panjang &mdash; Jurusan DKV</p>
-            <h1 class="gallery-headline">DKV Archive<br><em>// Access</em></h1>
-            <p class="gallery-sub">Ruang kerja digital untuk memaparkan hasil rancang, mendokumentasikan proses, dan mengarsipkan karya siswa Desain Komunikasi Visual.</p>
+            <h1 class="gallery-headline">DKV Archive<br><em>// Reset</em></h1>
+            <p class="gallery-sub">Masukkan email akun Anda. Jika email terdaftar, kami akan mengirimkan tautan untuk mereset password.</p>
         </div>
 
         <div class="wall-label">
@@ -433,15 +364,15 @@
         </div>
     </div>
 
-    {{-- ===== PANEL KANAN — form login ===== --}}
+    {{-- ===== PANEL KANAN — form forgot password ===== --}}
     <div class="form-panel">
         <div class="form-shell">
 
-            <a href="{{ url('/') }}" class="back-link">
+            <a href="{{ route('login') }}" class="back-link">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>
-                Kembali ke Beranda
+                Kembali ke Login
             </a>
 
             <div class="brandmark">
@@ -449,8 +380,8 @@
                 <span class="brandmark-text"><b>DKV SMEKDA</b> / Portal</span>
             </div>
 
-            <h2 class="form-headline">Selamat datang<br>kembali, <em>Kreator.</em></h2>
-            <p class="form-sub">Masuk untuk mengelola arsip portofolio digital Anda.</p>
+            <h2 class="form-headline">Lupa<br><em>Password?</em></h2>
+            <p class="form-sub">Masukkan alamat email Anda untuk menerima tautan reset password.</p>
 
             {{-- Session Status --}}
             @if (session('status'))
@@ -470,19 +401,18 @@
                     </svg>
                     <span>
                         @error('email') {{ $message }} @enderror
-                        @error('password') {{ $message }} @enderror
                     </span>
                 </div>
             @endif
 
             <div class="form-divider">
                 <div class="form-divider-line"></div>
-                <div class="form-divider-text">Masuk dengan akun Anda</div>
+                <div class="form-divider-text">Kirim Tautan Reset</div>
                 <div class="form-divider-line"></div>
             </div>
 
             {{-- ===== FORM ===== --}}
-            <form method="POST" action="{{ route('login.post') }}" novalidate id="login-form">
+            <form method="POST" action="{{ route('password.email') }}" novalidate id="forgot-form">
                 @csrf
 
                 {{-- Email --}}
@@ -513,62 +443,9 @@
                     @enderror
                 </div>
 
-                {{-- Password --}}
-                <div class="field-wrap">
-                    <label for="password" class="field-label">Password</label>
-                    <div class="input-icon-wrap">
-                        <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                        </svg>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            placeholder="••••••••••"
-                            autocomplete="current-password"
-                            class="input-field {{ $errors->has('password') ? 'is-error' : '' }}"
-                            style="padding-right: 44px;"
-                        >
-                        <button type="button" class="pw-toggle" id="pw-toggle" tabindex="-1" aria-label="Tampilkan atau sembunyikan password">
-                            <svg id="eye-icon-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                            <svg id="eye-icon-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
-                            </svg>
-                        </button>
-                    </div>
-                    @error('password')
-                        <div class="field-error">
-                            <svg fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            {{ $message }}
-                        </div>
-                    @enderror
-                </div>
-
-                {{-- Remember + Forgot --}}
-                <div class="remember-row">
-                    <label class="remember-label">
-                        <input
-                            type="checkbox"
-                            name="remember"
-                            id="remember"
-                            class="remember-checkbox"
-                            {{ old('remember') ? 'checked' : '' }}
-                        >
-                        <span class="remember-text">Ingat Saya</span>
-                    </label>
-                    <a href="{{ route('password.request') }}" class="forgot-link">
-                        Lupa Password?
-                    </a>
-                </div>
-
                 {{-- Submit --}}
                 <button type="submit" class="btn-submit" id="btn-submit">
-                    <span class="btn-submit-label">Masuk ke Arsip</span>
+                    <span class="btn-submit-label">Kirim Tautan Reset</span>
                     <span class="btn-icon">
                         <svg class="icon-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
@@ -580,9 +457,9 @@
                 </button>
             </form>
 
-            {{-- Bottom Register Link --}}
+            {{-- Bottom Login Link --}}
             <div class="bottom-link">
-                Belum punya akun? <a href="{{ route('login') }}">Daftar sebagai Siswa &rarr;</a>
+                Ingat password? <a href="{{ route('login') }}">Masuk ke Arsip &rarr;</a>
             </div>
 
             <p class="page-footer">
@@ -598,27 +475,14 @@
 
 @push('scripts')
 <script>
-    // Toggle tampil/sembunyi password
-    const pwToggle = document.getElementById('pw-toggle');
-    const pwInput  = document.getElementById('password');
-    const eyeShow  = document.getElementById('eye-icon-show');
-    const eyeHide  = document.getElementById('eye-icon-hide');
-
-    pwToggle.addEventListener('click', () => {
-        const isHidden = pwInput.type === 'password';
-        pwInput.type   = isHidden ? 'text' : 'password';
-        eyeShow.style.display = isHidden ? 'none'  : 'block';
-        eyeHide.style.display = isHidden ? 'block' : 'none';
-    });
-
     // Status memproses saat submit, mencegah klik ganda
-    const loginForm  = document.getElementById('login-form');
-    const submitBtn  = document.getElementById('btn-submit');
-    const submitText = submitBtn.querySelector('.btn-submit-label');
+    const forgotForm  = document.getElementById('forgot-form');
+    const submitBtn   = document.getElementById('btn-submit');
+    const submitText  = submitBtn.querySelector('.btn-submit-label');
 
-    loginForm.addEventListener('submit', () => {
+    forgotForm.addEventListener('submit', () => {
         submitBtn.classList.add('is-loading');
-        submitText.textContent = 'Memproses…';
+        submitText.textContent = 'Mengirim…';
     });
 </script>
- @endpush
+@endpush

@@ -207,7 +207,7 @@ class AchievementController extends Controller
     }
 
     /**
-     * Simpan file ke storage public.
+     * Simpan file ke storage public dengan validasi konten server-side.
      */
     private function storeFile(
         Request $request,
@@ -218,9 +218,33 @@ class AchievementController extends Controller
             return null;
         }
 
-        return $request
-            ->file($field)
-            ->store($folder, 'public');
+        $file = $request->file($field);
+        $allowedMimes = $field === 'image'
+            ? ['image/jpeg', 'image/png']
+            : ['application/pdf'];
+
+        $this->validateFileContent($file, $allowedMimes, $field);
+
+        return $file->store($folder, 'public');
+    }
+
+    /**
+     * Validate actual file content using finfo (server-side MIME check).
+     */
+    private function validateFileContent($file, array $allowedMimes, string $field): void
+    {
+        if (!$file || !$file->isValid()) {
+            return;
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file->getRealPath());
+
+        if (!in_array($mime, $allowedMimes, true)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                $field => "File tidak valid. Tipe file yang diizinkan: " . implode(', ', $allowedMimes),
+            ]);
+        }
     }
 
     /**

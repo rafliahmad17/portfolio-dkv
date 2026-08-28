@@ -175,8 +175,9 @@ class ProfileController extends Controller
             }
 
             /*
-             * Simpan foto baru.
+             * Simpan foto baru dengan validasi konten server-side.
              */
+            $this->validateFileContent($request->file('photo'), ['image/jpeg', 'image/png'], 'photo');
             $photoPath = $request
                 ->file('photo')
                 ->store('profiles/photos', 'public');
@@ -422,6 +423,7 @@ class ProfileController extends Controller
                 );
             }
 
+            $this->validateFileContent($request->file('avatar'), ['image/jpeg', 'image/png', 'image/webp'], 'avatar');
             $photoPath = $request
                 ->file('avatar')
                 ->store(
@@ -521,5 +523,24 @@ class ProfileController extends Controller
                 'success',
                 'Password berhasil diperbarui!'
             );
+    }
+
+    /**
+     * Validate actual file content using finfo (server-side MIME check).
+     */
+    private function validateFileContent($file, array $allowedMimes, string $field): void
+    {
+        if (!$file || !$file->isValid()) {
+            return;
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file->getRealPath());
+
+        if (!in_array($mime, $allowedMimes, true)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                $field => "File tidak valid. Tipe file yang diizinkan: " . implode(', ', $allowedMimes),
+            ]);
+        }
     }
 }

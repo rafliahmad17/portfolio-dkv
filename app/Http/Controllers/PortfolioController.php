@@ -29,6 +29,11 @@ class PortfolioController extends Controller
             'file_pdf'      => ['nullable', 'mimes:pdf', 'max:5120'],
         ]);
 
+        $this->validateFileContent($request->file('image'), ['image/jpeg', 'image/png'], 'image');
+        if ($request->hasFile('file_pdf')) {
+            $this->validateFileContent($request->file('file_pdf'), ['application/pdf'], 'file_pdf');
+        }
+
         $imagePath = $request->file('image')->store('portfolios/images', 'public');
 
         $pdfPath = null;
@@ -50,14 +55,6 @@ class PortfolioController extends Controller
                          ->with('success', 'Karya berhasil diunggah! 🎨');
     }
 
-    public function edit(Portfolio $portfolio): View
-    {
-        abort_if($portfolio->user_id !== Auth::id(), 403);
-
-        $categories = Category::all();
-        return view('siswa.portfolio.edit', compact('portfolio', 'categories'));
-    }
-
     public function update(Request $request, Portfolio $portfolio): RedirectResponse
     {
         abort_if($portfolio->user_id !== Auth::id(), 403);
@@ -69,6 +66,13 @@ class PortfolioController extends Controller
             'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
             'file_pdf'    => ['nullable', 'mimes:pdf', 'max:5120'],
         ]);
+
+        if ($request->hasFile('image')) {
+            $this->validateFileContent($request->file('image'), ['image/jpeg', 'image/png'], 'image');
+        }
+        if ($request->hasFile('file_pdf')) {
+            $this->validateFileContent($request->file('file_pdf'), ['application/pdf'], 'file_pdf');
+        }
 
         $imagePath = $portfolio->image_path;
         if ($request->hasFile('image')) {
@@ -94,6 +98,33 @@ class PortfolioController extends Controller
 
         return redirect()->route('siswa.dashboard')
                          ->with('success', 'Karya berhasil diperbarui! ✏️');
+    }
+
+    /**
+     * Validate actual file content using finfo (server-side MIME check).
+     */
+    private function validateFileContent($file, array $allowedMimes, string $field): void
+    {
+        if (!$file || !$file->isValid()) {
+            return;
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($file->getRealPath());
+
+        if (!in_array($mime, $allowedMimes, true)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                $field => "File tidak valid. Tipe file yang diizinkan: " . implode(', ', $allowedMimes),
+            ]);
+        }
+    }
+
+    public function edit(Portfolio $portfolio): View
+    {
+        abort_if($portfolio->user_id !== Auth::id(), 403);
+
+        $categories = Category::all();
+        return view('siswa.portfolio.edit', compact('portfolio', 'categories'));
     }
 
     public function destroy(Portfolio $portfolio): RedirectResponse
