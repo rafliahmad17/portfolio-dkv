@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ValidatesFileContent;
 use App\Models\Category;
 use App\Models\Portfolio;
 use Illuminate\Http\Request;
@@ -9,10 +10,11 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class PortfolioController extends Controller
 {
+    use ValidatesFileContent;
+
     public function create(): View
     {
         $categories = Category::all();
@@ -43,7 +45,7 @@ class PortfolioController extends Controller
 
         Portfolio::create([
             'title'         => $validated['title'],
-            'slug'          => Str::slug($validated['title']) . '-' . Str::random(6),
+            'slug'          => Portfolio::generateUniqueSlug($validated['title']),
             'description'   => $validated['description'],
             'category_id'   => $validated['category_id'],
             'user_id'       => Auth::id(),
@@ -98,25 +100,6 @@ class PortfolioController extends Controller
 
         return redirect()->route('siswa.dashboard')
                          ->with('success', 'Karya berhasil diperbarui! ✏️');
-    }
-
-    /**
-     * Validate actual file content using finfo (server-side MIME check).
-     */
-    private function validateFileContent($file, array $allowedMimes, string $field): void
-    {
-        if (!$file || !$file->isValid()) {
-            return;
-        }
-
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file->getRealPath());
-
-        if (!in_array($mime, $allowedMimes, true)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                $field => "File tidak valid. Tipe file yang diizinkan: " . implode(', ', $allowedMimes),
-            ]);
-        }
     }
 
     public function edit(Portfolio $portfolio): View

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -127,6 +128,37 @@ class User extends Authenticatable
             'Videografi',
         ],
     ];
+
+    /*
+    |--------------------------------------------------------------------------
+    | SLUG PORTOFOLIO PUBLIK (portfolio_slug)
+    |--------------------------------------------------------------------------
+    |
+    | SATU-SATUNYA sumber kebenaran untuk pembuatan portfolio_slug siswa.
+    | Dipakai oleh StudentController (saat mendaftarkan/backfill akun siswa)
+    | dan DashboardController (backfill defensif untuk akun lama). Sengaja
+    | TIDAK pernah menyertakan ID database pada slug — memakai Str::slug()
+    | dari nama + suffix acak, lalu dicek keunikannya ke database (termasuk
+    | baris yang sudah soft-deleted) supaya tidak pernah collision.
+    |
+    */
+
+    /**
+     * Buat slug publik unik untuk portofolio siswa (dipakai oleh rute
+     * /u/{slug} dan /u/{slug}/print). TIDAK boleh dipanggil berulang kali
+     * untuk siswa yang sama — hanya dipakai sekali saat portfolio_slug
+     * masih kosong, supaya URL publik yang sudah dibagikan tidak berubah.
+     */
+    public static function generateUniquePortfolioSlug(string $name): string
+    {
+        $base = Str::slug($name) ?: 'siswa';
+
+        do {
+            $slug = $base . '-' . Str::random(6);
+        } while (static::withTrashed()->where('portfolio_slug', $slug)->exists());
+
+        return $slug;
+    }
 
     /*
     |--------------------------------------------------------------------------

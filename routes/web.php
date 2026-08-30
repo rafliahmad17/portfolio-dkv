@@ -29,9 +29,13 @@ Route::middleware('guest')->group(function () {
         ->name('login.post');
 
     Route::get('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'create'])->name('password.request');
-    Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'store'])->name('password.email');
+    Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('password.email');
     Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'create'])->name('password.reset');
-    Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'store'])->name('password.update');
+    Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'store'])
+        ->middleware('throttle:5,1')
+        ->name('password.update');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])

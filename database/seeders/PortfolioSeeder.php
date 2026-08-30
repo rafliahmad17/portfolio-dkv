@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Portfolio;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class PortfolioSeeder extends Seeder
 {
@@ -40,7 +39,9 @@ class PortfolioSeeder extends Seeder
 
             for ($i = 1; $i <= $count; $i++) {
                 $title = $titles[array_rand($titles)];
-                $slug  = Str::slug($title . '-' . $user->id . '-' . $i);
+                // Konsisten dengan PortfolioController::store() — tidak pernah
+                // menyertakan user_id pada slug publik.
+                $slug  = Portfolio::generateUniqueSlug($title);
 
                 Portfolio::updateOrCreate(
                     ['slug' => $slug],

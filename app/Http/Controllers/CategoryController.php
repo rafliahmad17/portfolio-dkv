@@ -8,7 +8,6 @@ use App\Models\Portfolio;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -37,8 +36,10 @@ class CategoryController extends Controller
     }
 
     /**
-     * Simpan kategori baru. Slug dibuat otomatis dari nama menggunakan
-     * Str::slug() agar konsisten dan aman dipakai di URL.
+     * Simpan kategori baru. Slug dibuat otomatis dari nama lewat
+     * Category::generateUniqueSlug(), yang menjamin keunikan slug
+     * (bukan cuma nama) walau dua nama berbeda menghasilkan slug dasar
+     * yang sama.
      */
     public function store(Request $request): RedirectResponse
     {
@@ -52,7 +53,7 @@ class CategoryController extends Controller
 
         Category::create([
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
+            'slug' => Category::generateUniqueSlug($validated['name']),
         ]);
 
         return redirect()->route('guru.kategori.index')
@@ -83,7 +84,7 @@ class CategoryController extends Controller
 
         $category->update([
             'name' => $validated['name'],
-            'slug' => Str::slug($validated['name']),
+            'slug' => Category::generateUniqueSlug($validated['name'], $category->id),
         ]);
 
         return redirect()->route('guru.kategori.index')

@@ -7,16 +7,20 @@ use App\Models\Category;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 {
     public function siswa()
     {
-        // Fitur Auto-Slug: Membuat URL unik untuk siswa jika belum ada
+        // Backfill defensif: hanya untuk akun siswa lama yang entah bagaimana
+        // masih belum punya portfolio_slug (mis. dibuat lewat tinker/seeder
+        // lama). Memakai sumber kebenaran tunggal User::generateUniquePortfolioSlug()
+        // (sama seperti StudentController) supaya TIDAK PERNAH membocorkan ID
+        // database ke URL publik. Tidak menimpa slug yang sudah ada, dan tidak
+        // menjalankan regenerasi apa pun jika slug sudah tersedia.
         $user = Auth::user();
         if (empty($user->portfolio_slug)) {
-            $user->portfolio_slug = Str::slug($user->name) . '-' . $user->id;
+            $user->portfolio_slug = User::generateUniquePortfolioSlug($user->name);
             $user->save();
         }
 

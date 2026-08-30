@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\ValidatesFileContent;
 use App\Models\Achievement;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Storage;
 
 class AchievementController extends Controller
 {
+    use ValidatesFileContent;
+
     /**
      * Daftar prestasi & sertifikat milik siswa yang login.
      */
@@ -226,25 +229,6 @@ class AchievementController extends Controller
         $this->validateFileContent($file, $allowedMimes, $field);
 
         return $file->store($folder, 'public');
-    }
-
-    /**
-     * Validate actual file content using finfo (server-side MIME check).
-     */
-    private function validateFileContent($file, array $allowedMimes, string $field): void
-    {
-        if (!$file || !$file->isValid()) {
-            return;
-        }
-
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
-        $mime = $finfo->file($file->getRealPath());
-
-        if (!in_array($mime, $allowedMimes, true)) {
-            throw \Illuminate\Validation\ValidationException::withMessages([
-                $field => "File tidak valid. Tipe file yang diizinkan: " . implode(', ', $allowedMimes),
-            ]);
-        }
     }
 
     /**

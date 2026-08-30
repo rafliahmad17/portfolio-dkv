@@ -10,7 +10,6 @@ use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class StudentController extends Controller
 {
@@ -84,7 +83,7 @@ class StudentController extends Controller
             'role'     => 'siswa',
         ]);
 
-        $siswa->portfolio_slug = $this->generateUniqueStudentSlug($validated['name']);
+        $siswa->portfolio_slug = User::generateUniquePortfolioSlug($validated['name']);
         $siswa->save();
 
         return redirect()->route('guru.siswa.index')
@@ -136,7 +135,7 @@ class StudentController extends Controller
         // sudah ada meski nama berubah, supaya URL publik/QR yang mungkin
         // sudah dibagikan siswa tidak tiba-tiba berubah/rusak.
         if (empty($siswa->portfolio_slug)) {
-            $siswa->portfolio_slug = $this->generateUniqueStudentSlug($validated['name']);
+            $siswa->portfolio_slug = User::generateUniquePortfolioSlug($validated['name']);
         }
 
         $siswa->save();
@@ -198,21 +197,8 @@ class StudentController extends Controller
             ->with('success', "Akun siswa '{$namaSiswa}' beserta seluruh datanya dihapus permanen.");
     }
 
-    /**
-     * Buat slug publik unik untuk portofolio siswa (dipakai oleh rute
-     * /u/{slug} dan /u/{slug}/print). Memakai pola yang sama dengan
-     * Portfolio::store() di PortfolioController — Str::slug() + suffix
-     * acak — supaya konsisten dengan konvensi slug yang sudah ada di
-     * project, terjamin unik, dan tidak membocorkan ID/urutan pendaftaran.
-     */
-    private function generateUniqueStudentSlug(string $name): string
-    {
-        $base = Str::slug($name) ?: 'siswa';
-
-        do {
-            $slug = $base . '-' . Str::random(6);
-        } while (User::withTrashed()->where('portfolio_slug', $slug)->exists());
-
-        return $slug;
-    }
+    // Pembuatan portfolio_slug kini bersumber tunggal dari
+    // User::generateUniquePortfolioSlug() (lihat app/Models/User.php),
+    // supaya StudentController dan DashboardController tidak lagi punya
+    // dua mekanisme slug yang bisa saling tidak konsisten.
 }
