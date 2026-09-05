@@ -4,6 +4,16 @@
    reveal, tombol dasar). Dipisah ke file sendiri, tetap satu entry Vite. */
 @import './editorial.css';
 
+/* FASE 2 — STEP 2: shell dashboard (sidebar + topbar) yang dipakai sama
+   di guru/dashboard, guru/siswa/index, guru/kategori/index, guru/profile. */
+@import './components/dashboard-shell.css';
+
+/* FASE 2 — CHECKPOINT 1: shell dashboard siswa "Studio Index" (sidebar +
+   topbar), TERPISAH dari shell guru di atas karena sistem desainnya
+   berbeda (sidebar 280px vs 260px, spacing/logo/topbar berbeda). Dipakai
+   sama di siswa/dashboard dan siswa/profile/edit (audit banding). */
+@import './components/dashboard-shell-siswa.css';
+
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';

@@ -97,44 +97,13 @@
     }
     .skip-link:focus { top: 16px; }
 
-    /* ── SIDEBAR — "STUDIO INDEX" ── */
-    .sidebar {
-        position: fixed; top: 0; left: 0;
-        width: 280px; height: 100vh;
-        background: var(--color-paper-elevated);
-        border-right: 1px solid var(--hairline);
-        display: flex; flex-direction: column;
-        z-index: 50;
-        overflow-y: auto;
-    }
-
-    .sidebar-logo {
-        padding: 30px 26px 22px;
-        border-bottom: 1px solid var(--hairline);
-    }
-
-    .logo-wordmark {
-        font-family: var(--font-sans);
-        font-size: 0.82rem;
-        font-weight: 800;
-        letter-spacing: 2.5px;
-        text-transform: uppercase;
-        color: var(--color-ink);
-        display: flex; align-items: center; gap: 10px;
-    }
-
-    .logo-wordmark .dot { color: var(--color-accent-600); }
-
-    .logo-mark {
-        width: 34px; height: 34px;
-        border-radius: 50%;
-        border: 1px solid var(--hairline-strong);
-        background: var(--surface-sunk);
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0;
-        overflow: hidden;
-        position: relative;
-    }
+    /* ── SIDEBAR — "STUDIO INDEX" ──
+       Frame sidebar/logo/profile/nav/footer + main-content + topbar base
+       dipindahkan ke resources/css/components/dashboard-shell-siswa.css
+       (identik dengan siswa/profile/edit.blade.php — lihat audit banding).
+       Yang tetap di sini: .logo-mark::after (dekorasi khusus halaman ini,
+       tidak ada di profile/edit) dan .date-stamp (elemen topbar kanan
+       khusus dashboard, berbeda dari .badge-pill milik profile/edit). */
     .logo-mark::after {
         content: '';
         position: absolute; inset: 3px;
@@ -142,187 +111,6 @@
         border-radius: 50%;
         pointer-events: none;
     }
-
-    .logo-mark img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-
-    .logo-sub {
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-        color: var(--color-ink-faint);
-        margin-top: 6px;
-        letter-spacing: 1.6px;
-        text-transform: uppercase;
-        padding-left: 40px;
-    }
-
-    .sidebar-profile {
-        padding: 22px 26px;
-        border-bottom: 1px solid var(--hairline);
-    }
-
-    .profile-avatar {
-        width: 44px; height: 44px;
-        border-radius: 14px;
-        background: var(--color-accent-600);
-        display: flex; align-items: center; justify-content: center;
-        font-family: var(--font-serif);
-        font-size: 1.05rem; font-weight: 700; color: var(--color-paper);
-        flex-shrink: 0;
-        overflow: hidden;
-    }
-
-    .profile-name {
-        font-family: var(--font-sans);
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: var(--color-ink);
-        line-height: 1.3;
-        margin-bottom: 2px;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-
-    .profile-nis {
-        font-family: var(--font-mono);
-        font-size: 0.68rem;
-        color: var(--color-ink-faint);
-        margin-bottom: 8px;
-        letter-spacing: 0.3px;
-    }
-
-    .badge-role {
-        display: inline-flex; align-items: center; gap: 6px;
-        background: var(--oxblood-soft);
-        border: 1px solid var(--oxblood-border);
-        color: var(--oxblood-ink);
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-    .badge-role-dot {
-        width: 5px; height: 5px;
-        background: var(--color-accent-600);
-        border-radius: 50%;
-        flex-shrink: 0;
-    }
-
-    /* Nav — daftar terindeks, bukan grid ikon generik */
-    .sidebar-nav { flex: 1; padding: 22px 16px; }
-
-    .nav-label {
-        font-family: var(--font-mono);
-        font-size: 0.62rem;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--color-ink-faint);
-        padding: 0 10px;
-        margin-bottom: 10px;
-        margin-top: 4px;
-    }
-
-    .nav-item {
-        display: flex; align-items: center; gap: 14px;
-        padding: 11px 12px;
-        min-height: 44px;
-        border-radius: 10px;
-        font-family: var(--font-sans);
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--color-ink-muted);
-        text-decoration: none;
-        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        border: 1px solid transparent;
-        margin-bottom: 2px;
-        position: relative;
-    }
-
-    .nav-index {
-        font-family: var(--font-mono);
-        font-size: 0.68rem;
-        font-weight: 500;
-        color: var(--color-ink-faint);
-        flex-shrink: 0;
-        width: 16px;
-    }
-
-    .nav-item:hover { background: var(--surface-sunk); color: var(--color-ink); }
-
-    .nav-item.active {
-        color: var(--oxblood-ink);
-        background: var(--oxblood-soft);
-        border-color: var(--oxblood-border);
-    }
-
-    .nav-item.active .nav-index { color: var(--color-accent-600); }
-
-    .nav-item.active::before {
-        content: '';
-        position: absolute; left: 0; top: 50%;
-        transform: translateY(-50%);
-        width: 3px; height: 20px;
-        background: var(--color-accent-600);
-        border-radius: 0 3px 3px 0;
-    }
-
-    /* Logout */
-    .sidebar-footer { padding: 16px; border-top: 1px solid var(--hairline); }
-
-    .btn-logout {
-        width: 100%;
-        display: flex; align-items: center; gap: 12px;
-        padding: 11px 12px;
-        min-height: 44px;
-        border-radius: 10px;
-        background: none; border: 1px solid transparent;
-        color: var(--color-ink-muted);
-        font-family: var(--font-sans);
-        font-size: 0.85rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-
-    .btn-logout:hover {
-        color: var(--oxblood-ink);
-        background: var(--oxblood-soft);
-        border-color: var(--oxblood-border);
-    }
-
-    .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    .main-content {
-        margin-left: 280px;
-        min-height: 100vh;
-        position: relative; z-index: 1;
-    }
-
-    .topbar {
-        position: sticky; top: 0; z-index: 30;
-        background: rgba(250,247,242,0.86);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        border-bottom: 1px solid var(--hairline);
-        padding: 18px 40px;
-        display: flex; align-items: center; justify-content: space-between;
-        gap: 16px;
-    }
-
-    .topbar-title {
-        font-family: var(--font-mono);
-        font-size: 0.72rem;
-        font-weight: 500;
-        color: var(--color-ink-faint);
-        letter-spacing: 1px;
-        text-transform: uppercase;
-    }
-
-    .topbar-crumb-sep { margin-left: 8px; color: var(--color-ink-faint); }
-    .topbar-crumb-current { margin-left: 8px; color: var(--color-ink-muted); }
 
     .date-stamp {
         display: inline-flex; align-items: center; gap: 8px;
@@ -337,25 +125,12 @@
         white-space: nowrap;
     }
 
-    /* ── INNER PAGE ── */
-    .page-inner { padding: 44px 40px 64px; max-width: 1440px; }
+    /* ── INNER PAGE ──
+       Padding identik sudah pindah ke dashboard-shell-siswa.css.
+       max-width TETAP di sini karena berbeda per halaman (lihat audit). */
+    .page-inner { max-width: 1440px; }
 
-    /* Catatan / flash message */
-    .flash-note {
-        display: flex; align-items: flex-start; gap: 14px;
-        background: var(--color-paper-elevated);
-        border: 1px solid var(--hairline);
-        border-left: 3px solid var(--color-accent-600);
-        border-radius: 10px;
-        padding: 16px 20px;
-        margin-bottom: 32px;
-        font-family: var(--font-sans);
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: var(--color-ink);
-        box-shadow: var(--shadow-paper);
-    }
-    .flash-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--color-accent-600); margin-top: 2px; }
+    /* .flash-note dipindahkan ke dashboard-shell-siswa.css (identik). */
 
     /* ── STUDIO HEADER ── */
     .studio-header {
@@ -986,49 +761,9 @@
 
     /* ================================================================
        OFF-CANVAS DRAWER (SIDEBAR MOBILE) & TOMBOL HAMBURGER
+       .sidebar-overlay, .hamburger-btn, .sidebar-close-btn dipindahkan ke
+       dashboard-shell-siswa.css (identik dengan siswa/profile/edit.blade.php).
     ================================================================ */
-    .sidebar-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(25,24,22,0.35);
-        -webkit-backdrop-filter: blur(2px);
-        backdrop-filter: blur(2px);
-        z-index: 45;
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-    .sidebar-overlay.active { opacity: 1; visibility: visible; }
-
-    .hamburger-btn {
-        display: none;
-        align-items: center; justify-content: center;
-        width: 44px; height: 44px;
-        border-radius: 10px;
-        background: var(--color-paper-elevated);
-        border: 1px solid var(--hairline-strong);
-        color: var(--color-ink-muted);
-        cursor: pointer;
-        flex-shrink: 0;
-        transition: all 0.22s ease;
-    }
-    .hamburger-btn:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); background: var(--oxblood-soft); }
-    .hamburger-btn svg { width: 19px; height: 19px; }
-
-    .sidebar-close-btn {
-        display: none;
-        align-items: center; justify-content: center;
-        width: 40px; height: 40px;
-        border-radius: 9px;
-        background: var(--surface-sunk);
-        border: 1px solid var(--hairline);
-        color: var(--color-ink-muted);
-        cursor: pointer;
-        flex-shrink: 0;
-        transition: all 0.22s ease;
-    }
-    .sidebar-close-btn:hover { border-color: var(--oxblood-border); color: var(--oxblood-ink); }
-    .sidebar-close-btn svg { width: 16px; height: 16px; }
 
     /* ================================================================
        SCROLL REVEAL — HALUS, DIHORMATI reduced-motion
@@ -1042,27 +777,15 @@
 
     /* ================================================================
        RESPONSIVE — LAYAR MOBILE (≤860px)
+       Bagian inti toggle (.sidebar, .sidebar.sidebar-open, .sidebar-close-btn,
+       .hamburger-btn, .main-content, .topbar padding/gap, .page-inner padding,
+       .topbar-crumb-sep) sudah dipindahkan ke dashboard-shell-siswa.css.
+       Yang tetap di sini murni page-specific: .topbar-crumb-brand (elemen
+       khusus dashboard) dan seluruh penyesuaian konten/dekorasi di bawah.
     ================================================================ */
     @media (max-width: 860px) {
 
-        .sidebar {
-            transform: translateX(-100%);
-            width: min(300px, 86vw);
-            box-shadow: 20px 0 60px rgba(25,24,22,0.18);
-            transition: transform 0.34s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sidebar.sidebar-open { transform: translateX(0); }
-
-        .sidebar-close-btn { display: flex; }
-        .hamburger-btn { display: inline-flex; }
-
-        .main-content { margin-left: 0; }
-
-        .topbar { padding: 16px 20px; gap: 12px; }
-        .page-inner { padding: 26px 18px 50px; }
-
-        .topbar-crumb-brand,
-        .topbar-crumb-sep { display: none; }
+        .topbar-crumb-brand { display: none; }
 
         .studio-header { margin-bottom: 36px; padding-bottom: 28px; }
 

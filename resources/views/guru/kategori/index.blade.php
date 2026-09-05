@@ -76,214 +76,36 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--oxblood-border); }
 
         /* ================================================================
-           SIDEBAR (struktur sama persis dengan guru/dashboard.blade.php)
+           SIDEBAR — frame/logo dipindahkan ke
+           resources/css/components/dashboard-shell.css (identik dengan
+           guru/dashboard.blade.php). Yang tersisa di sini hanya override
+           khusus halaman ini: backdrop-filter blur pada .sidebar.
         ================================================================ */
         .sidebar {
-            position: fixed; top: 0; left: 0;
-            width: 260px; height: 100vh;
-            background: var(--color-paper-elevated);
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid var(--hairline);
-            display: flex; flex-direction: column;
-            z-index: 50; overflow-y: auto;
         }
 
-        .sidebar::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(122,46,46,0.4), transparent);
-        }
-
-        .sidebar-logo {
-            padding: 28px 24px 22px;
-            border-bottom: 1px solid var(--hairline);
-        }
-
-        .logo-wordmark {
-            font-size: 0.78rem; font-weight: 900;
-            letter-spacing: 3px; text-transform: uppercase;
-            color: var(--color-ink);
-            display: flex; align-items: center; gap: 9px;
-        }
-
-        .logo-icon {
-            width: 26px; height: 26px;
-            background: var(--color-accent-600); border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 14px rgba(122,46,46,0.45); flex-shrink: 0;
-        }
-
-        .logo-icon svg { width: 13px; height: 13px; }
-
-        .sidebar-profile {
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--hairline);
-        }
-
-        .profile-avatar {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: linear-gradient(135deg, var(--color-accent-500), var(--color-accent-700));
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: var(--color-paper);
-            flex-shrink: 0;
-            box-shadow: 0 0 18px rgba(122,46,46,0.3);
-        }
-
-        .profile-name {
-            font-size: 0.78rem; font-weight: 700; color: var(--color-ink);
-            line-height: 1.3; margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .profile-nip {
-            font-family: var(--font-mono);
-            font-size: 0.68rem; color: var(--color-ink-faint); margin-bottom: 7px;
-        }
-
-        .badge-role {
-            font-family: var(--font-mono);
-            display: inline-flex; align-items: center; gap: 5px;
-            background: var(--oxblood-soft);
-            border: 1px solid var(--oxblood-border);
-            color: var(--oxblood-ink);
-            padding: 2px 9px; border-radius: 30px;
-            font-size: 0.63rem; font-weight: 700;
-            letter-spacing: 0.8px; text-transform: uppercase;
-        }
-
-        .live-dot {
-            width: 5px; height: 5px; background: var(--color-accent-600);
-            border-radius: 50%; box-shadow: 0 0 6px rgba(122,46,46,0.45);
-            animation: livePulse 1.5s ease-in-out infinite;
-        }
+        /* Profile card (.sidebar-profile, .profile-avatar/name/nip,
+           .badge-role, .live-dot) dipindahkan ke dashboard-shell.css —
+           identik, tanpa override. */
 
 
-        .sidebar-nav { flex: 1; padding: 20px 14px; }
-
-        .nav-label {
-            font-size: 0.62rem; font-weight: 700;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: var(--color-ink-faint);
-            padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
-        }
-
-        .nav-item {
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600;
-            color: var(--color-ink-muted);
-            text-decoration: none;
-            transition: all 0.22s ease;
-            border: 1px solid transparent;
-            margin-bottom: 3px; position: relative;
-        }
-
-        .nav-item:hover {
-            color: var(--color-ink);
-            background: var(--surface-sunk);
-            border-color: var(--hairline);
-        }
-
-        .nav-item.active {
-            color: var(--oxblood-ink);
-            background: var(--oxblood-soft);
-            border-color: var(--oxblood-border);
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute; left: 0; top: 50%;
-            transform: translateY(-50%);
-            width: 3px; height: 18px;
-            background: var(--color-accent-600); border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 10px rgba(122,46,46,0.45);
-        }
-
-        .nav-item.active svg { color: var(--color-accent-600); }
-        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-/* Menu nonaktif — fitur belum tersedia (persiapan sidang) */
-        .nav-item-disabled { opacity: 0.5; cursor: not-allowed; }
-        .nav-item.nav-item-disabled:hover {
-            color: var(--color-ink-muted);
-            background: transparent;
-            border-color: transparent;
-        }
-        .nav-item-label {
-            display: flex; align-items: center; flex-wrap: wrap;
-            gap: 6px; row-gap: 2px;
-        }
-        .badge-soon {
-            font-family: var(--font-mono);
-            font-size: 0.58rem; font-weight: 700; letter-spacing: 0.3px;
-            color: var(--color-ink-muted);
-            background: var(--surface-sunk);
-            border: 1px solid var(--hairline-strong);
-            padding: 1px 6px; border-radius: 20px;
-            white-space: nowrap;
-        }
-        .sidebar-footer { padding: 14px; border-top: 1px solid var(--hairline); }
-
-        .btn-logout {
-            width: 100%; display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            background: none; border: 1px solid transparent;
-            color: var(--color-ink-muted);
-            font-size: 0.82rem; font-weight: 600;
-            font-family: var(--font-sans); cursor: pointer;
-            transition: all 0.22s ease;
-        }
-
-        .btn-logout:hover {
-            color: var(--oxblood-ink);
-            background: var(--oxblood-soft);
-            border-color: var(--oxblood-border);
-        }
-
-        .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
+        /* Navigasi & footer sidebar (.sidebar-nav, .nav-label, .nav-item +
+           varian, .nav-item-disabled, .nav-item-label, .badge-soon,
+           .sidebar-footer, .btn-logout + varian) dipindahkan ke
+           dashboard-shell.css — identik, tanpa override. */
 
         /* ================================================================
-           MAIN
+           MAIN — .main-content, .page-inner, dan base .topbar /
+           .topbar-left / .topbar-pill dipindahkan ke dashboard-shell.css.
+           Sisa di sini hanya override khusus halaman ini: gap pada
+           .topbar dan truncate pada .topbar-title.
         ================================================================ */
-        .main-content {
-            margin-left: 260px;
-            min-height: 100vh;
-            position: relative; z-index: 1;
-        }
-
-        .topbar {
-            position: sticky; top: 0; z-index: 30;
-            background: rgba(250,247,242,0.88);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--hairline);
-            padding: 16px 36px;
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
-        }
-
-        .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
-
+        .topbar { gap: 12px; }
         .topbar-title {
-            font-family: var(--font-mono);
-            font-size: 0.8rem; font-weight: 700;
-            color: var(--color-ink-faint); letter-spacing: 0.5px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-
-        .topbar-title span { color: var(--color-ink-muted); margin-left: 6px; }
-
-        .topbar-pill {
-            font-family: var(--font-mono);
-            display: flex; align-items: center; gap: 6px;
-            background: var(--oxblood-soft);
-            border: 1px solid var(--oxblood-border);
-            border-radius: 30px; padding: 5px 13px;
-            font-size: 0.68rem; font-weight: 700;
-            color: var(--oxblood-ink); letter-spacing: 0.5px;
-            white-space: nowrap; flex-shrink: 0;
-        }
-
-        .page-inner { padding: 40px 36px 60px; }
 
         /* ── MOBILE MENU TOGGLE (tambahan agar nyaman di layar sempit) ── */
         .mobile-menu-btn {

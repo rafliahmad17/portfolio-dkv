@@ -59,112 +59,22 @@
     }
     .skip-link:focus { top: 16px; }
 
-    /* ── SIDEBAR — sama seperti siswa/dashboard.blade.php, agar terasa
-       satu sistem navigasi di seluruh Portal Siswa. ── */
-    .sidebar {
-        position: fixed; top: 0; left: 0; width: 280px; height: 100vh;
-        background: var(--color-paper-elevated);
-        border-right: 1px solid var(--hairline);
-        display: flex; flex-direction: column;
-        z-index: 50; overflow-y: auto;
-    }
-    .sidebar-logo { padding: 30px 26px 22px; border-bottom: 1px solid var(--hairline); }
-    .logo-wordmark {
-        font-family: var(--font-sans); font-size: 0.82rem; font-weight: 800;
-        letter-spacing: 2.5px; text-transform: uppercase; color: var(--color-ink);
-        display: flex; align-items: center; gap: 10px;
-    }
-    .logo-wordmark .dot { color: var(--color-accent-600); }
-    .logo-mark {
-        width: 34px; height: 34px; border-radius: 50%;
-        border: 1px solid var(--hairline-strong); background: var(--surface-sunk);
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0; overflow: hidden; position: relative;
-    }
-    .logo-mark img { width: 100%; height: 100%; object-fit: contain; padding: 3px; }
-    .logo-sub {
-        font-family: var(--font-mono); font-size: 0.62rem; color: var(--color-ink-faint);
-        margin-top: 6px; letter-spacing: 1.6px; text-transform: uppercase; padding-left: 40px;
-    }
-
-    .sidebar-profile { padding: 22px 26px; border-bottom: 1px solid var(--hairline); }
-    .profile-avatar {
-        width: 44px; height: 44px; border-radius: 14px;
-        background: var(--color-accent-600);
-        display: flex; align-items: center; justify-content: center;
-        font-family: var(--font-serif); font-size: 1.05rem; font-weight: 700; color: var(--color-paper);
-        flex-shrink: 0; overflow: hidden;
-    }
-    .profile-name {
-        font-family: var(--font-sans); font-size: 0.85rem; font-weight: 700; color: var(--color-ink);
-        line-height: 1.3; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .profile-nis { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); margin-bottom: 8px; letter-spacing: 0.3px; }
-    .badge-role {
-        display: inline-flex; align-items: center; gap: 6px;
-        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
-        color: var(--oxblood-ink); padding: 3px 10px; border-radius: 20px;
-        font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
-    }
-    .badge-role-dot { width: 5px; height: 5px; background: var(--color-accent-600); border-radius: 50%; flex-shrink: 0; }
-
-    .sidebar-nav { flex: 1; padding: 22px 16px; }
-    .nav-label {
-        font-family: var(--font-mono); font-size: 0.62rem; font-weight: 600; letter-spacing: 2px;
-        text-transform: uppercase; color: var(--color-ink-faint); padding: 0 10px; margin-bottom: 10px; margin-top: 4px;
-    }
-    .nav-item {
-        display: flex; align-items: center; gap: 14px; padding: 11px 12px; min-height: 44px;
-        border-radius: 10px; font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600;
-        color: var(--color-ink-muted); text-decoration: none;
-        transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-        border: 1px solid transparent; margin-bottom: 2px; position: relative;
-    }
-    .nav-index { font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500; color: var(--color-ink-faint); flex-shrink: 0; width: 16px; }
-    .nav-item:hover { background: var(--surface-sunk); color: var(--color-ink); }
-    .nav-item.active { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
-    .nav-item.active .nav-index { color: var(--color-accent-600); }
-    .nav-item.active::before {
-        content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-        width: 3px; height: 20px; background: var(--color-accent-600); border-radius: 0 3px 3px 0;
-    }
-
-    .sidebar-footer { padding: 16px; border-top: 1px solid var(--hairline); }
-    .btn-logout {
-        width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 12px; min-height: 44px;
-        border-radius: 10px; background: none; border: 1px solid transparent; color: var(--color-ink-muted);
-        font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
-    }
-    .btn-logout:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
-    .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-    .main-content { margin-left: 280px; min-height: 100vh; position: relative; z-index: 1; }
-
-    .topbar {
-        position: sticky; top: 0; z-index: 30;
-        background: rgba(250,247,242,0.86); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-        border-bottom: 1px solid var(--hairline); padding: 18px 40px;
-        display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    }
-    .topbar-title { font-family: var(--font-mono); font-size: 0.72rem; font-weight: 500; color: var(--color-ink-faint); letter-spacing: 1px; text-transform: uppercase; }
-    .topbar-crumb-sep { margin-left: 8px; color: var(--color-ink-faint); }
-    .topbar-crumb-current { margin-left: 8px; color: var(--color-ink-muted); }
+    /* ── SIDEBAR + TOPBAR + MAIN-CONTENT ──
+       Dipindahkan ke resources/css/components/dashboard-shell-siswa.css
+       (identik dengan siswa/dashboard.blade.php — lihat audit banding
+       checkpoint 1). Yang tetap di sini: .badge-pill (elemen topbar kanan
+       khusus halaman ini, berbeda dari .date-stamp milik dashboard). */
     .badge-pill {
         display: inline-flex; align-items: center; gap: 8px;
         border: 1px solid var(--hairline-strong); border-radius: 30px; padding: 6px 14px;
         font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.5px; white-space: nowrap;
     }
 
-    .page-inner { padding: 44px 40px 64px; max-width: 780px; }
+    /* max-width tetap page-specific — padding identik sudah pindah ke
+       dashboard-shell-siswa.css (lihat audit banding). */
+    .page-inner { max-width: 780px; }
 
-    .flash-note {
-        display: flex; align-items: flex-start; gap: 14px;
-        background: var(--color-paper-elevated); border: 1px solid var(--hairline); border-left: 3px solid var(--color-accent-600);
-        border-radius: 10px; padding: 16px 20px; margin-bottom: 32px;
-        font-family: var(--font-sans); font-size: 0.85rem; font-weight: 500; color: var(--color-ink);
-        box-shadow: var(--shadow-paper);
-    }
-    .flash-note svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--color-accent-600); margin-top: 2px; }
+    /* .flash-note dipindahkan ke dashboard-shell-siswa.css (identik). */
 
     /* ── HEADER ── */
     .profile-header { margin-bottom: 40px; }

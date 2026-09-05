@@ -172,14 +172,14 @@
 
         .greeting-eyebrow {
             font-size: 0.68rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
-            color: rgba(220,38,38,0.7); margin-bottom: 10px;
+            color: var(--color-accent-600); margin-bottom: 10px;
         }
         .greeting-headline {
             font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 900; letter-spacing: -1px;
-            line-height: 1.15; color: #f5f5f5; margin-bottom: 8px;
+            line-height: 1.15; color: var(--color-ink); margin-bottom: 8px;
         }
-        .greeting-headline .name-highlight { color: var(--red); text-shadow: 0 0 30px rgba(220,38,38,0.4); }
-        .greeting-sub { font-size: 0.875rem; color: rgba(255,255,255,0.3); font-weight: 400; }
+        .greeting-headline .name-highlight { color: var(--color-accent-600); }
+        .greeting-sub { font-size: 0.875rem; color: var(--color-ink-muted); font-weight: 400; }
 
         .flash-success {
             display: flex; align-items: center; gap: 12px;
@@ -189,8 +189,8 @@
         }
         .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: #4ade80; }
 
-        .section-title { font-size: 1.05rem; font-weight: 800; color: #f5f5f5; letter-spacing: -0.3px; }
-        .section-sub { font-size: 0.75rem; color: rgba(255,255,255,0.25); margin-top: 3px; font-weight: 500; }
+        .section-title { font-size: 1.05rem; font-weight: 800; color: var(--color-ink); letter-spacing: -0.3px; }
+        .section-sub { font-size: 0.75rem; color: var(--color-ink-faint); margin-top: 3px; font-weight: 500; }
 
         .btn-add {
             display: inline-flex; align-items: center; gap: 8px;
@@ -239,21 +239,21 @@
         }
         .achv-type svg { width: 11px; height: 11px; }
         .achv-title {
-            font-size: 0.9rem; font-weight: 800; color: #f5f5f5; letter-spacing: -0.2px;
+            font-size: 0.9rem; font-weight: 800; color: var(--color-ink); letter-spacing: -0.2px;
             line-height: 1.35; margin-bottom: 5px;
         }
         .achv-issuer {
             display: flex; align-items: center; gap: 5px;
-            font-size: 0.75rem; color: rgba(255,255,255,0.32); margin-bottom: 8px; font-weight: 500;
+            font-size: 0.75rem; color: var(--color-ink-muted); margin-bottom: 8px; font-weight: 500;
         }
         .achv-issuer svg { width: 12px; height: 12px; flex-shrink: 0; }
         .achv-desc {
-            font-size: 0.75rem; color: rgba(255,255,255,0.28); line-height: 1.5; margin-bottom: 12px;
+            font-size: 0.75rem; color: var(--color-ink-muted); line-height: 1.5; margin-bottom: 12px;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
         }
         .achv-meta {
             display: flex; align-items: center; gap: 5px; font-size: 0.68rem;
-            color: rgba(255,255,255,0.2); margin-bottom: 14px;
+            color: var(--color-ink-faint); margin-bottom: 14px;
         }
         .achv-meta svg { width: 11px; height: 11px; }
 
@@ -521,10 +521,10 @@
     <div class="sidebar-logo">
         <div class="sidebar-logo-row">
             <div class="logo-wordmark">
-                    <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
+                    <div class="logo-icon" style="background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); box-shadow: none;">
             <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
         </div>
-                        DKV<span style="color:var(--red);">.</span>SMEKDA
+                        DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
             </div>
             <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" onclick="closeSidebar()" aria-label="Tutup menu navigasi">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -532,13 +532,6 @@
                 </svg>
             </button>
         </div>
-                   <div class="logo-wordmark">
-                    <div class="logo-icon" style="background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); box-shadow: none;">
-            <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
-        </div>
-                        DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
-            </div>
-    </div>
 
     <div class="sidebar-profile">
         <div class="sidebar-profile-row">
@@ -683,7 +676,7 @@
         </div>
 
         {{-- ── ACHIEVEMENT SECTION ── --}}
-        <div style="background:rgba(255,255,255,0.018); border:1px solid var(--border); border-radius:20px; overflow:hidden;">
+        <div style="background:var(--color-paper-elevated); border:1px solid var(--color-paper-border); border-radius:20px; overflow:hidden;">
 
             <div style="padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <div>
@@ -840,12 +833,12 @@
 
         {{-- Footer Strip --}}
         <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.15);">
-                &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.28);">DKV SMEKDA</strong>
+            <span style="font-size:0.7rem; color:var(--color-ink-faint);">
+                &copy; {{ date('Y') }} <strong style="color:var(--color-ink-muted);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
             </span>
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.12);">
-                Dikembangkan untuk Skripsi oleh <strong style="color:rgba(255,255,255,0.22);">Rafli</strong> &mdash; 2026
+            <span style="font-size:0.7rem; color:var(--color-ink-faint);">
+                Dikembangkan untuk Skripsi oleh <strong style="color:var(--color-ink-muted);">Rafli</strong> &mdash; 2026
             </span>
         </div>
 
