@@ -19,9 +19,17 @@
 @section('content')
 <style>
         :root {
+            /* FASE 4: --hairline / --hairline-strong / --surface-sunk /
+               --shadow-paper ditambahkan karena sekarang dipakai oleh shell
+               bersama resources/css/components/dashboard-shell-siswa.css
+               (identik dengan token di siswa/dashboard.blade.php dkk). */
+            --hairline:        rgba(25,24,22,0.10);
+            --hairline-strong: rgba(25,24,22,0.18);
+            --surface-sunk:    #F6F1E7;
             --oxblood-soft:   rgba(122,46,46,0.08);
             --oxblood-border: rgba(122,46,46,0.26);
             --oxblood-ink:    #6E2A2A;
+            --shadow-paper:    0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
         }
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -76,92 +84,21 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--color-paper-border); border-radius: var(--radius-pill); }
         ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-500); }
-        /* ── SIDEBAR (identik dengan siswa/achievement/index.blade.php) ── */
-        .sidebar {
-            position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-            background: var(--color-paper-elevated);
-            border-right: 1px solid var(--color-paper-border);
-            display: flex; flex-direction: column; z-index: 50; overflow-y: auto;
+        /* ── SIDEBAR + TOPBAR + MAIN-CONTENT ──
+           FASE 4: seluruh CSS sidebar/topbar/main-content lokal DIHAPUS.
+           Sekarang memakai shell bersama
+           resources/css/components/dashboard-shell-siswa.css secara penuh
+           — identik dengan siswa/dashboard.blade.php,
+           siswa/profile/edit.blade.php, siswa/portfolio/create.blade.php &
+           siswa/portfolio/edit.blade.php. Elemen topbar kanan tetap
+           page-specific: .badge-pill. .page-inner max-width tetap
+           page-specific (padding identik sudah ada di shell). */
+        .badge-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            border: 1px solid var(--hairline-strong); border-radius: 30px; padding: 6px 14px;
+            font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.5px; white-space: nowrap;
         }
-        .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--color-paper-border); }
-        .logo-wordmark {
-            font-size: 0.82rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
-            color: var(--color-ink); display: flex; align-items: center; gap: 10px;
-        }
-        .logo-icon {
-            width: 26px; height: 26px; background: var(--color-accent-600); border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-        }
-        .logo-icon svg { width: 13px; height: 13px; }
-        .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--color-paper-border); display:flex; flex-direction:column; gap:12px; }
-        .sidebar-profile-row { display:flex; align-items:center; gap:12px; }
-        .profile-avatar {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: var(--color-accent-600);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: var(--color-paper); flex-shrink: 0;
-        }
-        .profile-name {
-            font-size: 0.82rem; font-weight: 700; color: var(--color-ink); line-height: 1.3; margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-        .profile-nis { font-size: 0.7rem; color: var(--color-ink-faint); margin-bottom: 6px; }
-        .badge-role {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
-            color: var(--oxblood-ink); padding: 2px 9px; border-radius: 30px;
-            font-size: 0.65rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
-        }
-        .badge-role-dot {
-            width: 5px; height: 5px; background: var(--color-accent-600); border-radius: 50%; flex-shrink: 0;
-        }
-        .sidebar-nav { flex: 1; padding: 20px 14px; }
-        .nav-label {
-            font-size: 0.62rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-            color: var(--color-ink-faint); padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
-        }
-        .nav-item {
-            display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600; color: var(--color-ink-muted);
-            text-decoration: none; transition: all 0.22s ease; border: 1px solid transparent;
-            margin-bottom: 3px; position: relative;
-        }
-        .nav-item:hover { color: var(--color-ink); background: var(--color-paper-muted); }
-        .nav-item.active { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
-        .nav-item.active::before {
-            content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 18px; background: var(--color-accent-600); border-radius: 0 3px 3px 0;
-        }
-        .nav-item.active svg { color: var(--color-accent-600); }
-        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; transition: color 0.22s ease; }
-        .sidebar-footer { padding: 14px; border-top: 1px solid var(--color-paper-border); }
-        .btn-logout {
-            width: 100%; display: flex; align-items: center; gap: 11px; padding: 10px 12px;
-            border-radius: 10px; background: none; border: 1px solid transparent;
-            color: var(--color-ink-muted); font-size: 0.82rem; font-weight: 600;
-            font-family: var(--font-sans); cursor: pointer; transition: all 0.22s ease;
-        }
-        .btn-logout:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
-        .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-        .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
-        .topbar {
-            position: sticky; top: 0; z-index: 30;
-            background: rgba(250,247,242,0.86);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--color-paper-border); padding: 16px 36px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-        .topbar-title { font-size: 0.82rem; font-weight: 700; color: var(--color-ink-faint); letter-spacing: 0.5px; }
-        .topbar-title span { color: var(--color-ink-muted); margin-left: 6px; }
-        .topbar-badge {
-            display: flex; align-items: center; gap: 6px;
-            background: var(--color-paper-muted); border: 1px dashed var(--color-paper-border);
-            border-radius: 30px; padding: 5px 13px; font-size: 0.7rem; font-weight: 700;
-            color: var(--color-ink-muted); letter-spacing: 0.5px;
-        }
-        .page-inner { padding: 40px 36px 70px; max-width: 760px; margin: 0 auto; }
+        .page-inner { max-width: 760px; margin: 0 auto; }
         /* ── BACK BUTTON ── */
         .btn-back {
             display: inline-flex; align-items: center; gap: 8px;
@@ -314,44 +251,18 @@
             .field-row { grid-template-columns: 1fr; }
             .btn-row { flex-direction: column; }
         }
-        /* ================================================================
-           MOBILE-FIRST & OFF-CANVAS SIDEBAR (identik dengan
-           siswa/achievement/index.blade.php)
-        ================================================================ */
-        .sidebar { transform: translateX(0); transition: transform .3s ease-in-out; max-width: 85vw; }
-        .sidebar-overlay {
-            position: fixed; inset: 0; z-index: 45; background: rgba(25,24,22,0.35);
-            backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
-            opacity: 0; pointer-events: none; transition: opacity .3s ease;
-        }
-        .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
-        .sidebar-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .sidebar-close-btn {
-            display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
-            border-radius: 10px; background: var(--color-paper-muted); border: 1px solid var(--color-paper-border);
-            color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0; transition: all .2s ease; font: inherit;
-        }
-        .sidebar-close-btn:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); color: var(--oxblood-ink); }
-        .sidebar-close-btn svg { width: 16px; height: 16px; }
-        .hamburger-btn {
-            display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
-            border-radius: 10px; background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
-            color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0; transition: all .2s ease; font: inherit;
-        }
-        .hamburger-btn:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); color: var(--oxblood-ink); }
-        .hamburger-btn svg { width: 19px; height: 19px; }
-        .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
-        .topbar-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
+        /* ── SIDEBAR MOBILE OFF-CANVAS ──
+           FASE 4: seluruh CSS sidebar/overlay/hamburger-btn/sidebar-close-btn/
+           topbar-left/sidebar-logo-row lokal (memakai id & class berbeda dari
+           shell) DIHAPUS. Sekarang memakai shell bersama
+           resources/css/components/dashboard-shell-siswa.css secara penuh —
+           identik dengan siswa/achievement/index.blade.php,
+           siswa/dashboard.blade.php & siswa/profile/edit.blade.php.
+           .topbar-crumb-sep sudah disembunyikan oleh shell bersama pada
+           breakpoint yang sama; hanya .badge-pill yang tetap page-specific
+           (sama seperti pola index.blade.php & profile/edit.blade.php). */
         @media (max-width: 860px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); box-shadow: 28px 0 60px rgba(0,0,0,0.5); }
-            .sidebar-close-btn { display: flex; }
-            .hamburger-btn { display: flex; }
-            .main-content { margin-left: 0; }
-            .topbar { padding: 12px 16px; }
-            .topbar-badge { display: none; }
-            .page-inner { padding: 28px 18px 48px; }
+            .badge-pill { display: none; }
         }
         @media (max-width: 480px) {
             .page-inner { padding: 22px 14px 40px; }
@@ -369,90 +280,71 @@
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+<div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
 
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar" id="appSidebar">
+<aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
     <div class="sidebar-logo">
-        <div class="sidebar-logo-row">
-            <div class="logo-wordmark">
-                <div class="logo-icon" style="background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); box-shadow: none;">
-                    <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+                <div class="logo-wordmark">
+                    <div class="logo-mark">
+                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                    </div>
+                    DKV<span class="dot">.</span>SMEKDA
                 </div>
-                DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
+                <div class="logo-sub">Portal Siswa</div>
             </div>
-            <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" onclick="closeSidebar()" aria-label="Tutup menu navigasi">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12"/>
                 </svg>
             </button>
         </div>
     </div>
 
     <div class="sidebar-profile">
-        <div class="sidebar-profile-row">
-            <div class="profile-avatar" style="overflow: hidden;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <div class="profile-avatar" style="overflow:hidden;">
                 @if(auth()->user()->photo)
-                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif
             </div>
             <div style="flex:1; min-width:0;">
                 <div class="profile-name">{{ auth()->user()->name }}</div>
-                <div class="profile-nis">NIS: {{ auth()->user()->nis_nip ?? '—' }}</div>
+                <div class="profile-nis">NIS {{ auth()->user()->nis_nip ?? '—' }}</div>
             </div>
         </div>
         <div class="badge-role">
-            <div class="badge-role-dot"></div>
+            <span class="badge-role-dot" aria-hidden="true"></span>
             Siswa DKV
         </div>
     </div>
 
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" aria-label="Menu utama">
         <div class="nav-label">Menu Utama</div>
 
         <a href="{{ route('siswa.dashboard') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            Dashboard
+            <span class="nav-index">01</span><span>Dashboard</span>
         </a>
-
         <a href="{{ route('siswa.portfolio.create') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Tambah Karya
+            <span class="nav-index">02</span><span>Tambah Karya</span>
         </a>
-
         <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            Cetak Portfolio
+            <span class="nav-index">03</span><span>Cetak Portfolio</span>
         </a>
-
         <a href="{{ route('siswa.achievement.index') }}" class="nav-item active" aria-current="page">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M9 17a3 3 0 013-3h0a3 3 0 013 3v3H9v-3zM6 6h12v2a6 6 0 01-12 0V6zm0 0H4a2 2 0 000 4h2M18 6h2a2 2 0 010 4h-2"/>
-            </svg>
-            Prestasi &amp; Sertifikat
+            <span class="nav-index">04</span><span>Prestasi &amp; Sertifikat</span>
         </a>
 
         <div class="nav-label" style="margin-top:20px;">Akun</div>
 
         <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-            Profil Saya
+            <span class="nav-index">05</span><span>Profil Saya</span>
         </a>
     </nav>
 
@@ -460,8 +352,8 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="btn-logout">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
                 Keluar dari Portal
@@ -473,24 +365,27 @@
 {{-- ================================================================
      MAIN CONTENT
 ================================================================ --}}
-<div class="main-content">
+<main class="main-content" id="kontenEditPrestasi">
 
-    <div class="topbar">
-        <div class="topbar-left">
-            <button type="button" class="hamburger-btn" id="hamburgerBtn" onclick="openSidebar()" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+            <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
+                    aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 7h16M4 12h16M4 17h16"/>
                 </svg>
             </button>
             <div class="topbar-title">
-                Portal DKV SMEKDA <span>/</span> Edit Prestasi &amp; Sertifikat
+                <span>Portal DKV SMEKDA</span>
+                <span class="topbar-crumb-sep">/</span>
+                <span class="topbar-crumb-current">Edit Prestasi &amp; Sertifikat</span>
             </div>
         </div>
-        <div class="topbar-badge">
-            <div class="badge-role-dot"></div>
+        <div class="badge-pill">
+            <span class="badge-role-dot" aria-hidden="true"></span>
             {{ now()->translatedFormat('d F Y') }}
         </div>
-    </div>
+    </header>
 
     <div class="page-inner">
 
@@ -712,7 +607,7 @@
         </div>
 
     </div>
-</div>
+</main>
 
 <script>
     function updateFileLabel(input, labelId, fallback) {
@@ -720,54 +615,89 @@
         label.textContent = input.files && input.files.length > 0 ? input.files[0].name : fallback;
     }
 
-    // ── Sidebar off-canvas (mobile ≤ 860px) ── identik dengan achievement/index.blade.php ──
-    function isMobileNav() {
-        return window.matchMedia('(max-width: 860px)').matches;
-    }
-    function openSidebar() {
-        var sidebar  = document.getElementById('appSidebar');
-        var overlay  = document.getElementById('sidebarOverlay');
-        var hamburger = document.getElementById('hamburgerBtn');
-        var closeBtn = document.getElementById('sidebarCloseBtn');
-        sidebar.classList.add('open');
-        overlay.classList.add('open');
-        sidebar.inert = false;
-        document.body.style.overflow = 'hidden';
-        hamburger.setAttribute('aria-expanded', 'true');
-        if (closeBtn) closeBtn.focus();
-    }
-    function closeSidebar() {
-        var sidebar  = document.getElementById('appSidebar');
-        var overlay  = document.getElementById('sidebarOverlay');
-        var hamburger = document.getElementById('hamburgerBtn');
-        sidebar.classList.remove('open');
-        overlay.classList.remove('open');
-        if (isMobileNav()) sidebar.inert = true;
-        document.body.style.overflow = '';
-        hamburger.setAttribute('aria-expanded', 'false');
-        if (hamburger) hamburger.focus();
-    }
-    function syncSidebarForViewport() {
-        var sidebar = document.getElementById('appSidebar');
-        var overlay = document.getElementById('sidebarOverlay');
-        if (!sidebar) return;
-        if (isMobileNav()) {
-            if (!sidebar.classList.contains('open')) sidebar.inert = true;
-        } else {
-            sidebar.inert = false;
-            sidebar.classList.remove('open');
-            overlay.classList.remove('open');
-            document.body.style.overflow = '';
-        }
-    }
-    window.addEventListener('resize', syncSidebarForViewport);
-    syncSidebarForViewport();
+    // ── OFF-CANVAS SIDEBAR (mobile) ── identik dengan siswa/dashboard.blade.php,
+    // siswa/profile/edit.blade.php & siswa/achievement/index.blade.php
+    // (shell bersama dashboard-shell-siswa.css). ──
+    (function () {
+        var sidebar  = document.getElementById('siswaSidebar');
+        var overlay  = document.getElementById('siswaSidebarOverlay');
+        var openBtn  = document.getElementById('siswaSidebarOpen');
+        var closeBtn = document.getElementById('siswaSidebarClose');
 
-    document.addEventListener('keydown', function (e) {
-        if (e.key !== 'Escape') return;
-        var sidebar = document.getElementById('appSidebar');
-        if (sidebar.classList.contains('open')) closeSidebar();
-    });
+        if (!sidebar || !overlay || !openBtn) return;
+
+        function isMobile() {
+            return window.innerWidth <= 860;
+        }
+
+        function syncA11y() {
+            if (isMobile() && !sidebar.classList.contains('sidebar-open')) {
+                sidebar.setAttribute('aria-hidden', 'true');
+            } else {
+                sidebar.removeAttribute('aria-hidden');
+            }
+        }
+
+        function openSidebar() {
+            sidebar.classList.add('sidebar-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openBtn.setAttribute('aria-expanded', 'true');
+            syncA11y();
+            window.requestAnimationFrame(function () {
+                if (closeBtn) closeBtn.focus();
+            });
+        }
+
+        function closeSidebar(returnFocus) {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            openBtn.setAttribute('aria-expanded', 'false');
+            syncA11y();
+            if (returnFocus !== false) openBtn.focus();
+        }
+
+        function trapFocus(e) {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('sidebar-open')) return;
+            var focusable = sidebar.querySelectorAll('a[href], button:not([disabled])');
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', function () { closeSidebar(); });
+        overlay.addEventListener('click', function () { closeSidebar(); });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) {
+                closeSidebar();
+            }
+            trapFocus(e);
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
+            el.addEventListener('click', function () { closeSidebar(false); });
+        });
+
+        window.addEventListener('resize', function () {
+            if (!isMobile()) {
+                closeSidebar(false);
+            } else {
+                syncA11y();
+            }
+        });
+
+        syncA11y();
+    })();
 
     // ── Loading state ringan pada submit form (cegah submit ganda) ──
     document.querySelectorAll('.js-loading-form').forEach(function (form) {
