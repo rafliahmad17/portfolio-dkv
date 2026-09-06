@@ -477,13 +477,16 @@
             <span class="nav-index">02</span><span>Tambah Karya</span>
         </a>
         <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
-            <span class="nav-index">03</span><span>Export PDF</span>
+            <span class="nav-index">03</span><span>Cetak Portfolio</span>
+        </a>
+        <a href="{{ route('siswa.achievement.index') }}" class="nav-item">
+            <span class="nav-index">04</span><span>Prestasi &amp; Sertifikat</span>
         </a>
 
         <div class="nav-label" style="margin-top:20px;">Akun</div>
 
         <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
-            <span class="nav-index">04</span><span>Profil Saya</span>
+            <span class="nav-index">05</span><span>Profil Saya</span>
         </a>
     </nav>
 
