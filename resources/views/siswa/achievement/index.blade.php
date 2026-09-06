@@ -1,12 +1,10 @@
 {{-- resources/views/siswa/achievement/index.blade.php --}}
 {{-- Halaman "Prestasi & Sertifikat" milik siswa yang login.
      Struktur & gaya mengikuti resources/views/siswa/dashboard.blade.php.
-     Migrasi ke tema editorial ("Kertas & Oxblood") sudah berjalan sebagian:
-     sidebar, topbar, dan modal Tambah/Edit Prestasi sudah memakai token
-     resmi (var(--color-*)). Grid kartu prestasi, tombol di luar modal
-     (.btn-add, .btn-action-*), header sambutan, dan error alert MASIH
-     memakai sistem lama (dark theme, aksen merah #dc2626) dan menunggu
-     migrasi pada checkpoint berikutnya. --}}
+     Migrasi ke tema editorial ("Kertas & Oxblood") sudah SELESAI: sidebar,
+     topbar, modal Tambah/Edit Prestasi, grid kartu prestasi, tombol di luar
+     modal (.btn-add, .btn-action-*), header sambutan, dan error alert semua
+     memakai token resmi (var(--color-*) / var(--oxblood-*)). --}}
 @extends('layouts.app')
 
 @section('title', 'Prestasi & Sertifikat — DKV SMEKDA Portal')
@@ -18,13 +16,10 @@
 
 <style>
         :root {
-            
-            --red-border: rgba(220,38,38,0.35);
-
-            --border:     rgba(255,255,255,0.1);
-
             /* Token lokal editorial (pola sama seperti siswa/dashboard.blade.php),
-               hanya berlaku di halaman ini - BUKAN token global app.css. */
+               hanya berlaku di halaman ini - BUKAN token global app.css.
+               --red-border dan --border (dark theme, tak terlihat di atas
+               latar paper terang) sudah tidak dipakai & dihapus di sini. */
             --oxblood-soft:   rgba(122,46,46,0.08);
             --oxblood-border: rgba(122,46,46,0.26);
             --oxblood-ink:    #6E2A2A;
@@ -183,58 +178,58 @@
 
         .flash-success {
             display: flex; align-items: center; gap: 12px;
-            background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+            background: rgba(21,128,61,0.08); border: 1px solid rgba(21,128,61,0.22);
             border-radius: 12px; padding: 14px 18px; margin-bottom: 28px;
-            font-size: 0.82rem; font-weight: 600; color: #86efac;
+            font-size: 0.82rem; font-weight: 600; color: #15803d;
         }
-        .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: #4ade80; }
+        .flash-success svg { width: 16px; height: 16px; flex-shrink: 0; color: #16a34a; }
 
         .section-title { font-size: 1.05rem; font-weight: 800; color: var(--color-ink); letter-spacing: -0.3px; }
         .section-sub { font-size: 0.75rem; color: var(--color-ink-faint); margin-top: 3px; font-weight: 500; }
 
         .btn-add {
             display: inline-flex; align-items: center; gap: 8px;
-            background: var(--red); border: 1px solid var(--red); color: white;
+            background: var(--color-accent-600); border: 1px solid var(--color-accent-600); color: var(--color-paper);
             padding: 9px 18px; border-radius: 10px; font-size: 0.78rem; font-weight: 700;
             cursor: pointer; text-decoration: none;
             transition: all 0.3s ease; position: relative; overflow: hidden;
         }
         .btn-add::before {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(135deg, #b91c1c, #ef4444); opacity: 0; transition: opacity 0.3s ease;
+            background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-500)); opacity: 0; transition: opacity 0.3s ease;
         }
-        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 28px var(--red-glow), 0 0 0 3px rgba(220,38,38,0.15); }
+        .btn-add:hover { transform: translateY(-2px); box-shadow: 0 8px 28px color-mix(in srgb, var(--color-accent-600) 35%, transparent), 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 15%, transparent); }
         .btn-add:hover::before { opacity: 1; }
         .btn-add span, .btn-add svg { position: relative; z-index: 1; }
         .btn-add svg { width: 15px; height: 15px; }
 
         /* ── ACHIEVEMENT CARD ── */
         .achv-card {
-            background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+            background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
             border-radius: 16px; overflow: hidden; transition: all 0.3s ease; position: relative;
         }
         .achv-card::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+            background: linear-gradient(90deg, transparent, var(--color-paper-border), transparent);
         }
         .achv-card:hover {
-            transform: translateY(-5px); border-color: rgba(220,38,38,0.22);
-            box-shadow: 0 24px 60px rgba(0,0,0,0.45), 0 0 0 1px rgba(220,38,38,0.08), 0 0 50px rgba(220,38,38,0.06);
+            transform: translateY(-5px); border-color: var(--oxblood-border);
+            box-shadow: 0 20px 50px rgba(28,26,23,0.15), 0 0 40px rgba(122,46,46,0.07);
         }
-        .achv-thumb-wrap { position: relative; overflow: hidden; height: 150px; background:#111; }
+        .achv-thumb-wrap { position: relative; overflow: hidden; height: 150px; background: var(--color-paper-muted); }
         .achv-thumb { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
         .achv-card:hover .achv-thumb { transform: scale(1.04); }
         .achv-thumb-placeholder {
             width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
-            background: rgba(255,255,255,0.02);
+            background: linear-gradient(160deg, var(--color-paper-muted), var(--color-paper-border));
         }
-        .achv-thumb-placeholder svg { width: 40px; height: 40px; color: rgba(255,255,255,0.08); }
+        .achv-thumb-placeholder svg { width: 40px; height: 40px; color: var(--color-ink-faint); }
 
         .achv-body { padding: 16px; }
         .achv-type {
             display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.2);
-            color: #fca5a5; font-size: 0.62rem; font-weight: 800; letter-spacing: 1.5px;
+            background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+            color: var(--oxblood-ink); font-size: 0.62rem; font-weight: 800; letter-spacing: 1.5px;
             text-transform: uppercase; padding: 2px 9px; border-radius: 20px; margin-bottom: 9px;
         }
         .achv-type svg { width: 11px; height: 11px; }
@@ -257,23 +252,23 @@
         }
         .achv-meta svg { width: 11px; height: 11px; }
 
-        .achv-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; }
+        .achv-actions { display: flex; gap: 8px; padding-top: 12px; border-top: 1px solid var(--color-paper-border); flex-wrap: wrap; }
         .btn-action-edit, .btn-action-file {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px; border-radius: 9px; background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.35);
+            padding: 8px; border-radius: 9px; background: var(--color-paper-muted);
+            border: 1px solid var(--color-paper-border); color: var(--color-ink-muted);
             font-size: 0.73rem; font-weight: 700; text-decoration: none; transition: all 0.22s ease;
         }
-        .btn-action-edit:hover, .btn-action-file:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); color: #f5f5f5; }
+        .btn-action-edit:hover, .btn-action-file:hover { background: var(--color-paper-border); border-color: var(--color-ink-faint); color: var(--color-ink); }
         .btn-action-edit svg, .btn-action-file svg { width: 13px; height: 13px; }
         .btn-action-delete {
             flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
-            padding: 8px; border-radius: 9px; background: rgba(220,38,38,0.06);
-            border: 1px solid rgba(220,38,38,0.12); color: rgba(220,38,38,0.5);
+            padding: 8px; border-radius: 9px; background: var(--oxblood-soft);
+            border: 1px solid var(--oxblood-border); color: var(--oxblood-ink);
             font-size: 0.73rem; font-weight: 700; cursor: pointer; width: 100%;
             transition: all 0.22s ease;
         }
-        .btn-action-delete:hover { background: rgba(220,38,38,0.14); border-color: rgba(220,38,38,0.3); color: #f87171; }
+        .btn-action-delete:hover { background: color-mix(in srgb, var(--color-accent-600) 16%, transparent); border-color: var(--color-accent-500); color: var(--color-accent-700); }
         .btn-action-delete svg { width: 13px; height: 13px; }
 
         .empty-wrap { padding: 80px 40px; text-align: center; }
@@ -288,7 +283,7 @@
         /* ── MODAL TAMBAH ── */
         .modal-overlay {
             position: fixed; inset: 0; z-index: 100;
-            background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+            background: rgba(25,24,22,0.45); backdrop-filter: blur(4px);
             display: flex; align-items: flex-start; justify-content: center;
             padding: 48px 20px; overflow-y: auto;
             opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
@@ -368,14 +363,14 @@
         .file-drop-sub { font-size: 0.66rem; color: var(--color-ink-faint); margin-top: 1px; }
 
         .error-alert {
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.3);
-            border-left: 3px solid var(--red); border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
+            background: color-mix(in srgb, var(--color-accent-600) 8%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+            border-left: 3px solid var(--color-accent-600); border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
         }
-        .error-alert-title { font-size: 0.8rem; font-weight: 800; color: #fca5a5; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .error-alert-title { font-size: 0.8rem; font-weight: 800; color: var(--color-accent-700); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .error-alert-title svg { width: 16px; height: 16px; flex-shrink: 0; }
         .error-alert-list { list-style: none; }
-        .error-alert-list li { font-size: 0.75rem; color: rgba(252,165,165,0.8); padding: 3px 0; display: flex; align-items: flex-start; gap: 7px; }
-        .error-alert-list li::before { content: '✕'; color: var(--red); font-weight: 900; font-size: 0.65rem; margin-top: 1px; flex-shrink: 0; }
+        .error-alert-list li { font-size: 0.75rem; color: var(--color-ink-muted); padding: 3px 0; display: flex; align-items: flex-start; gap: 7px; }
+        .error-alert-list li::before { content: '✕'; color: var(--color-accent-600); font-weight: 900; font-size: 0.65rem; margin-top: 1px; flex-shrink: 0; }
 
         .btn-submit {
             width: 100%; background: var(--color-accent-600); color: var(--color-paper); border: none;
@@ -404,7 +399,7 @@
         /* Off-canvas sidebar */
         .sidebar { transform: translateX(0); transition: transform .3s ease-in-out; max-width: 85vw; }
         .sidebar-overlay {
-            position: fixed; inset: 0; z-index: 45; background: rgba(0,0,0,0.6);
+            position: fixed; inset: 0; z-index: 45; background: rgba(25,24,22,0.35);
             backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
             opacity: 0; pointer-events: none; transition: opacity .3s ease;
         }
@@ -437,7 +432,7 @@
         .achv-title, .achv-desc, .achv-issuer { overflow-wrap: break-word; }
 
         /* Empty state — dashed border sesuai spesifikasi */
-        .empty-wrap { border: 1.5px dashed rgba(255,255,255,0.14); border-radius: 20px; }
+        .empty-wrap { border: 1.5px dashed var(--color-paper-border); border-radius: 20px; }
 
         /* Touch target minimal 44x44px */
         .nav-item, .btn-logout, .btn-add, .btn-action-edit, .btn-action-file, .btn-action-delete { min-height: 44px; }
@@ -464,7 +459,7 @@
         .modal-close:focus-visible,
         .hamburger-btn:focus-visible,
         .sidebar-close-btn:focus-visible {
-            outline: none; box-shadow: 0 0 0 3px rgba(220,38,38,0.35);
+            outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
         }
         /* Override aditif: modal-close dipisah dari rule gabungan di atas
            karena bagian dalam modal sudah dimigrasikan ke token editorial.
@@ -678,7 +673,7 @@
         {{-- ── ACHIEVEMENT SECTION ── --}}
         <div style="background:var(--color-paper-elevated); border:1px solid var(--color-paper-border); border-radius:20px; overflow:hidden;">
 
-            <div style="padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+            <div style="padding:20px 24px; border-bottom:1px solid var(--color-paper-border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
                 <div>
                     <div class="section-title">Daftar Prestasi &amp; Sertifikat</div>
                     <div class="section-sub">
@@ -832,7 +827,7 @@
         </div>
 
         {{-- Footer Strip --}}
-        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--color-paper-border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
             <span style="font-size:0.7rem; color:var(--color-ink-faint);">
                 &copy; {{ date('Y') }} <strong style="color:var(--color-ink-muted);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
@@ -955,7 +950,7 @@
                 <div class="field-wrap">
                     <label class="field-label">
                         Thumbnail / Foto
-                        <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; JPG/PNG, maks 2MB)</span>
+                        <span style="color:var(--color-ink-faint); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; JPG/PNG, maks 2MB)</span>
                     </label>
                     <label class="file-drop" for="imageInput">
                         <div class="file-drop-icon">
@@ -981,7 +976,7 @@
                 <div class="field-wrap" style="margin-bottom:4px;">
                     <label class="field-label">
                         Dokumen PDF
-                        <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; PDF, maks 4MB)</span>
+                        <span style="color:var(--color-ink-faint); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; PDF, maks 4MB)</span>
                     </label>
                     <label class="file-drop" for="fileInput">
                         <div class="file-drop-icon">

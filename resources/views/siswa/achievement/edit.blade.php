@@ -1,53 +1,70 @@
 {{-- resources/views/siswa/achievement/edit.blade.php --}}
 {{-- Form edit Prestasi & Sertifikat milik siswa yang login.
-     Struktur & gaya mengikuti resources/views/siswa/dashboard.blade.php
-     dan resources/views/siswa/achievement/index.blade.php
-     (dark theme #080808, aksen merah #dc2626, Tailwind CDN). --}}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Prestasi/Sertifikat — DKV SMEKDA Portal</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
+     MIGRASI: sebelumnya masih dark theme legacy (HTML mandiri, Inter,
+     #080808, var(--red)/var(--border), tanpa navigasi mobile). Sekarang
+     dipindahkan ke sistem editorial "Kertas & Oxblood" yang sama dengan
+     resources/views/siswa/achievement/index.blade.php — sidebar/topbar,
+     off-canvas mobile nav, dan style field form (form-input/select/textarea,
+     file-drop, error-alert) memakai class & token yang identik dengan modal
+     "Tambah Prestasi/Sertifikat" di halaman index, supaya Tambah & Edit
+     terasa sebagai satu sistem yang sama. Backend (route, method, nama
+     field, validasi) TIDAK diubah sama sekali. --}}
+@extends('layouts.app')
+
+@section('title', 'Edit Prestasi/Sertifikat — DKV SMEKDA Portal')
+
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@section('content')
+<style>
+        :root {
+            --oxblood-soft:   rgba(122,46,46,0.08);
+            --oxblood-border: rgba(122,46,46,0.26);
+            --oxblood-ink:    #6E2A2A;
+        }
+
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         html, body {
             height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #f5f5f5;
+            font-family: var(--font-sans);
+            background-color: var(--color-paper);
+            color: var(--color-ink);
             overflow-x: hidden;
         }
 
         body::before {
             content: '';
             position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
             pointer-events: none; z-index: 0;
+            mix-blend-mode: multiply;
         }
 
         .bg-grid {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
-            background-size: 48px 48px;
+            position: fixed; top: -280px; left: 50%;
+            width: 900px; height: 900px;
+            transform: translateX(-40%);
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(122,46,46,0.055) 0%, transparent 62%);
             pointer-events: none; z-index: 0;
+            animation: gridGlowDrift 26s ease-in-out infinite alternate;
+        }
+        @keyframes gridGlowDrift {
+            0%   { transform: translateX(-42%) translateY(0); }
+            100% { transform: translateX(-34%) translateY(26px); }
         }
 
         .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
         .blob-1 {
             top: -200px; left: 180px; width: 600px; height: 600px;
-            background: radial-gradient(circle, rgba(220,38,38,0.09) 0%, transparent 65%);
+            background: radial-gradient(circle, rgba(122,46,46,0.07) 0%, transparent 65%);
             animation: blobFloat 10s ease-in-out infinite alternate;
         }
         .blob-2 {
             bottom: -150px; right: -100px; width: 500px; height: 500px;
-            background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
+            background: radial-gradient(circle, rgba(122,46,46,0.05) 0%, transparent 65%);
             animation: blobFloat 13s ease-in-out infinite alternate-reverse;
         }
         @keyframes blobFloat {
@@ -55,263 +72,323 @@
             100% { transform: scale(1.15) translate(20px,15px); }
         }
 
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
-
-        /* ── SIDEBAR (sama seperti dashboard & index) ── */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--color-paper-border); border-radius: var(--radius-pill); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--color-accent-500); }
+        /* ── SIDEBAR (identik dengan siswa/achievement/index.blade.php) ── */
         .sidebar {
             position: fixed; top: 0; left: 0; width: 260px; height: 100vh;
-            background: rgba(8,8,8,0.88);
-            backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid var(--border);
+            background: var(--color-paper-elevated);
+            border-right: 1px solid var(--color-paper-border);
             display: flex; flex-direction: column; z-index: 50; overflow-y: auto;
         }
-        .sidebar::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
-        }
-        .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--border); }
+        .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--color-paper-border); }
         .logo-wordmark {
-            font-size: 0.78rem; font-weight: 900; letter-spacing: 3px; text-transform: uppercase;
-            color: rgba(255,255,255,0.85); display: flex; align-items: center; gap: 9px;
+            font-size: 0.82rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase;
+            color: var(--color-ink); display: flex; align-items: center; gap: 10px;
         }
         .logo-icon {
-            width: 26px; height: 26px; background: var(--red); border-radius: 7px;
+            width: 26px; height: 26px; background: var(--color-accent-600); border-radius: 7px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0;
+            flex-shrink: 0;
         }
         .logo-icon svg { width: 13px; height: 13px; }
-        .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--border); display:flex; flex-direction:column; gap:12px; }
+        .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--color-paper-border); display:flex; flex-direction:column; gap:12px; }
         .sidebar-profile-row { display:flex; align-items:center; gap:12px; }
         .profile-avatar {
             width: 42px; height: 42px; border-radius: 12px;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
+            background: var(--color-accent-600);
             display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: white; flex-shrink: 0;
-            box-shadow: 0 0 18px rgba(220,38,38,0.3);
+            font-size: 1rem; font-weight: 900; color: var(--color-paper); flex-shrink: 0;
         }
         .profile-name {
-            font-size: 0.82rem; font-weight: 700; color: #f5f5f5; line-height: 1.3; margin-bottom: 2px;
+            font-size: 0.82rem; font-weight: 700; color: var(--color-ink); line-height: 1.3; margin-bottom: 2px;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .profile-nis { font-size: 0.7rem; color: rgba(255,255,255,0.3); margin-bottom: 6px; }
+        .profile-nis { font-size: 0.7rem; color: var(--color-ink-faint); margin-bottom: 6px; }
         .badge-role {
             display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.25);
-            color: #fca5a5; padding: 2px 9px; border-radius: 30px;
+            background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+            color: var(--oxblood-ink); padding: 2px 9px; border-radius: 30px;
             font-size: 0.65rem; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase;
         }
         .badge-role-dot {
-            width: 5px; height: 5px; background: var(--red); border-radius: 50%;
-            animation: pulseDot 1.5s ease-in-out infinite; box-shadow: 0 0 6px var(--red-glow);
-        }
-        @keyframes pulseDot {
-            0%,100% { opacity: 1; transform: scale(1); }
-            50%      { opacity: 0.35; transform: scale(0.65); }
+            width: 5px; height: 5px; background: var(--color-accent-600); border-radius: 50%; flex-shrink: 0;
         }
         .sidebar-nav { flex: 1; padding: 20px 14px; }
         .nav-label {
             font-size: 0.62rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255,255,255,0.18); padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
+            color: var(--color-ink-faint); padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
         }
         .nav-item {
             display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.38);
+            font-size: 0.82rem; font-weight: 600; color: var(--color-ink-muted);
             text-decoration: none; transition: all 0.22s ease; border: 1px solid transparent;
             margin-bottom: 3px; position: relative;
         }
-        .nav-item:hover { color: rgba(255,255,255,0.75); background: rgba(255,255,255,0.04); border-color: var(--border); }
-        .nav-item.active { color: #fca5a5; background: rgba(220,38,38,0.1); border-color: rgba(220,38,38,0.2); }
+        .nav-item:hover { color: var(--color-ink); background: var(--color-paper-muted); }
+        .nav-item.active { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
         .nav-item.active::before {
             content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
-            width: 3px; height: 18px; background: var(--red); border-radius: 0 3px 3px 0;
-            box-shadow: 0 0 10px var(--red-glow);
+            width: 3px; height: 18px; background: var(--color-accent-600); border-radius: 0 3px 3px 0;
         }
-        .nav-item.active svg { color: var(--red); }
+        .nav-item.active svg { color: var(--color-accent-600); }
         .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; transition: color 0.22s ease; }
-        .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
+        .sidebar-footer { padding: 14px; border-top: 1px solid var(--color-paper-border); }
         .btn-logout {
             width: 100%; display: flex; align-items: center; gap: 11px; padding: 10px 12px;
             border-radius: 10px; background: none; border: 1px solid transparent;
-            color: rgba(255,255,255,0.28); font-size: 0.82rem; font-weight: 600;
-            font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.22s ease;
+            color: var(--color-ink-muted); font-size: 0.82rem; font-weight: 600;
+            font-family: var(--font-sans); cursor: pointer; transition: all 0.22s ease;
         }
-        .btn-logout:hover { color: #fca5a5; background: rgba(220,38,38,0.08); border-color: rgba(220,38,38,0.18); }
+        .btn-logout:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
         .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
 
         .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
         .topbar {
             position: sticky; top: 0; z-index: 30;
-            background: rgba(8,8,8,0.85);
+            background: rgba(250,247,242,0.86);
             backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border); padding: 16px 36px;
+            border-bottom: 1px solid var(--color-paper-border); padding: 16px 36px;
             display: flex; align-items: center; justify-content: space-between;
         }
-        .topbar-title { font-size: 0.82rem; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 0.5px; }
-        .topbar-title span { color: rgba(255,255,255,0.55); margin-left: 6px; }
+        .topbar-title { font-size: 0.82rem; font-weight: 700; color: var(--color-ink-faint); letter-spacing: 0.5px; }
+        .topbar-title span { color: var(--color-ink-muted); margin-left: 6px; }
         .topbar-badge {
             display: flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
+            background: var(--color-paper-muted); border: 1px dashed var(--color-paper-border);
             border-radius: 30px; padding: 5px 13px; font-size: 0.7rem; font-weight: 700;
-            color: rgba(220,38,38,0.7); letter-spacing: 0.5px;
+            color: var(--color-ink-muted); letter-spacing: 0.5px;
         }
         .page-inner { padding: 40px 36px 70px; max-width: 760px; margin: 0 auto; }
-
+        /* ── BACK BUTTON ── */
         .btn-back {
             display: inline-flex; align-items: center; gap: 8px;
-            font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.35);
+            font-size: 0.78rem; font-weight: 700; color: var(--color-ink-faint);
             text-decoration: none; margin-bottom: 22px; transition: color 0.22s ease;
         }
-        .btn-back:hover { color: #fca5a5; }
+        .btn-back:hover { color: var(--oxblood-ink); }
         .btn-back svg { width: 14px; height: 14px; transition: transform 0.22s ease; }
         .btn-back:hover svg { transform: translateX(-3px); }
 
         .form-headline {
             font-size: clamp(1.4rem, 2.2vw, 1.9rem); font-weight: 900; letter-spacing: -1px;
-            line-height: 1.2; color: #f5f5f5; margin-bottom: 8px;
+            line-height: 1.2; color: var(--color-ink); margin-bottom: 8px;
         }
-        .form-headline .hl { color: var(--red); text-shadow: 0 0 26px rgba(220,38,38,0.4); }
-        .form-sub { font-size: 0.85rem; color: rgba(255,255,255,0.3); margin-bottom: 30px; }
+        .form-headline .hl { color: var(--color-accent-600); }
+        .form-sub { font-size: 0.85rem; color: var(--color-ink-muted); margin-bottom: 30px; }
 
         .form-card {
-            background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+            background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
             border-radius: 20px; padding: 28px;
         }
 
         .field-label {
             display: block; font-size: 0.7rem; font-weight: 700; letter-spacing: 1px;
-            text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px;
+            text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 8px;
         }
-        .field-label .req { color: var(--red); margin-left: 3px; }
-        .field-wrap { margin-bottom: 20px; }
+        .field-label .req { color: var(--color-accent-600); margin-left: 3px; }
+        .field-wrap { margin-bottom: 18px; }
         .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .form-input, .form-select, .form-textarea {
-            width: 100%; background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08); border-radius: 11px;
-            padding: 12px 14px; font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif; color: #f5f5f5; outline: none;
-            caret-color: var(--red); transition: all 0.25s ease;
+            width: 100%; background: var(--color-paper);
+            border: 1.5px solid var(--color-paper-border); border-radius: 11px;
+            padding: 11px 14px; font-size: 0.85rem; font-weight: 500;
+            color: var(--color-ink); outline: none;
+            caret-color: var(--color-accent-600); transition: all 0.25s ease;
+            min-height: 44px;
         }
-        .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; color: rgba(255,255,255,0.7); }
-        .form-select option { background: #1a1a1a; color: #f5f5f5; }
+        .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; color: var(--color-ink-muted); }
+        .form-select option { background: var(--color-paper-elevated); color: var(--color-ink); }
         .form-textarea { resize: none; line-height: 1.6; }
-        .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.18); }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--color-ink-faint); }
         .form-input:focus, .form-select:focus, .form-textarea:focus {
-            border-color: var(--red); background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15); color: #f5f5f5;
+            border-color: var(--color-accent-600); background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent); color: var(--color-ink);
         }
         .form-input.is-error, .form-select.is-error, .form-textarea.is-error {
-            border-color: var(--red-bright) !important; background: rgba(239,68,68,0.06) !important;
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14) !important;
+            border-color: var(--color-accent-500) !important; background: color-mix(in srgb, var(--color-accent-500) 5%, transparent) !important;
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-500) 14%, transparent) !important;
         }
         .field-error {
-            margin-top: 7px; font-size: 0.73rem; font-weight: 600; color: #f87171;
+            margin-top: 7px; font-size: 0.73rem; font-weight: 600; color: var(--color-accent-700);
             display: flex; align-items: center; gap: 6px;
         }
         .field-error svg { width: 12px; height: 12px; flex-shrink: 0; }
 
         .current-file-box {
             display: flex; align-items: center; gap: 12px;
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            background: var(--color-paper-muted); border: 1px solid var(--color-paper-border);
             border-radius: 12px; padding: 10px 14px; margin-bottom: 10px;
         }
         .current-file-thumb {
             width: 44px; height: 44px; border-radius: 9px; object-fit: cover; flex-shrink: 0;
-            background: #111;
+            background: var(--color-paper-border);
         }
         .current-file-icon {
-            width: 44px; height: 44px; border-radius: 9px; background: rgba(220,38,38,0.08);
-            border: 1px solid rgba(220,38,38,0.2); display: flex; align-items: center;
+            width: 44px; height: 44px; border-radius: 9px; background: var(--oxblood-soft);
+            border: 1px solid var(--oxblood-border); display: flex; align-items: center;
             justify-content: center; flex-shrink: 0;
         }
-        .current-file-icon svg { width: 19px; height: 19px; color: var(--red); }
-        .current-file-text { font-size: 0.76rem; font-weight: 700; color: rgba(255,255,255,0.55); }
+        .current-file-icon svg { width: 19px; height: 19px; color: var(--color-accent-600); }
+        .current-file-text { font-size: 0.76rem; font-weight: 700; color: var(--color-ink-muted); }
         .current-file-sub {
-            font-size: 0.68rem; color: rgba(255,255,255,0.25); margin-top: 1px;
+            font-size: 0.68rem; color: var(--color-ink-faint); margin-top: 1px;
             display: flex; align-items: center; gap: 6px;
         }
-        .current-file-sub a { color: #fca5a5; text-decoration: none; font-weight: 700; }
+        .current-file-sub a { color: var(--color-accent-600); text-decoration: none; font-weight: 700; }
         .current-file-sub a:hover { text-decoration: underline; }
-
+        /* ── FILE DROP ── */
         .file-drop {
-            border: 1.5px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 14px 16px;
+            border: 1.5px dashed var(--color-paper-border); border-radius: 12px; padding: 14px 16px;
             display: flex; align-items: center; gap: 12px; cursor: pointer;
-            background: rgba(255,255,255,0.02); transition: all 0.25s ease;
+            background: var(--color-paper-muted); transition: all 0.25s ease;
         }
-        .file-drop:hover { border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.04); }
+        .file-drop:hover { border-color: var(--color-accent-600); background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent); }
+        .file-drop:focus-within {
+            border-color: var(--color-accent-600); background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+            box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+        }
         .file-drop-icon {
-            width: 38px; height: 38px; border-radius: 10px; background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+            width: 38px; height: 38px; border-radius: 10px; background: var(--color-paper-elevated);
+            border: 1px solid var(--color-paper-border); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
         }
-        .file-drop-icon svg { width: 16px; height: 16px; color: rgba(255,255,255,0.2); }
-        .file-drop:hover .file-drop-icon { background: var(--red-soft); border-color: rgba(220,38,38,0.25); }
-        .file-drop:hover .file-drop-icon svg { color: var(--red); }
-        .file-drop-text { font-size: 0.78rem; font-weight: 700; color: rgba(255,255,255,0.4); }
-        .file-drop-sub { font-size: 0.66rem; color: rgba(255,255,255,0.18); margin-top: 1px; }
+        .file-drop-icon svg { width: 16px; height: 16px; color: var(--color-ink-faint); }
+        .file-drop:hover .file-drop-icon { background: var(--color-accent-50); border-color: var(--color-accent-200); }
+        .file-drop:hover .file-drop-icon svg { color: var(--color-accent-600); }
+        .file-drop-text { font-size: 0.78rem; font-weight: 700; color: var(--color-ink-muted); }
+        .file-drop-sub { font-size: 0.66rem; color: var(--color-ink-faint); margin-top: 1px; }
+        .visually-hidden-file {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+        }
 
+        /* ── ERROR ALERT (identik dengan achievement/index.blade.php) ── */
         .error-alert {
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.3);
-            border-left: 3px solid var(--red); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px;
+            background: color-mix(in srgb, var(--color-accent-600) 8%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+            border-left: 3px solid var(--color-accent-600); border-radius: 14px; padding: 16px 20px; margin-bottom: 24px;
         }
-        .error-alert-title { font-size: 0.8rem; font-weight: 800; color: #fca5a5; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+        .error-alert-title { font-size: 0.8rem; font-weight: 800; color: var(--color-accent-700); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
         .error-alert-title svg { width: 16px; height: 16px; flex-shrink: 0; }
         .error-alert-list { list-style: none; }
-        .error-alert-list li { font-size: 0.75rem; color: rgba(252,165,165,0.8); padding: 3px 0; display: flex; align-items: flex-start; gap: 7px; }
-        .error-alert-list li::before { content: '✕'; color: var(--red); font-weight: 900; font-size: 0.65rem; margin-top: 1px; flex-shrink: 0; }
+        .error-alert-list li { font-size: 0.75rem; color: var(--color-ink-muted); padding: 3px 0; display: flex; align-items: flex-start; gap: 7px; }
+        .error-alert-list li::before { content: '✕'; color: var(--color-accent-600); font-weight: 900; font-size: 0.65rem; margin-top: 1px; flex-shrink: 0; }
 
+        /* ── TOMBOL ── */
         .btn-row { display: flex; gap: 12px; margin-top: 8px; }
         .btn-submit {
-            flex: 1; background: var(--red); color: white; border: none;
+            flex: 1; background: var(--color-accent-600); color: var(--color-paper); border: none;
             border-radius: 12px; padding: 14px 24px; font-size: 0.88rem; font-weight: 800;
-            font-family: 'Inter', sans-serif; letter-spacing: 0.3px; cursor: pointer;
+            letter-spacing: 0.3px; cursor: pointer; min-height: 44px;
             display: flex; align-items: center; justify-content: center; gap: 10px;
             position: relative; overflow: hidden; transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(220,38,38,0.3);
+            box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent);
         }
-        .btn-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, #b91c1c, #ef4444); opacity: 0; transition: opacity 0.3s ease; }
-        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px var(--red-glow), 0 0 0 4px rgba(220,38,38,0.15); }
+        .btn-submit::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-500)); opacity: 0; transition: opacity 0.3s ease; }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px color-mix(in srgb, var(--color-accent-600) 45%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 15%, transparent); }
         .btn-submit:hover::before { opacity: 1; }
         .btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
         .btn-submit svg { width: 17px; height: 17px; }
+        .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; }
 
         .btn-cancel {
-            background: rgba(255,255,255,0.04); border: 1px solid var(--border); color: rgba(255,255,255,0.45);
-            border-radius: 12px; padding: 14px 22px; font-size: 0.85rem; font-weight: 700;
-            font-family: 'Inter', sans-serif; cursor: pointer; text-decoration: none;
+            background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); color: var(--color-ink-muted);
+            border-radius: 12px; padding: 14px 22px; font-size: 0.85rem; font-weight: 700; min-height: 44px;
+            cursor: pointer; text-decoration: none;
             display: flex; align-items: center; justify-content: center; transition: all 0.22s ease;
         }
-        .btn-cancel:hover { background: rgba(255,255,255,0.08); color: #f5f5f5; border-color: rgba(255,255,255,0.15); }
+        .btn-cancel:hover { background: var(--color-paper-border); color: var(--color-ink); }
+
+        .nav-item:focus-visible,
+        .btn-logout:focus-visible,
+        .btn-back:focus-visible,
+        .btn-submit:focus-visible,
+        .btn-cancel:focus-visible,
+        .hamburger-btn:focus-visible,
+        .sidebar-close-btn:focus-visible {
+            outline: none; box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+        }
 
         @media (max-width: 768px) {
             .field-row { grid-template-columns: 1fr; }
             .btn-row { flex-direction: column; }
         }
-    </style>
-</head>
-<body>
+        /* ================================================================
+           MOBILE-FIRST & OFF-CANVAS SIDEBAR (identik dengan
+           siswa/achievement/index.blade.php)
+        ================================================================ */
+        .sidebar { transform: translateX(0); transition: transform .3s ease-in-out; max-width: 85vw; }
+        .sidebar-overlay {
+            position: fixed; inset: 0; z-index: 45; background: rgba(25,24,22,0.35);
+            backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+            opacity: 0; pointer-events: none; transition: opacity .3s ease;
+        }
+        .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+        .sidebar-logo-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .sidebar-close-btn {
+            display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
+            border-radius: 10px; background: var(--color-paper-muted); border: 1px solid var(--color-paper-border);
+            color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0; transition: all .2s ease; font: inherit;
+        }
+        .sidebar-close-btn:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); color: var(--oxblood-ink); }
+        .sidebar-close-btn svg { width: 16px; height: 16px; }
+        .hamburger-btn {
+            display: none; width: 44px; height: 44px; align-items: center; justify-content: center;
+            border-radius: 10px; background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
+            color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0; transition: all .2s ease; font: inherit;
+        }
+        .hamburger-btn:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); color: var(--oxblood-ink); }
+        .hamburger-btn svg { width: 19px; height: 19px; }
+        .topbar-left { display: flex; align-items: center; gap: 14px; min-width: 0; }
+        .topbar-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+        @media (max-width: 860px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); box-shadow: 28px 0 60px rgba(0,0,0,0.5); }
+            .sidebar-close-btn { display: flex; }
+            .hamburger-btn { display: flex; }
+            .main-content { margin-left: 0; }
+            .topbar { padding: 12px 16px; }
+            .topbar-badge { display: none; }
+            .page-inner { padding: 28px 18px 48px; }
+        }
+        @media (max-width: 480px) {
+            .page-inner { padding: 22px 14px 40px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition-duration: .001ms !important;
+                animation-duration: .001ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+</style>
 
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar">
+<aside class="sidebar" id="appSidebar">
     <div class="sidebar-logo">
-        <div class="logo-wordmark">
-            <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
-                <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
-            </div>  
-            DKV<span style="color:var(--red);">.</span>SMEKDA
-        </div>
-        <div class="logo-wordmark">
-                    <div class="logo-icon" style="background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); box-shadow: none;">
-            <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
-        </div>
-                        DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
+        <div class="sidebar-logo-row">
+            <div class="logo-wordmark">
+                <div class="logo-icon" style="background: var(--color-paper-muted); border: 1px solid var(--color-paper-border); box-shadow: none;">
+                    <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+                </div>
+                DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
             </div>
+            <button type="button" class="sidebar-close-btn" id="sidebarCloseBtn" onclick="closeSidebar()" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <div class="sidebar-profile">
@@ -360,7 +437,7 @@
             Cetak Portfolio
         </a>
 
-        <a href="{{ route('siswa.achievement.index') }}" class="nav-item active">
+        <a href="{{ route('siswa.achievement.index') }}" class="nav-item active" aria-current="page">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                       d="M9 17a3 3 0 013-3h0a3 3 0 013 3v3H9v-3zM6 6h12v2a6 6 0 01-12 0V6zm0 0H4a2 2 0 000 4h2M18 6h2a2 2 0 010 4h-2"/>
@@ -399,8 +476,15 @@
 <div class="main-content">
 
     <div class="topbar">
-        <div class="topbar-title">
-            Portal DKV SMEKDA <span>/</span> Edit Prestasi &amp; Sertifikat
+        <div class="topbar-left">
+            <button type="button" class="hamburger-btn" id="hamburgerBtn" onclick="openSidebar()" aria-label="Buka menu navigasi" aria-expanded="false" aria-controls="appSidebar">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5"/>
+                </svg>
+            </button>
+            <div class="topbar-title">
+                Portal DKV SMEKDA <span>/</span> Edit Prestasi &amp; Sertifikat
+            </div>
         </div>
         <div class="topbar-badge">
             <div class="badge-role-dot"></div>
@@ -420,7 +504,6 @@
         <h1 class="form-headline">Edit <span class="hl">{{ $achievement->type === 'prestasi' ? 'Prestasi' : 'Sertifikat' }}</span></h1>
         <p class="form-sub">Perbarui data prestasi atau sertifikat yang sudah tersimpan.</p>
 
-        {{-- Error alert --}}
         @if($errors->any())
             <div class="error-alert">
                 <div class="error-alert-title">
@@ -439,7 +522,7 @@
         @endif
 
         <div class="form-card">
-            <form method="POST" action="{{ route('siswa.achievement.update', $achievement) }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('siswa.achievement.update', $achievement) }}" enctype="multipart/form-data" class="js-loading-form" data-loading-text="Menyimpan...">
                 @csrf
                 @method('PUT')
 
@@ -529,11 +612,10 @@
                     @enderror
                 </div>
 
-                {{-- Thumbnail / Foto --}}
                 <div class="field-wrap">
                     <label class="field-label">
                         Thumbnail / Foto
-                        <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; JPG/PNG, maks 2MB)</span>
+                        <span style="color:var(--color-ink-faint); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; JPG/PNG, maks 2MB)</span>
                     </label>
 
                     @if($achievement->image_path)
@@ -546,7 +628,7 @@
                         </div>
                     @endif
 
-                    <div class="file-drop" onclick="document.getElementById('imageInput').click()">
+                    <label class="file-drop" for="imageInput">
                         <div class="file-drop-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -559,8 +641,8 @@
                             </div>
                             <div class="file-drop-sub">Format JPG/PNG &bull; Maksimal 2MB</div>
                         </div>
-                    </div>
-                    <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/jpg" style="display:none;" onchange="updateFileLabel(this, 'imageFileText', '{{ $achievement->image_path ? 'Klik untuk mengganti gambar' : 'Klik untuk memilih gambar' }}')">
+                    </label>
+                    <input type="file" id="imageInput" name="image" accept="image/jpeg,image/png,image/jpg" class="visually-hidden-file" onchange="updateFileLabel(this, 'imageFileText', '{{ $achievement->image_path ? 'Klik untuk mengganti gambar' : 'Klik untuk memilih gambar' }}')">
                     @error('image')
                         <div class="field-error">
                             <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -569,11 +651,10 @@
                     @enderror
                 </div>
 
-                {{-- Dokumen PDF --}}
-                <div class="field-wrap">
+                <div class="field-wrap" style="margin-bottom:4px;">
                     <label class="field-label">
                         Dokumen PDF
-                        <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; PDF, maks 4MB)</span>
+                        <span style="color:var(--color-ink-faint); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional &bull; PDF, maks 4MB)</span>
                     </label>
 
                     @if($achievement->file_path)
@@ -594,7 +675,7 @@
                         </div>
                     @endif
 
-                    <div class="file-drop" onclick="document.getElementById('fileInput').click()">
+                    <label class="file-drop" for="fileInput">
                         <div class="file-drop-icon">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -607,8 +688,8 @@
                             </div>
                             <div class="file-drop-sub">Format PDF &bull; Maksimal 4MB</div>
                         </div>
-                    </div>
-                    <input type="file" id="fileInput" name="file" accept=".pdf" style="display:none;" onchange="updateFileLabel(this, 'fileFileText', '{{ $achievement->file_path ? 'Klik untuk mengganti dokumen PDF' : 'Klik untuk memilih file PDF' }}')">
+                    </label>
+                    <input type="file" id="fileInput" name="file" accept=".pdf" class="visually-hidden-file" onchange="updateFileLabel(this, 'fileFileText', '{{ $achievement->file_path ? 'Klik untuk mengganti dokumen PDF' : 'Klik untuk memilih file PDF' }}')">
                     @error('file')
                         <div class="field-error">
                             <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -635,10 +716,69 @@
 
 <script>
     function updateFileLabel(input, labelId, fallback) {
-        const label = document.getElementById(labelId);
+        var label = document.getElementById(labelId);
         label.textContent = input.files && input.files.length > 0 ? input.files[0].name : fallback;
     }
+
+    // ── Sidebar off-canvas (mobile ≤ 860px) ── identik dengan achievement/index.blade.php ──
+    function isMobileNav() {
+        return window.matchMedia('(max-width: 860px)').matches;
+    }
+    function openSidebar() {
+        var sidebar  = document.getElementById('appSidebar');
+        var overlay  = document.getElementById('sidebarOverlay');
+        var hamburger = document.getElementById('hamburgerBtn');
+        var closeBtn = document.getElementById('sidebarCloseBtn');
+        sidebar.classList.add('open');
+        overlay.classList.add('open');
+        sidebar.inert = false;
+        document.body.style.overflow = 'hidden';
+        hamburger.setAttribute('aria-expanded', 'true');
+        if (closeBtn) closeBtn.focus();
+    }
+    function closeSidebar() {
+        var sidebar  = document.getElementById('appSidebar');
+        var overlay  = document.getElementById('sidebarOverlay');
+        var hamburger = document.getElementById('hamburgerBtn');
+        sidebar.classList.remove('open');
+        overlay.classList.remove('open');
+        if (isMobileNav()) sidebar.inert = true;
+        document.body.style.overflow = '';
+        hamburger.setAttribute('aria-expanded', 'false');
+        if (hamburger) hamburger.focus();
+    }
+    function syncSidebarForViewport() {
+        var sidebar = document.getElementById('appSidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (!sidebar) return;
+        if (isMobileNav()) {
+            if (!sidebar.classList.contains('open')) sidebar.inert = true;
+        } else {
+            sidebar.inert = false;
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+    }
+    window.addEventListener('resize', syncSidebarForViewport);
+    syncSidebarForViewport();
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        var sidebar = document.getElementById('appSidebar');
+        if (sidebar.classList.contains('open')) closeSidebar();
+    });
+
+    // ── Loading state ringan pada submit form (cegah submit ganda) ──
+    document.querySelectorAll('.js-loading-form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            var btn = form.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
+            btn.disabled = true;
+            var label = btn.querySelector('span');
+            if (label && form.dataset.loadingText) label.textContent = form.dataset.loadingText;
+        });
+    });
 </script>
 
-</body>
- </html>
+@endsection

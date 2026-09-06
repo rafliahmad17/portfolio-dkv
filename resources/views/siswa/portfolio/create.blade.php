@@ -1,10 +1,32 @@
 {{-- resources/views/siswa/portfolio/create.blade.php --}}
+{{-- MIGRASI: menambahkan shared shell sidebar/topbar siswa (identik dengan
+     resources/views/siswa/portfolio/edit.blade.php, yang memakai
+     resources/css/components/dashboard-shell-siswa.css sebagai single
+     source of truth), dan menghapus sisa token dark-theme yang belum
+     sempat dimigrasikan pada percobaan sebelumnya (bg-red-600,
+     text-white/[...], border-white/[...], bg-yellow-500 arbitrary).
+     SELURUH JavaScript form (validasi klien, drag & drop, live region,
+     counter deskripsi, submit guard) DIPERTAHANKAN 100% tanpa perubahan —
+     hanya ditambah satu IIFE baru di awal untuk toggle sidebar mobile. --}}
 @extends('layouts.app')
 
 @section('title', 'Tambah Karya')
 
+@section('navbar')@endsection
+@section('footer')@endsection
+
 @push('styles')
 <style>
+    :root {
+        --hairline:        rgba(25,24,22,0.10);
+        --hairline-strong: rgba(25,24,22,0.18);
+        --surface-sunk:    #F6F1E7;
+        --oxblood-soft:    rgba(122,46,46,0.08);
+        --oxblood-border:  rgba(122,46,46,0.26);
+        --oxblood-ink:     #6E2A2A;
+        --shadow-paper:    0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
+    }
+
     /* ── DESIGN TOKENS (migrasi Fase 2.2: --tk-* → token editorial resmi) ── */
     /* --tk-border-3 sudah selesai dimigrasikan & dihapus di Batch 2 (dipakai
        langsung sebagai var(--color-paper-border) di .tk-card::before).
@@ -17,10 +39,32 @@
         background-color: var(--color-paper);
         color: var(--color-ink);
     }
-    
+
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+        outline: 2px solid var(--color-accent-600);
+        outline-offset: 3px;
+        border-radius: 6px;
+    }
+
+    .skip-link {
+        position: fixed; top: -100px; left: 16px; z-index: 100;
+        background: var(--color-ink); color: var(--color-paper);
+        padding: 10px 18px; border-radius: 8px;
+        font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;
+        text-decoration: none; transition: top 0.2s ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    /* Elemen topbar kanan khusus halaman ini (page-specific per dokumentasi
+       dashboard-shell-siswa.css — lihat catatan #4 di file tersebut). */
+    .badge-pill {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--hairline-strong); border-radius: 30px; padding: 6px 14px;
+        font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.5px; white-space: nowrap;
+    }
+
     .tk-page {
         position: relative;
-        min-height: 100vh;
     }
     .tk-page::before {
         content: '';
@@ -35,7 +79,12 @@
     }
 
     /* ── CARD SURFACE / DEPTH ── */
-    .tk-card { position: relative; }
+    .tk-card {
+        position: relative;
+        background: var(--color-paper-elevated);
+        border: 1px solid var(--color-paper-border);
+        box-shadow: var(--shadow-paper);
+    }
     .tk-card::before {
         content: '';
         position: absolute; top: 0; left: 0; right: 0; height: 1px;
@@ -273,18 +322,6 @@
         background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
     }
 
-    /* ── BREADCRUMB (Batch 5.3b — migrasi token editorial) ── */
-    .tk-breadcrumb-link {
-        color: inherit;
-    }
-    .tk-breadcrumb-link:hover {
-        color: var(--color-accent-600);
-    }
-    .tk-breadcrumb-link:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
-    }
-
     /* ── PAGE HEADER (Batch 5.3c — migrasi token editorial) ── */
     .tk-header-blur {
         background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
@@ -351,6 +388,26 @@
         color: color-mix(in srgb, var(--color-ink) 80%, transparent);
     }
 
+    /* ── EMPTY CATEGORY WARNING (migrasi: dulu Tailwind arbitrary yellow-500,
+         sekarang class lokal — warna amber dipertahankan sebagai warna semantik
+         "peringatan" yang terpisah dari aksen oxblood, konsisten dengan
+         .flash-success di siswa/achievement/index.blade.php yang juga memakai
+         warna semantik (hijau) di luar token oxblood) ── */
+    .tk-warning-banner {
+        background: rgba(217,158,10,0.08);
+        border: 1px solid rgba(217,158,10,0.25);
+        border-left: 3px solid #D97706;
+        border-radius: 12px;
+    }
+    .tk-warning-icon { color: #D97706; }
+    .tk-warning-text { color: color-mix(in srgb, var(--color-ink) 80%, transparent); }
+    .tk-warning-text strong { color: #B45309; }
+    .tk-warning-code {
+        background: var(--color-paper-muted);
+        border: 1px solid var(--color-paper-border);
+        color: var(--color-ink-muted);
+    }
+
     /* ── MEDIA KARYA CARD HEADER (Batch 5.3h — migrasi token editorial) ── */
     .tk-media-header-border {
         border-bottom-color: var(--color-paper-border);
@@ -366,7 +423,7 @@
         color: var(--color-ink);
     }
     .tk-media-subtitle {
-        color: color-mix(in srgb, var(--color-ink-faint) 25%, transparent);
+        color: var(--color-ink-faint);
     }
 
     /* ── INFORMASI KARYA HEADER (Batch 5.3i — migrasi token editorial) ── */
@@ -384,7 +441,72 @@
         color: var(--color-ink);
     }
     .tk-info-subtitle {
-        color: color-mix(in srgb, var(--color-ink-faint) 25%, transparent);
+        color: var(--color-ink-faint);
+    }
+
+    /* ── TIPS CARD (migrasi: dulu border-red-600/[...] + text-white/[...],
+         sekarang token oxblood-soft, konsisten dengan .tips-card di
+         siswa/portfolio/edit.blade.php) ── */
+    .tk-tips-card {
+        background: var(--oxblood-soft);
+        border: 1px solid var(--oxblood-border);
+        border-radius: 14px;
+    }
+    .tk-tips-title { color: var(--oxblood-ink); }
+    .tk-tips-item { color: var(--color-ink-muted); }
+    .tk-tips-item strong { color: var(--color-ink); }
+    .tk-tips-bullet { background: var(--color-accent-600); }
+    .tk-tips-asterisk { color: var(--color-accent-600); }
+
+    /* ── TOMBOL SIMPAN (migrasi: dulu bg-red-600 hardcoded, sekarang
+         var(--color-accent-*), konsisten dengan .btn-submit di
+         siswa/portfolio/edit.blade.php) ── */
+    .tk-btn-submit {
+        background: var(--color-accent-600);
+        color: var(--color-paper);
+        box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+        position: relative; overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    .tk-btn-submit::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-500));
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .tk-btn-submit:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px color-mix(in srgb, var(--color-accent-600) 45%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 15%, transparent);
+    }
+    .tk-btn-submit:hover:not(:disabled)::before { opacity: 1; }
+    .tk-btn-submit:active:not(:disabled) { transform: translateY(0); }
+    .tk-btn-submit span, .tk-btn-submit svg { position: relative; z-index: 1; }
+    .tk-btn-submit:focus-visible {
+        outline: none;
+        box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent), 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+    }
+    .tk-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    /* ── TOMBOL BATAL (migrasi: dulu border-white/[...] bg-white/[...],
+         sekarang token paper/oxblood) ── */
+    .tk-btn-cancel {
+        border: 1px solid var(--color-paper-border);
+        background: var(--color-paper-elevated);
+        color: var(--color-ink-faint);
+        transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+    .tk-btn-cancel:hover {
+        color: var(--oxblood-ink);
+        border-color: var(--oxblood-border);
+        background: var(--oxblood-soft);
+    }
+    .tk-btn-cancel:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+    }
+
+    /* ── DEKORASI BLOB BAWAH (migrasi: dulu bg-red-600/[0.05]) ── */
+    .tk-decor-blob {
+        background: color-mix(in srgb, var(--color-accent-600) 5%, transparent);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -399,328 +521,312 @@
 @endpush
 
 @section('content')
-<div class="tk-page w-full max-w-6xl mx-auto pb-16" style="font-family:var(--font-sans);">
+<a href="#kontenTambahKarya" class="skip-link">Lompat ke konten utama</a>
+<div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
 
-    {{-- BREADCRUMB --}}
-    <nav aria-label="Breadcrumb" class="mb-6 flex items-center gap-2 text-xs font-semibold" style="color: var(--color-ink-faint);">
-        <a href="{{ route('siswa.dashboard') }}" class="tk-breadcrumb-link transition-colors rounded">Dashboard</a>
-        <svg class="w-3 h-3" style="color: var(--color-ink-faint);" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-        </svg>
-        <span style="color: var(--color-ink-muted);" aria-current="page">Tambah Karya</span>
-    </nav>
+{{-- ================================================================
+     SIDEBAR
+================================================================ --}}
+<aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
 
-    {{-- PAGE HEADER --}}
-    <div class="relative mb-8 sm:mb-10">
-        <div class="tk-header-blur pointer-events-none absolute -top-16 -right-10 w-72 h-72 rounded-full blur-3xl" aria-hidden="true"></div>
-
-        <div class="relative z-10">
-            <a href="{{ route('siswa.dashboard') }}"
-               class="tk-header-back-link group inline-flex items-center gap-2 mb-6 px-3.5 py-2 rounded-lg border text-xs font-bold">
-                <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
-                </svg>
-                Kembali ke Dashboard
-            </a>
-
-            <div class="tk-header-eyebrow text-[0.68rem] font-bold tracking-[3px] uppercase mb-2.5">
-                <span aria-hidden="true">&#9654;</span> Portofolio Digital
+    <div class="sidebar-logo">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+                <div class="logo-wordmark">
+                    <div class="logo-mark">
+                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                    </div>
+                    DKV<span class="dot">.</span>SMEKDA
+                </div>
+                <div class="logo-sub">Portal Siswa</div>
             </div>
-            <h1 class="tk-header-title text-2xl sm:text-3xl lg:text-[2rem] font-black tracking-tight leading-tight">
-                Tambah <span class="tk-header-title-accent">Karya</span>
-            </h1>
-            <p class="tk-header-subtitle mt-2 text-sm max-w-xl">
-                Unggah karya terbarumu dan lengkapi detailnya untuk ditampilkan di portofolio digital.
-            </p>
+            <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
     </div>
 
-    {{-- SUCCESS FLASH (jika backend menyediakan session flash, tampilkan secara elegan) --}}
-    @if(session('success'))
-        <div role="status" class="tk-success-banner mb-7 flex items-start gap-3 rounded-2xl border border-l-[3px] px-5 py-4">
-            <div class="tk-success-icon-box w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg class="tk-success-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-                </svg>
+    <div class="sidebar-profile">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+            <div class="profile-avatar" style="overflow:hidden;">
+                @if(auth()->user()->photo)
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @endif
             </div>
-            <p class="tk-success-text text-[0.82rem] font-semibold leading-relaxed">{{ session('success') }}</p>
-        </div>
-    @endif
-
-    {{-- GLOBAL ERROR ALERT --}}
-    @if ($errors->any())
-        <div id="tk-error-alert" role="alert" class="tk-error-banner mb-7 rounded-2xl border border-l-[3px] px-5 py-4">
-            <div class="tk-error-heading flex items-center gap-2 text-[0.8rem] font-extrabold mb-2.5">
-                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
-                </svg>
-                Form gagal disimpan &mdash; {{ $errors->count() }} kesalahan perlu diperbaiki:
+            <div style="flex:1; min-width:0;">
+                <div class="profile-name">{{ auth()->user()->name }}</div>
+                <div class="profile-nis">NIS {{ auth()->user()->nis_nip ?? '—' }}</div>
             </div>
-            <ul class="space-y-1">
-                @foreach ($errors->all() as $error)
-                    <li class="tk-error-text flex items-start gap-2 text-[0.75rem]">
-                        <span class="tk-error-bullet font-black text-[0.65rem] mt-0.5" aria-hidden="true">&#10005;</span>
-                        <span>{{ $error }}</span>
-                    </li>
-                @endforeach
-            </ul>
         </div>
-    @endif
-
-    {{-- EMPTY CATEGORY WARNING --}}
-    @php $categoriesEmpty = isset($categories) && $categories->isEmpty(); @endphp
-    @if($categoriesEmpty)
-        <div class="mb-5 flex items-start gap-2.5 rounded-xl border border-yellow-500/[0.25] border-l-[3px] border-l-yellow-500 bg-yellow-500/[0.08] px-4 py-3.5">
-            <svg class="w-4 h-4 text-yellow-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            <p class="text-[0.75rem] leading-relaxed font-semibold text-yellow-500/[0.8]">
-                <strong class="text-yellow-500">Kategori belum tersedia.</strong>
-                Minta admin untuk menjalankan
-                <code class="bg-white/[0.08] px-1.5 py-0.5 rounded text-[0.7rem]">php artisan db:seed --class=CategorySeeder</code>
-                &mdash; formulir tidak dapat disimpan sampai kategori tersedia.
-            </p>
+        <div class="badge-role">
+            <span class="badge-role-dot" aria-hidden="true"></span>
+            Siswa DKV
         </div>
-    @endif
+    </div>
 
-    {{-- Live region untuk pengumuman status ke pembaca layar (screen reader) --}}
-    <div id="tkSrAnnouncer" class="sr-only" role="status" aria-live="polite"></div>
+    <nav class="sidebar-nav" aria-label="Menu utama">
+        <div class="nav-label">Menu Utama</div>
 
-    {{-- FORM --}}
-    <form
-        method="POST"
-        action="{{ route('siswa.portfolio.store') }}"
-        enctype="multipart/form-data"
-        id="tkForm"
-        novalidate
-        class="space-y-6"
-    >
-        @csrf
+        <a href="{{ route('siswa.dashboard') }}" class="nav-item">
+            <span class="nav-index">01</span><span>Dashboard</span>
+        </a>
+        <a href="{{ route('siswa.portfolio.create') }}" class="nav-item active" aria-current="page">
+            <span class="nav-index">02</span><span>Tambah Karya</span>
+        </a>
+        <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
+            <span class="nav-index">03</span><span>Export PDF</span>
+        </a>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="nav-label" style="margin-top:20px;">Akun</div>
 
-            {{-- ============ MEDIA ============ --}}
-            <section aria-labelledby="tk-media-heading" class="tk-card relative rounded-[20px] border border-white/[0.07] bg-white/[0.03] overflow-hidden shadow-[0_25px_60px_-35px_rgba(0,0,0,0.8)]">
-                <div class="tk-media-header-border flex items-center gap-3 px-6 py-[18px] border-b">
-                    <div class="tk-media-icon-box w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0">
-                        <svg class="tk-media-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 id="tk-media-heading" class="tk-media-title text-[0.85rem] font-extrabold">Media Karya</h2>
-                        <p class="tk-media-subtitle text-[0.7rem] mt-0.5">Thumbnail dan dokumen pendukung</p>
-                    </div>
+        <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
+            <span class="nav-index">04</span><span>Profil Saya</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn-logout">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Keluar dari Portal
+            </button>
+        </form>
+    </div>
+</aside>
+
+{{-- ================================================================
+     MAIN CONTENT
+================================================================ --}}
+<main class="main-content" id="kontenTambahKarya">
+
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+            <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
+                    aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+            <div class="topbar-title">
+                <span>Portal DKV SMEKDA</span>
+                <span class="topbar-crumb-sep">/</span>
+                <span class="topbar-crumb-current">Tambah Karya</span>
+            </div>
+        </div>
+        <div class="badge-pill">
+            <span class="badge-role-dot" aria-hidden="true"></span>
+            {{ now()->translatedFormat('d F Y') }}
+        </div>
+    </header>
+
+    <div class="page-inner">
+    <div class="tk-page w-full max-w-6xl mx-auto pb-16" style="font-family:var(--font-sans);">
+
+        {{-- PAGE HEADER --}}
+        <div class="relative mb-8 sm:mb-10">
+            <div class="tk-header-blur pointer-events-none absolute -top-16 -right-10 w-72 h-72 rounded-full blur-3xl" aria-hidden="true"></div>
+
+            <div class="relative z-10">
+                <a href="{{ route('siswa.dashboard') }}"
+                   class="tk-header-back-link group inline-flex items-center gap-2 mb-6 px-3.5 py-2 rounded-lg border text-xs font-bold">
+                    <svg class="w-3.5 h-3.5 transition-transform duration-200 group-hover:-translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    Kembali ke Dashboard
+                </a>
+
+                <div class="tk-header-eyebrow text-[0.68rem] font-bold tracking-[3px] uppercase mb-2.5">
+                    <span aria-hidden="true">&#9654;</span> Portofolio Digital
                 </div>
+                <h1 class="tk-header-title text-2xl sm:text-3xl lg:text-[2rem] font-black tracking-tight leading-tight">
+                    Tambah <span class="tk-header-title-accent">Karya</span>
+                </h1>
+                <p class="tk-header-subtitle mt-2 text-sm max-w-xl">
+                    Unggah karya terbarumu dan lengkapi detailnya untuk ditampilkan di portofolio digital.
+                </p>
+            </div>
+        </div>
 
-                <div class="p-6 space-y-5">
+        {{-- SUCCESS FLASH (jika backend menyediakan session flash, tampilkan secara elegan) --}}
+        @if(session('success'))
+            <div role="status" class="tk-success-banner mb-7 flex items-start gap-3 rounded-2xl border border-l-[3px] px-5 py-4">
+                <div class="tk-success-icon-box w-7 h-7 rounded-full border flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg class="tk-success-icon w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </div>
+                <p class="tk-success-text text-[0.82rem] font-semibold leading-relaxed">{{ session('success') }}</p>
+            </div>
+        @endif
 
-                    {{-- IMAGE DROPZONE --}}
-                    <div>
-                        <label for="image" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
-                            Thumbnail Gambar <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
-                        </label>
+        {{-- GLOBAL ERROR ALERT --}}
+        @if ($errors->any())
+            <div id="tk-error-alert" role="alert" class="tk-error-banner mb-7 rounded-2xl border border-l-[3px] px-5 py-4">
+                <div class="tk-error-heading flex items-center gap-2 text-[0.8rem] font-extrabold mb-2.5">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    Form gagal disimpan &mdash; {{ $errors->count() }} kesalahan perlu diperbaiki:
+                </div>
+                <ul class="space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li class="tk-error-text flex items-start gap-2 text-[0.75rem]">
+                            <span class="tk-error-bullet font-black text-[0.65rem] mt-0.5" aria-hidden="true">&#10005;</span>
+                            <span>{{ $error }}</span>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                        <div
-                            id="tkImageDropzone"
-                            class="tk-dropzone {{ $errors->has('image') ? 'has-error' : '' }} relative w-full max-w-full min-h-[260px] sm:min-h-[300px] rounded-2xl border-2 border-dashed border-[color:var(--color-paper-border)] bg-[color:var(--color-paper-elevated)] flex flex-col items-center justify-center cursor-pointer overflow-hidden"
-                            role="button"
-                            tabindex="0"
-                            aria-required="true"
-                            aria-label="Pilih atau seret gambar thumbnail karya untuk diunggah. Format JPG, JPEG, atau PNG, maksimal 2MB."
-                        >
-                            <div id="tkImagePrompt" class="flex flex-col items-center justify-center gap-3.5 px-6 py-9 text-center pointer-events-none">
-                                <div class="tk-drop-icon-box w-16 h-16 rounded-2xl bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] flex items-center justify-center">
-                                    <svg class="w-7 h-7 text-[color:var(--color-ink-faint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <div class="tk-drop-title text-[0.88rem] font-extrabold text-[color:var(--color-ink-muted)]">Pilih atau letakkan gambar di sini</div>
-                                    <div class="text-[0.72rem] text-[color:var(--color-ink-faint)] mt-1.5 leading-relaxed">Klik area ini atau seret file untuk mengunggah</div>
-                                </div>
-                                <div id="tkImageFormatHint" class="flex gap-1.5 flex-wrap justify-center">
-                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">JPG</span>
-                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">PNG</span>
-                                    <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">Maks 2MB</span>
-                                </div>
-                            </div>
+        {{-- EMPTY CATEGORY WARNING --}}
+        @php $categoriesEmpty = isset($categories) && $categories->isEmpty(); @endphp
+        @if($categoriesEmpty)
+            <div class="tk-warning-banner mb-5 flex items-start gap-2.5 px-4 py-3.5">
+                <svg class="tk-warning-icon w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+                <p class="tk-warning-text text-[0.75rem] leading-relaxed font-semibold">
+                    <strong>Kategori belum tersedia.</strong>
+                    Minta admin untuk menjalankan
+                    <code class="tk-warning-code px-1.5 py-0.5 rounded text-[0.7rem]">php artisan db:seed --class=CategorySeeder</code>
+                    &mdash; formulir tidak dapat disimpan sampai kategori tersedia.
+                </p>
+            </div>
+        @endif
 
-                            {{-- Processing state (saat FileReader membaca gambar) --}}
-                            <div id="tkImageProcessing" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center gap-3" style="background-color: color-mix(in srgb, var(--color-ink) 70%, transparent);">
-                                <svg class="w-8 h-8 animate-spin" style="color: var(--color-accent-500);" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                                </svg>
-                                <span role="status" class="text-[0.75rem] font-semibold" style="color: color-mix(in srgb, var(--color-paper) 60%, transparent);">Memproses gambar&hellip;</span>
-                            </div>
+        {{-- Live region untuk pengumuman status ke pembaca layar (screen reader) --}}
+        <div id="tkSrAnnouncer" class="sr-only" role="status" aria-live="polite"></div>
 
-                            <div id="tkImagePreviewWrap" class="absolute inset-0 hidden">
-                                <img src="#" alt="Pratinjau gambar karya" id="tkImagePreviewImg" class="w-full h-full object-cover">
+        {{-- FORM --}}
+        <form
+            method="POST"
+            action="{{ route('siswa.portfolio.store') }}"
+            enctype="multipart/form-data"
+            id="tkForm"
+            novalidate
+            class="space-y-6"
+        >
+            @csrf
 
-                                <button type="button" id="tkRemoveImageBtn"
-                                        class="hidden absolute top-3 right-3 z-10 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"
-                                        aria-label="Hapus gambar yang dipilih">
-                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                </button>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
 
-                                <div class="tk-preview-overlay absolute inset-0 flex flex-col items-center justify-center gap-2.5">
-                                    <button type="button" id="tkChangeImageBtn"
-                                            class="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[0.78rem] font-extrabold transition-transform duration-150 active:scale-95 focus-visible:outline-none">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                {{-- ============ MEDIA ============ --}}
+                <section aria-labelledby="tk-media-heading" class="tk-card relative rounded-[20px] overflow-hidden">
+                    <div class="tk-media-header-border flex items-center gap-3 px-6 py-[18px] border-b">
+                        <div class="tk-media-icon-box w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0">
+                            <svg class="tk-media-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 id="tk-media-heading" class="tk-media-title text-[0.85rem] font-extrabold">Media Karya</h2>
+                            <p class="tk-media-subtitle text-[0.7rem] mt-0.5">Thumbnail dan dokumen pendukung</p>
+                        </div>
+                    </div>
+
+                    <div class="p-6 space-y-5">
+
+                        {{-- IMAGE DROPZONE --}}
+                        <div>
+                            <label for="image" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                                Thumbnail Gambar <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
+                            </label>
+
+                            <div
+                                id="tkImageDropzone"
+                                class="tk-dropzone {{ $errors->has('image') ? 'has-error' : '' }} relative w-full max-w-full min-h-[260px] sm:min-h-[300px] rounded-2xl border-2 border-dashed border-[color:var(--color-paper-border)] bg-[color:var(--color-paper-elevated)] flex flex-col items-center justify-center cursor-pointer overflow-hidden"
+                                role="button"
+                                tabindex="0"
+                                aria-required="true"
+                                aria-label="Pilih atau seret gambar thumbnail karya untuk diunggah. Format JPG, JPEG, atau PNG, maksimal 2MB."
+                            >
+                                <div id="tkImagePrompt" class="flex flex-col items-center justify-center gap-3.5 px-6 py-9 text-center pointer-events-none">
+                                    <div class="tk-drop-icon-box w-16 h-16 rounded-2xl bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] flex items-center justify-center">
+                                        <svg class="w-7 h-7 text-[color:var(--color-ink-faint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                         </svg>
-                                        Ganti Gambar
-                                    </button>
-                                    <div class="flex items-center gap-1.5 px-4 max-w-full">
-                                        <div id="tkImageFileName" class="text-[0.72rem] font-semibold truncate" style="color: color-mix(in srgb, var(--color-paper) 60%, transparent);"></div>
-                                        <span id="tkImageFileSize" class="text-[0.68rem] flex-shrink-0" style="color: color-mix(in srgb, var(--color-paper) 35%, transparent);"></span>
+                                    </div>
+                                    <div>
+                                        <div class="tk-drop-title text-[0.88rem] font-extrabold text-[color:var(--color-ink-muted)]">Pilih atau letakkan gambar di sini</div>
+                                        <div class="text-[0.72rem] text-[color:var(--color-ink-faint)] mt-1.5 leading-relaxed">Klik area ini atau seret file untuk mengunggah</div>
+                                    </div>
+                                    <div id="tkImageFormatHint" class="flex gap-1.5 flex-wrap justify-center">
+                                        <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">JPG</span>
+                                        <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">PNG</span>
+                                        <span class="text-[0.62rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-full bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">Maks 2MB</span>
                                     </div>
                                 </div>
 
-                                <div class="absolute top-3 left-3 backdrop-blur px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold tracking-wider uppercase" style="background-color: color-mix(in srgb, var(--color-ink) 75%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent-500) 40%, transparent); color: var(--color-accent-500);" aria-hidden="true">
-                                    &#10003; Terpilih
+                                {{-- Processing state (saat FileReader membaca gambar) --}}
+                                <div id="tkImageProcessing" class="hidden absolute inset-0 z-20 flex flex-col items-center justify-center gap-3" style="background-color: color-mix(in srgb, var(--color-ink) 70%, transparent);">
+                                    <svg class="w-8 h-8 animate-spin" style="color: var(--color-accent-500);" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                    </svg>
+                                    <span role="status" class="text-[0.75rem] font-semibold" style="color: color-mix(in srgb, var(--color-paper) 60%, transparent);">Memproses gambar&hellip;</span>
+                                </div>
+
+                                <div id="tkImagePreviewWrap" class="absolute inset-0 hidden">
+                                    <img src="#" alt="Pratinjau gambar karya" id="tkImagePreviewImg" class="w-full h-full object-cover">
+
+                                    <button type="button" id="tkRemoveImageBtn"
+                                            class="hidden absolute top-3 right-3 z-10 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"
+                                            aria-label="Hapus gambar yang dipilih">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+
+                                    <div class="tk-preview-overlay absolute inset-0 flex flex-col items-center justify-center gap-2.5">
+                                        <button type="button" id="tkChangeImageBtn"
+                                                class="inline-flex items-center gap-1.5 px-4 py-2 rounded-[10px] text-[0.78rem] font-extrabold transition-transform duration-150 active:scale-95 focus-visible:outline-none">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                            </svg>
+                                            Ganti Gambar
+                                        </button>
+                                        <div class="flex items-center gap-1.5 px-4 max-w-full">
+                                            <div id="tkImageFileName" class="text-[0.72rem] font-semibold truncate" style="color: color-mix(in srgb, var(--color-paper) 60%, transparent);"></div>
+                                            <span id="tkImageFileSize" class="text-[0.68rem] flex-shrink-0" style="color: color-mix(in srgb, var(--color-paper) 35%, transparent);"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="absolute top-3 left-3 backdrop-blur px-2.5 py-1 rounded-full text-[0.65rem] font-extrabold tracking-wider uppercase" style="background-color: color-mix(in srgb, var(--color-ink) 75%, transparent); border: 1px solid color-mix(in srgb, var(--color-accent-500) 40%, transparent); color: var(--color-accent-500);" aria-hidden="true">
+                                        &#10003; Terpilih
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <input
-                            type="file"
-                            id="image"
-                            name="image"
-                            accept=".jpg,.jpeg,.png"
-                            class="sr-only"
-                            required
-                            aria-required="true"
-                            aria-describedby="tkImageFormatHint{{ $errors->has('image') ? ' image-error' : '' }}"
-                            @if ($errors->has('image')) aria-invalid="true" @endif
-                        >
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept=".jpg,.jpeg,.png"
+                                class="sr-only"
+                                required
+                                aria-required="true"
+                                aria-describedby="tkImageFormatHint{{ $errors->has('image') ? ' image-error' : '' }}"
+                                @if ($errors->has('image')) aria-invalid="true" @endif
+                            >
 
-                        <p id="tkImageClientError" role="alert" class="hidden mt-2.5 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
-                            <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            <span id="tkImageClientErrorText"></span>
-                        </p>
-
-                        @error('image')
-                            <p id="image-error" class="mt-2.5 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+                            <p id="tkImageClientError" role="alert" class="hidden mt-2.5 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                                 <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
-                                {{ $message }}
+                                <span id="tkImageClientErrorText"></span>
                             </p>
-                        @enderror
-                    </div>
 
-                    {{-- PDF UPLOAD --}}
-                    <div>
-                        <label for="file_pdf" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
-                            Dokumen PDF
-                            <span class="font-medium normal-case tracking-normal text-[0.65rem] ml-1" style="color: var(--color-ink-faint);">(Opsional)</span>
-                        </label>
-
-                        <div
-                            id="tkPdfArea"
-                            class="tk-pdf-area flex items-center gap-3.5 rounded-xl border border-dashed border-[color:var(--color-paper-border)] bg-[color:var(--color-paper-elevated)] px-4 py-4 cursor-pointer min-h-[44px]"
-                            role="button"
-                            tabindex="0"
-                            aria-label="Pilih atau seret file PDF dokumen pendukung, opsional. Maksimal 5MB."
-                        >
-                            <div class="tk-pdf-icon-box w-10 h-10 rounded-[10px] bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] flex items-center justify-center flex-shrink-0">
-                                <svg class="w-[18px] h-[18px] text-[color:var(--color-ink-faint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div id="tkPdfText" class="tk-pdf-text text-[0.8rem] font-bold text-[color:var(--color-ink-muted)] truncate">Klik atau seret file PDF ke sini</div>
-                                <div id="tkPdfSub" class="text-[0.68rem] text-[color:var(--color-ink-faint)] mt-0.5">Format PDF &bull; Maksimal 5MB</div>
-                            </div>
-                            <span id="tkPdfBrowsePill" class="flex-shrink-0 text-[0.65rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">Browse</span>
-                            <button type="button" id="tkRemovePdfBtn"
-                                    class="hidden flex-shrink-0 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"
-                                    aria-label="Hapus file PDF">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                        </div>
-
-                        <input
-                            type="file"
-                            id="file_pdf"
-                            name="file_pdf"
-                            accept=".pdf"
-                            class="sr-only"
-                            aria-describedby="tkPdfSub{{ $errors->has('file_pdf') ? ' pdf-error' : '' }}"
-                            @if ($errors->has('file_pdf')) aria-invalid="true" @endif
-                        >
-
-                        <p id="tkPdfClientError" role="alert" class="hidden mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
-                            <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                            </svg>
-                            <span id="tkPdfClientErrorText"></span>
-                        </p>
-
-                        @error('file_pdf')
-                            <p id="pdf-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
-                                <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                </svg>
-                                {{ $message }}
-                            </p>
-                        @enderror
-                    </div>
-
-                </div>
-            </section>
-
-            {{-- ============ INFORMASI KARYA ============ --}}
-            <section aria-labelledby="tk-info-heading" class="tk-card relative rounded-[20px] border border-white/[0.07] bg-white/[0.03] overflow-hidden shadow-[0_25px_60px_-35px_rgba(0,0,0,0.8)]">
-                <div class="tk-info-header-border flex items-center gap-3 px-6 py-[18px] border-b">
-                    <div class="tk-info-icon-box w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0">
-                        <svg class="tk-info-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h2 id="tk-info-heading" class="tk-info-title text-[0.85rem] font-extrabold">Informasi Karya</h2>
-                        <p class="tk-info-subtitle text-[0.7rem] mt-0.5">Lengkapi detail karya kamu</p>
-                    </div>
-                </div>
-
-                <div class="p-6 space-y-5">
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                        {{-- JUDUL --}}
-                        <div>
-                            <label for="title" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
-                                Judul Karya <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
-                            </label>
-                            <div class="relative group">
-                                <svg class="tk-title-icon pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                                </svg>
-                                <input
-                                    type="text"
-                                    id="title"
-                                    name="title"
-                                    value="{{ old('title') }}"
-                                    placeholder="Contoh: Poster Hari Kemerdekaan 2025"
-                                    autofocus
-                                    required
-                                    maxlength="255"
-                                    aria-required="true"
-                                    @if ($errors->has('title')) aria-invalid="true" aria-describedby="title-error" @endif
-                                    class="tk-title-input {{ $errors->has('title') ? 'has-error' : '' }} w-full min-h-[44px] rounded-[11px] border-[1.5px] pl-[42px] pr-3.5 py-3 text-[0.85rem] font-medium outline-none"
-                                >
-                            </div>
-                            @error('title')
-                                <p id="title-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+                            @error('image')
+                                <p id="image-error" class="mt-2.5 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                                     <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                     </svg>
@@ -729,148 +835,330 @@
                             @enderror
                         </div>
 
-                        {{-- KATEGORI --}}
-                                {{-- KATEGORI --}}
-        <div>
-            <label for="category_id" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
-                Kategori <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
-            </label>
-            <div class="relative group">
-                <svg class="tk-category-icon pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                </svg>
-                <select
-                    id="category_id"
-                    name="category_id"
-                    required
-                    aria-required="true"
-                    @if ($categoriesEmpty) disabled @endif
-                    @if ($errors->has('category_id')) aria-invalid="true" aria-describedby="category-error" @endif
-                    class="tk-category-select {{ $errors->has('category_id') ? 'has-error' : '' }} w-full min-h-[44px] appearance-none rounded-[11px] border-[1.5px] pl-[42px] pr-10 py-3 text-[0.85rem] font-medium outline-none cursor-pointer"
-                >
-                    <option value="" disabled {{ old('category_id') ? '' : 'selected' }}>
-                        @if($categoriesEmpty)
-                            &#9888; Belum ada kategori
-                        @else
-                            &mdash; Pilih Kategori &mdash;
-                        @endif
-                    </option>
-                    @if(isset($categories))
-                        @foreach($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                {{ $category->name }}
-                            </option>
-                        @endforeach
-                    @endif
-                </select>
-                <svg class="tk-category-chevron pointer-events-none absolute right-[13px] top-1/2 -translate-y-1/2 w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                </svg>
-            </div>
-            @error('category_id')
-                <p id="category-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
-                    <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                    </svg>
-                    {{ $message }}
-                </p>
-            @enderror
-        </div>
-                    </div>
-
-                    {{-- DESKRIPSI --}}
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <label for="description" class="block text-[0.7rem] font-bold tracking-wider uppercase" style="color: var(--color-ink-muted);">
-                                Deskripsi <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
+                        {{-- PDF UPLOAD --}}
+                        <div>
+                            <label for="file_pdf" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                                Dokumen PDF
+                                <span class="font-medium normal-case tracking-normal text-[0.65rem] ml-1" style="color: var(--color-ink-faint);">(Opsional)</span>
                             </label>
-                            <span id="tkDescCount" class="text-[0.65rem] tabular-nums" style="color: var(--color-ink-faint);" aria-hidden="true">0 karakter</span>
-                        </div>
-                        <textarea
-                            id="description"
-                            name="description"
-                            rows="6"
-                            placeholder="Ceritakan konsep, proses kreatif, tools yang digunakan, dan pesan di balik karya ini..."
-                            required
-                            aria-required="true"
-                            @if ($errors->has('description')) aria-invalid="true" aria-describedby="description-error" @endif
-                            class="tk-description-textarea {{ $errors->has('description') ? 'has-error' : '' }} w-full min-h-[140px] rounded-[11px] border-[1.5px] px-3.5 py-3 text-[0.85rem] font-medium leading-relaxed outline-none resize-y"
-                        >{{ old('description') }}</textarea>
-                        @error('description')
-                            <p id="description-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+
+                            <div
+                                id="tkPdfArea"
+                                class="tk-pdf-area flex items-center gap-3.5 rounded-xl border border-dashed border-[color:var(--color-paper-border)] bg-[color:var(--color-paper-elevated)] px-4 py-4 cursor-pointer min-h-[44px]"
+                                role="button"
+                                tabindex="0"
+                                aria-label="Pilih atau seret file PDF dokumen pendukung, opsional. Maksimal 5MB."
+                            >
+                                <div class="tk-pdf-icon-box w-10 h-10 rounded-[10px] bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] flex items-center justify-center flex-shrink-0">
+                                    <svg class="w-[18px] h-[18px] text-[color:var(--color-ink-faint)]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div id="tkPdfText" class="tk-pdf-text text-[0.8rem] font-bold text-[color:var(--color-ink-muted)] truncate">Klik atau seret file PDF ke sini</div>
+                                    <div id="tkPdfSub" class="text-[0.68rem] text-[color:var(--color-ink-faint)] mt-0.5">Format PDF &bull; Maksimal 5MB</div>
+                                </div>
+                                <span id="tkPdfBrowsePill" class="flex-shrink-0 text-[0.65rem] font-extrabold tracking-wider uppercase px-2.5 py-1 rounded-md bg-[color:var(--color-paper-elevated)] border border-[color:var(--color-paper-border)] text-[color:var(--color-ink-faint)]">Browse</span>
+                                <button type="button" id="tkRemovePdfBtn"
+                                        class="hidden flex-shrink-0 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"
+                                        aria-label="Hapus file PDF">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <input
+                                type="file"
+                                id="file_pdf"
+                                name="file_pdf"
+                                accept=".pdf"
+                                class="sr-only"
+                                aria-describedby="tkPdfSub{{ $errors->has('file_pdf') ? ' pdf-error' : '' }}"
+                                @if ($errors->has('file_pdf')) aria-invalid="true" @endif
+                            >
+
+                            <p id="tkPdfClientError" role="alert" class="hidden mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
                                 <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                 </svg>
-                                {{ $message }}
+                                <span id="tkPdfClientErrorText"></span>
                             </p>
-                        @enderror
+
+                            @error('file_pdf')
+                                <p id="pdf-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+                                    <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                    </div>
+                </section>
+
+                {{-- ============ INFORMASI KARYA ============ --}}
+                <section aria-labelledby="tk-info-heading" class="tk-card relative rounded-[20px] overflow-hidden">
+                    <div class="tk-info-header-border flex items-center gap-3 px-6 py-[18px] border-b">
+                        <div class="tk-info-icon-box w-9 h-9 rounded-[10px] border flex items-center justify-center flex-shrink-0">
+                            <svg class="tk-info-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 id="tk-info-heading" class="tk-info-title text-[0.85rem] font-extrabold">Informasi Karya</h2>
+                            <p class="tk-info-subtitle text-[0.7rem] mt-0.5">Lengkapi detail karya kamu</p>
+                        </div>
                     </div>
 
-                </div>
-            </section>
+                    <div class="p-6 space-y-5">
 
-        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        {{-- TIPS --}}
-        <div class="rounded-[14px] border border-red-600/[0.15] bg-red-600/[0.05] px-[18px] py-[18px]">
-            <div class="flex items-center gap-1.5 text-[0.7rem] font-extrabold tracking-[1.5px] uppercase text-red-500/[0.7] mb-3">
-                <svg class="w-[13px] h-[13px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Tips Upload
+                            {{-- JUDUL --}}
+                            <div>
+                                <label for="title" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                                    Judul Karya <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <svg class="tk-title-icon pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                    </svg>
+                                    <input
+                                        type="text"
+                                        id="title"
+                                        name="title"
+                                        value="{{ old('title') }}"
+                                        placeholder="Contoh: Poster Hari Kemerdekaan 2025"
+                                        autofocus
+                                        required
+                                        maxlength="255"
+                                        aria-required="true"
+                                        @if ($errors->has('title')) aria-invalid="true" aria-describedby="title-error" @endif
+                                        class="tk-title-input {{ $errors->has('title') ? 'has-error' : '' }} w-full min-h-[44px] rounded-[11px] border-[1.5px] pl-[42px] pr-3.5 py-3 text-[0.85rem] font-medium outline-none"
+                                    >
+                                </div>
+                                @error('title')
+                                    <p id="title-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+                                        <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+
+                            {{-- KATEGORI --}}
+                            <div>
+                                <label for="category_id" class="block text-[0.7rem] font-bold tracking-wider uppercase mb-2" style="color: var(--color-ink-muted);">
+                                    Kategori <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
+                                </label>
+                                <div class="relative group">
+                                    <svg class="tk-category-icon pointer-events-none absolute left-[14px] top-1/2 -translate-y-1/2 w-[15px] h-[15px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                    </svg>
+                                    <select
+                                        id="category_id"
+                                        name="category_id"
+                                        required
+                                        aria-required="true"
+                                        @if ($categoriesEmpty) disabled @endif
+                                        @if ($errors->has('category_id')) aria-invalid="true" aria-describedby="category-error" @endif
+                                        class="tk-category-select {{ $errors->has('category_id') ? 'has-error' : '' }} w-full min-h-[44px] appearance-none rounded-[11px] border-[1.5px] pl-[42px] pr-10 py-3 text-[0.85rem] font-medium outline-none cursor-pointer"
+                                    >
+                                        <option value="" disabled {{ old('category_id') ? '' : 'selected' }}>
+                                            @if($categoriesEmpty)
+                                                &#9888; Belum ada kategori
+                                            @else
+                                                &mdash; Pilih Kategori &mdash;
+                                            @endif
+                                        </option>
+                                        @if(isset($categories))
+                                            @foreach($categories as $category)
+                                                <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->name }}
+                                                </option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                    <svg class="tk-category-chevron pointer-events-none absolute right-[13px] top-1/2 -translate-y-1/2 w-[14px] h-[14px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                    </svg>
+                                </div>
+                                @error('category_id')
+                                    <p id="category-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+                                        <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                        {{ $message }}
+                                    </p>
+                                @enderror
+                            </div>
+                        </div>
+
+                        {{-- DESKRIPSI --}}
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label for="description" class="block text-[0.7rem] font-bold tracking-wider uppercase" style="color: var(--color-ink-muted);">
+                                    Deskripsi <span class="ml-0.5" style="color: var(--color-accent-600);">*</span>
+                                </label>
+                                <span id="tkDescCount" class="text-[0.65rem] tabular-nums" style="color: var(--color-ink-faint);" aria-hidden="true">0 karakter</span>
+                            </div>
+                            <textarea
+                                id="description"
+                                name="description"
+                                rows="6"
+                                placeholder="Ceritakan konsep, proses kreatif, tools yang digunakan, dan pesan di balik karya ini..."
+                                required
+                                aria-required="true"
+                                @if ($errors->has('description')) aria-invalid="true" aria-describedby="description-error" @endif
+                                class="tk-description-textarea {{ $errors->has('description') ? 'has-error' : '' }} w-full min-h-[140px] rounded-[11px] border-[1.5px] px-3.5 py-3 text-[0.85rem] font-medium leading-relaxed outline-none resize-y"
+                            >{{ old('description') }}</textarea>
+                            @error('description')
+                                <p id="description-error" class="mt-2 flex items-center gap-1.5 text-[0.73rem] font-semibold" style="color: var(--color-accent-500);">
+                                    <svg class="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ $message }}
+                                </p>
+                            @enderror
+                        </div>
+
+                    </div>
+                </section>
+
             </div>
-            <ul class="space-y-2">
-                <li class="flex items-start gap-2 text-[0.75rem] text-white/[0.3] leading-relaxed">
-                    <span class="mt-[7px] w-1 h-1 rounded-full bg-red-600 flex-shrink-0" aria-hidden="true"></span>
-                    Gunakan resolusi minimal <strong class="text-white/[0.45] font-semibold">800&times;600px</strong> untuk tampilan terbaik.
-                </li>
-                <li class="flex items-start gap-2 text-[0.75rem] text-white/[0.3] leading-relaxed">
-                    <span class="mt-[7px] w-1 h-1 rounded-full bg-red-600 flex-shrink-0" aria-hidden="true"></span>
-                    Format yang diterima: <strong class="text-white/[0.45] font-semibold">JPG, JPEG, PNG</strong> &mdash; maksimal 2MB.
-                </li>
-                <li class="flex items-start gap-2 text-[0.75rem] text-white/[0.3] leading-relaxed">
-                    <span class="mt-[7px] w-1 h-1 rounded-full bg-red-600 flex-shrink-0" aria-hidden="true"></span>
-                    Isi semua field bertanda <span class="text-red-600 font-bold">*</span> agar karya berhasil disimpan.
-                </li>
-            </ul>
-        </div>
 
-        {{-- ACTIONS --}}
-        <div>
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button
-                    type="submit"
-                    id="tkSubmitBtn"
-                    @if ($categoriesEmpty) disabled @endif
-                    class="order-1 sm:order-2 sm:flex-1 min-h-[44px] inline-flex items-center justify-center gap-2.5 rounded-xl bg-red-600 px-6 py-[15px] text-[0.9rem] font-extrabold text-white tracking-wide shadow-[0_4px_20px_rgba(220,38,38,0.3)] transition-all duration-300 hover:bg-red-500 hover:-translate-y-0.5 hover:shadow-[0_10px_40px_rgba(220,38,38,0.45)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-red-600 disabled:hover:translate-y-0 disabled:hover:shadow-[0_4px_20px_rgba(220,38,38,0.3)]"
-                >
-                    <svg id="tkSubmitIcon" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+            {{-- TIPS --}}
+            <div class="tk-tips-card px-[18px] py-[18px]">
+                <div class="tk-tips-title flex items-center gap-1.5 text-[0.7rem] font-extrabold tracking-[1.5px] uppercase mb-3">
+                    <svg class="w-[13px] h-[13px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <span id="tkSubmitText">Simpan Karya</span>
-                </button>
-
-                <a href="{{ route('siswa.dashboard') }}"
-                   class="order-2 sm:order-1 min-h-[44px] inline-flex items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.03] px-6 py-[15px] text-[0.85rem] font-bold text-white/[0.4] transition-colors duration-200 hover:text-white/[0.7] hover:border-white/[0.15] hover:bg-white/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-600/[0.4]">
-                    Batal
-                </a>
+                    Tips Upload
+                </div>
+                <ul class="space-y-2">
+                    <li class="tk-tips-item flex items-start gap-2 text-[0.75rem] leading-relaxed">
+                        <span class="tk-tips-bullet mt-[7px] w-1 h-1 rounded-full flex-shrink-0" aria-hidden="true"></span>
+                        Gunakan resolusi minimal <strong class="font-semibold">800&times;600px</strong> untuk tampilan terbaik.
+                    </li>
+                    <li class="tk-tips-item flex items-start gap-2 text-[0.75rem] leading-relaxed">
+                        <span class="tk-tips-bullet mt-[7px] w-1 h-1 rounded-full flex-shrink-0" aria-hidden="true"></span>
+                        Format yang diterima: <strong class="font-semibold">JPG, JPEG, PNG</strong> &mdash; maksimal 2MB.
+                    </li>
+                    <li class="tk-tips-item flex items-start gap-2 text-[0.75rem] leading-relaxed">
+                        <span class="tk-tips-bullet mt-[7px] w-1 h-1 rounded-full flex-shrink-0" aria-hidden="true"></span>
+                        Isi semua field bertanda <span class="tk-tips-asterisk font-bold">*</span> agar karya berhasil disimpan.
+                    </li>
+                </ul>
             </div>
-            @if($categoriesEmpty)
-                <p class="mt-2.5 text-center sm:text-right text-[0.7rem] text-white/[0.25]">
-                    Tombol simpan nonaktif sampai kategori tersedia.
-                </p>
-            @endif
-        </div>
 
-    </form>
+            {{-- ACTIONS --}}
+            <div>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button
+                        type="submit"
+                        id="tkSubmitBtn"
+                        @if ($categoriesEmpty) disabled @endif
+                        class="tk-btn-submit order-1 sm:order-2 sm:flex-1 min-h-[44px] inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-[15px] text-[0.9rem] font-extrabold tracking-wide"
+                    >
+                        <svg id="tkSubmitIcon" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                        </svg>
+                        <span id="tkSubmitText">Simpan Karya</span>
+                    </button>
 
-    <div class="pointer-events-none absolute -z-10 bottom-0 -left-16 w-80 h-80 bg-red-600/[0.05] rounded-full blur-3xl" aria-hidden="true"></div>
+                    <a href="{{ route('siswa.dashboard') }}"
+                       class="tk-btn-cancel order-2 sm:order-1 min-h-[44px] inline-flex items-center justify-center rounded-xl border px-6 py-[15px] text-[0.85rem] font-bold">
+                        Batal
+                    </a>
+                </div>
+                @if($categoriesEmpty)
+                    <p class="mt-2.5 text-center sm:text-right text-[0.7rem]" style="color: var(--color-ink-faint);">
+                        Tombol simpan nonaktif sampai kategori tersedia.
+                    </p>
+                @endif
+            </div>
 
-</div>
+        </form>
+
+        <div class="tk-decor-blob pointer-events-none absolute -z-10 bottom-0 -left-16 w-80 h-80 rounded-full blur-3xl" aria-hidden="true"></div>
+
+    </div>
+    </div>
+</main>
 @endsection
 
 @push('scripts')
 <script>
+    /* ── OFF-CANVAS SIDEBAR (mobile) — identik dengan siswa/portfolio/edit.blade.php ── */
+    (function () {
+        var sidebar  = document.getElementById('siswaSidebar');
+        var overlay  = document.getElementById('siswaSidebarOverlay');
+        var openBtn  = document.getElementById('siswaSidebarOpen');
+        var closeBtn = document.getElementById('siswaSidebarClose');
+
+        if (!sidebar || !overlay || !openBtn) return;
+
+        function isMobile() { return window.innerWidth <= 860; }
+
+        function syncA11y() {
+            if (isMobile() && !sidebar.classList.contains('sidebar-open')) {
+                sidebar.setAttribute('aria-hidden', 'true');
+            } else {
+                sidebar.removeAttribute('aria-hidden');
+            }
+        }
+
+        function openSidebar() {
+            sidebar.classList.add('sidebar-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openBtn.setAttribute('aria-expanded', 'true');
+            syncA11y();
+            window.requestAnimationFrame(function () { if (closeBtn) closeBtn.focus(); });
+        }
+
+        function closeSidebar(returnFocus) {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            openBtn.setAttribute('aria-expanded', 'false');
+            syncA11y();
+            if (returnFocus !== false) openBtn.focus();
+        }
+
+        function trapFocus(e) {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('sidebar-open')) return;
+            var focusable = sidebar.querySelectorAll('a[href], button:not([disabled])');
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', function () { closeSidebar(); });
+        overlay.addEventListener('click', function () { closeSidebar(); });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) closeSidebar();
+            trapFocus(e);
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
+            el.addEventListener('click', function () { closeSidebar(false); });
+        });
+
+        window.addEventListener('resize', function () {
+            if (!isMobile()) closeSidebar(false); else syncA11y();
+        });
+
+        syncA11y();
+    })();
+
 (function () {
     var MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
     var MAX_PDF_SIZE   = 5 * 1024 * 1024; // 5MB

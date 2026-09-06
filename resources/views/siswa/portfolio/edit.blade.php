@@ -1,748 +1,489 @@
 {{-- resources/views/siswa/portfolio/edit.blade.php --}}
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Karya — DKV SMEKDA Portal</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        html, body {
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            background-color: #080808;
-            color: #f5f5f5;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed; inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none; z-index: 0;
-        }
-
-        .bg-grid {
-            position: fixed; inset: 0;
-            background-image:
-                linear-gradient(rgba(220,38,38,0.035) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(220,38,38,0.035) 1px, transparent 1px);
-            background-size: 48px 48px;
-            pointer-events: none; z-index: 0;
-        }
-
-        .blob { position: fixed; border-radius: 50%; pointer-events: none; z-index: 0; }
-        .blob-1 {
-            top: -160px; right: 80px;
-            width: 560px; height: 560px;
-            background: radial-gradient(circle, rgba(220,38,38,0.09) 0%, transparent 65%);
-            animation: blobF 10s ease-in-out infinite alternate;
-        }
-        .blob-2 {
-            bottom: -140px; left: -80px;
-            width: 460px; height: 460px;
-            background: radial-gradient(circle, rgba(220,38,38,0.06) 0%, transparent 65%);
-            animation: blobF 13s ease-in-out infinite alternate-reverse;
-        }
-        @keyframes blobF {
-            0%   { transform: scale(1)    translate(0,0); }
-            100% { transform: scale(1.14) translate(18px,14px); }
-        }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: var(--red); border-radius: 10px; }
-
-        /* ── SIDEBAR ── */
-        .sidebar {
-            position: fixed; top: 0; left: 0;
-            width: 260px; height: 100vh;
-            background: rgba(8,8,8,0.9);
-            backdrop-filter: blur(28px);
-            -webkit-backdrop-filter: blur(28px);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            z-index: 50; overflow-y: auto;
-        }
-
-        .sidebar::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(220,38,38,0.4), transparent);
-        }
-
-        .sidebar-logo { padding: 28px 24px 22px; border-bottom: 1px solid var(--border); }
-
-        .logo-wordmark {
-            font-size: 0.78rem; font-weight: 900;
-            letter-spacing: 3px; text-transform: uppercase;
-            color: rgba(255,255,255,0.85);
-            display: flex; align-items: center; gap: 9px;
-        }
-
-        .logo-icon {
-            width: 26px; height: 26px; background: var(--red); border-radius: 7px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 0 14px var(--red-glow); flex-shrink: 0;
-        }
-
-        .logo-icon svg { width: 13px; height: 13px; }
-
-        .sidebar-profile { padding: 20px 24px; border-bottom: 1px solid var(--border); }
-
-        .profile-avatar {
-            width: 42px; height: 42px; border-radius: 12px;
-            background: linear-gradient(135deg, #dc2626, #7c3aed);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1rem; font-weight: 900; color: white;
-            flex-shrink: 0; box-shadow: 0 0 18px rgba(220,38,38,0.3);
-        }
-
-        .profile-name {
-            font-size: 0.78rem; font-weight: 700; color: #f5f5f5;
-            line-height: 1.3; margin-bottom: 2px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .profile-nis { font-size: 0.68rem; color: rgba(255,255,255,0.28); margin-bottom: 7px; }
-
-        .badge-role {
-            display: inline-flex; align-items: center; gap: 5px;
-            background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.22);
-            color: #fca5a5; padding: 2px 9px; border-radius: 30px;
-            font-size: 0.63rem; font-weight: 700;
-            letter-spacing: 0.8px; text-transform: uppercase;
-        }
-
-        .live-dot {
-            width: 5px; height: 5px; background: var(--red);
-            border-radius: 50%; box-shadow: 0 0 6px var(--red-glow);
-            animation: livePulse 1.5s ease-in-out infinite;
-        }
-
-        .sidebar-nav { flex: 1; padding: 20px 14px; }
-
-        .nav-label {
-            font-size: 0.62rem; font-weight: 700;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: rgba(255,255,255,0.18);
-            padding: 0 10px; margin-bottom: 8px; margin-top: 4px;
-        }
-
-        .nav-item {
-            display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            font-size: 0.82rem; font-weight: 600;
-            color: rgba(255,255,255,0.35);
-            text-decoration: none;
-            transition: all 0.22s ease;
-            border: 1px solid transparent;
-            margin-bottom: 3px; position: relative;
-        }
-
-        .nav-item:hover {
-            color: rgba(255,255,255,0.7);
-            background: rgba(255,255,255,0.04);
-            border-color: var(--border);
-        }
-
-        .nav-item.active {
-            color: #fca5a5;
-            background: rgba(220,38,38,0.1);
-            border-color: rgba(220,38,38,0.2);
-        }
-
-        .nav-item.active::before {
-            content: '';
-            position: absolute; left: 0; top: 50%;
-            transform: translateY(-50%);
-            width: 3px; height: 18px; background: var(--red);
-            border-radius: 0 3px 3px 0; box-shadow: 0 0 10px var(--red-glow);
-        }
-
-        .nav-item.active svg { color: var(--red); }
-        .nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-        .sidebar-footer { padding: 14px; border-top: 1px solid var(--border); }
-
-        .btn-logout {
-            width: 100%; display: flex; align-items: center; gap: 11px;
-            padding: 10px 12px; border-radius: 10px;
-            background: none; border: 1px solid transparent;
-            color: rgba(255,255,255,0.28);
-            font-size: 0.82rem; font-weight: 600;
-            font-family: 'Inter', sans-serif; cursor: pointer;
-            transition: all 0.22s ease;
-        }
-
-        .btn-logout:hover {
-            color: #fca5a5;
-            background: rgba(220,38,38,0.08);
-            border-color: rgba(220,38,38,0.18);
-        }
-
-        .btn-logout svg { width: 16px; height: 16px; flex-shrink: 0; }
-
-        /* ── MAIN ── */
-        .main-content { margin-left: 260px; min-height: 100vh; position: relative; z-index: 1; }
-
-        .topbar {
-            position: sticky; top: 0; z-index: 30;
-            background: rgba(8,8,8,0.88);
-            backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 36px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .topbar-title {
-            font-size: 0.8rem; font-weight: 700;
-            color: rgba(255,255,255,0.22); letter-spacing: 0.5px;
-        }
-
-        .topbar-title span { color: rgba(255,255,255,0.5); margin-left: 6px; }
-
-        .topbar-pill {
-            display: flex; align-items: center; gap: 6px;
-            background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.18);
-            border-radius: 30px; padding: 5px 13px;
-            font-size: 0.68rem; font-weight: 700;
-            color: rgba(220,38,38,0.65); letter-spacing: 0.5px;
-        }
-
-        .page-inner { padding: 40px 36px 60px; }
-
-        /* ── BACK BUTTON ── */
-        .btn-back {
-            display: inline-flex; align-items: center; gap: 8px;
-            color: rgba(255,255,255,0.3); font-size: 0.78rem; font-weight: 700;
-            text-decoration: none; padding: 8px 14px;
-            border: 1px solid var(--border); border-radius: 10px;
-            background: rgba(255,255,255,0.03);
-            transition: all 0.22s ease; margin-bottom: 28px;
-            width: fit-content;
-        }
-
-        .btn-back:hover {
-            color: var(--red-bright);
-            border-color: rgba(220,38,38,0.3);
-            background: rgba(220,38,38,0.06);
-        }
-
-        .btn-back svg { width: 14px; height: 14px; transition: transform 0.22s ease; }
-        .btn-back:hover svg { transform: translateX(-3px); }
-
-        /* ── FORM HEADER ── */
-        .form-headline {
-            font-size: clamp(1.5rem, 2.2vw, 2rem);
-            font-weight: 900; letter-spacing: -1px; line-height: 1.15;
-            color: #f5f5f5; margin-bottom: 6px;
-        }
-
-        .form-headline .hl { color: var(--red); text-shadow: 0 0 26px rgba(220,38,38,0.4); }
-
-        .form-sub {
-            font-size: 0.875rem; color: rgba(255,255,255,0.28);
-            font-weight: 400; margin-bottom: 36px;
-        }
-
-        /* ── INPUT STYLES ── */
-        .field-label {
-            display: block; font-size: 0.7rem; font-weight: 700;
-            letter-spacing: 1px; text-transform: uppercase;
-            color: rgba(255,255,255,0.35); margin-bottom: 8px;
-        }
-
-        .field-label .req { color: var(--red); margin-left: 3px; }
-
-        .input-wrap { position: relative; }
-
-        .input-icon {
-            position: absolute; top: 50%; left: 14px;
-            transform: translateY(-50%);
-            width: 15px; height: 15px;
-            color: rgba(255,255,255,0.2);
-            pointer-events: none; transition: color 0.22s ease;
-        }
-
-        .form-input {
-            width: 100%;
-            background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08);
-            border-radius: 11px;
-            padding: 12px 14px 12px 42px;
-            font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif;
-            color: #f5f5f5; outline: none;
-            caret-color: var(--red);
-            transition: all 0.25s ease;
-        }
-
-        .form-input::placeholder { color: rgba(255,255,255,0.18); }
-
-        .form-input:focus {
-            border-color: var(--red);
-            background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15), 0 0 18px rgba(220,38,38,0.08);
-        }
-
-        .input-wrap:focus-within .input-icon { color: var(--red); }
-
-        .form-input.is-error {
-            border-color: var(--red-bright);
-            background: rgba(239,68,68,0.06);
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14);
-        }
-
-        .form-textarea {
-            width: 100%; resize: none;
-            background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08);
-            border-radius: 11px;
-            padding: 12px 14px;
-            font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif;
-            color: #f5f5f5; outline: none;
-            caret-color: var(--red);
-            transition: all 0.25s ease;
-            line-height: 1.6;
-        }
-
-        .form-textarea::placeholder { color: rgba(255,255,255,0.18); }
-
-        .form-textarea:focus {
-            border-color: var(--red);
-            background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15), 0 0 18px rgba(220,38,38,0.08);
-        }
-
-        .form-textarea.is-error {
-            border-color: var(--red-bright);
-            box-shadow: 0 0 0 3px rgba(239,68,68,0.14);
-        }
-
-        .form-select {
-            width: 100%; appearance: none; -webkit-appearance: none;
-            background: rgba(255,255,255,0.04);
-            border: 1.5px solid rgba(255,255,255,0.08);
-            border-radius: 11px;
-            padding: 12px 40px 12px 42px;
-            font-size: 0.85rem; font-weight: 500;
-            font-family: 'Inter', sans-serif;
-            color: rgba(255,255,255,0.7); outline: none;
-            cursor: pointer; transition: all 0.25s ease;
-        }
-
-        .form-select:focus {
-            border-color: var(--red);
-            background: rgba(220,38,38,0.05);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.15);
-            color: #f5f5f5;
-        }
-
-        .form-select option { background: #1a1a1a; color: #f5f5f5; }
-
-        .select-arrow {
-            position: absolute; right: 13px; top: 50%;
-            transform: translateY(-50%);
-            width: 14px; height: 14px;
-            color: rgba(255,255,255,0.2); pointer-events: none;
-        }
-
-        .field-error {
-            margin-top: 7px; font-size: 0.73rem; font-weight: 600;
-            color: #f87171;
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        .field-error svg { width: 12px; height: 12px; flex-shrink: 0; }
-
-        .field-wrap { margin-bottom: 20px; }
-
-        /* ── FORM CARD ── */
-        .form-card {
-            background: rgba(255,255,255,0.025);
-            border: 1px solid var(--border);
-            border-radius: 20px; overflow: hidden;
-            position: relative;
-        }
-
-        .form-card::before {
-            content: '';
-            position: absolute; top: 0; left: 0; right: 0; height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
-        }
-
-        .form-card-header {
-            padding: 18px 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; gap: 12px;
-        }
-
-        .card-header-icon {
-            width: 36px; height: 36px; border-radius: 10px;
-            background: var(--red-soft); border: 1px solid rgba(220,38,38,0.18);
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-        }
-
-        .card-header-icon svg { width: 16px; height: 16px; color: var(--red); }
-
-        .card-header-title { font-size: 0.85rem; font-weight: 800; color: #f5f5f5; }
-        .card-header-sub { font-size: 0.7rem; color: rgba(255,255,255,0.25); margin-top: 1px; }
-
-        .form-card-body { padding: 24px; }
-
-        /* ── DROP ZONE ── */
-        .drop-zone {
-            position: relative;
-            border: 2px dashed rgba(255,255,255,0.1);
-            border-radius: 16px;
-            min-height: 340px;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            cursor: pointer; overflow: hidden;
-            transition: all 0.3s ease;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .drop-zone:hover,
-        .drop-zone.drag-over {
-            border-color: var(--red);
-            background: rgba(220,38,38,0.04);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.1), inset 0 0 40px rgba(220,38,38,0.04);
-        }
-
-        .drop-zone.has-preview {
-            border-color: rgba(220,38,38,0.4);
-            border-style: solid;
-        }
-
-        @keyframes borderPulse {
-            0%,100% { border-color: var(--red); box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
-            50%      { border-color: var(--red-bright); box-shadow: 0 0 0 5px rgba(220,38,38,0.18); }
-        }
-
-        .drop-zone.drag-over { animation: borderPulse 1s ease-in-out infinite; }
-
-        .drop-zone-prompt {
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 14px; padding: 40px 24px; text-align: center;
-        }
-
-        .drop-icon-wrap {
-            width: 72px; height: 72px; border-radius: 20px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .drop-zone:hover .drop-icon-wrap,
-        .drop-zone.drag-over .drop-icon-wrap {
-            background: var(--red-soft);
-            border-color: rgba(220,38,38,0.25);
-            box-shadow: 0 0 24px rgba(220,38,38,0.15);
-        }
-
-        .drop-icon-wrap svg {
-            width: 32px; height: 32px;
-            color: rgba(255,255,255,0.18); transition: color 0.3s ease;
-        }
-
-        .drop-zone:hover .drop-icon-wrap svg,
-        .drop-zone.drag-over .drop-icon-wrap svg { color: var(--red); }
-
-        .drop-title {
-            font-size: 0.88rem; font-weight: 800; color: rgba(255,255,255,0.5);
-            transition: color 0.3s ease;
-        }
-
-        .drop-zone:hover .drop-title,
-        .drop-zone.drag-over .drop-title { color: rgba(255,255,255,0.75); }
-
-        .drop-sub { font-size: 0.72rem; color: rgba(255,255,255,0.2); line-height: 1.6; }
-
-        .drop-types { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
-
-        .drop-type-pill {
-            font-size: 0.62rem; font-weight: 800;
-            letter-spacing: 1px; text-transform: uppercase;
-            padding: 3px 9px; border-radius: 20px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid var(--border);
-            color: rgba(255,255,255,0.25);
-        }
-
-        /* ── IMAGE PREVIEW ── */
-        .preview-wrap {
-            position: absolute; inset: 0;
-        }
-
-        .preview-img {
-            width: 100%; height: 100%;
-            object-fit: cover; display: block;
-        }
-
-        .preview-overlay {
-            position: absolute; inset: 0;
-            background: rgba(0,0,0,0.58);
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            gap: 10px; opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .drop-zone:hover .preview-overlay { opacity: 1; }
-
-        .preview-change-btn {
-            display: inline-flex; align-items: center; gap: 7px;
-            background: rgba(220,38,38,0.88);
-            color: white; padding: 10px 20px; border-radius: 10px;
-            font-size: 0.8rem; font-weight: 800;
-            cursor: pointer; border: none;
-            font-family: 'Inter', sans-serif;
-            box-shadow: 0 4px 22px rgba(220,38,38,0.45);
-            transition: all 0.22s ease;
-        }
-
-        .preview-change-btn:hover { background: var(--red-bright); }
-        .preview-change-btn svg { width: 14px; height: 14px; }
-
-        .preview-name {
-            font-size: 0.72rem; color: rgba(255,255,255,0.55);
-            font-weight: 600; max-width: 240px;
-            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-        }
-
-        .preview-badge {
-            position: absolute; top: 12px; left: 12px;
-            background: rgba(8,8,8,0.75); backdrop-filter: blur(10px);
-            border: 1px solid rgba(220,38,38,0.35);
-            color: #fca5a5; padding: 4px 10px; border-radius: 20px;
-            font-size: 0.65rem; font-weight: 800;
-            letter-spacing: 0.8px; text-transform: uppercase;
-        }
-
-        /* Edit indicator badge */
-        .existing-badge {
-            position: absolute; top: 12px; right: 12px;
-            background: rgba(8,8,8,0.75); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.4); padding: 4px 10px; border-radius: 20px;
-            font-size: 0.62rem; font-weight: 700;
-            letter-spacing: 0.5px; text-transform: uppercase;
-        }
-
-        /* ── PDF UPLOAD ── */
-        .pdf-upload-area {
-            border: 1.5px dashed rgba(255,255,255,0.08);
-            border-radius: 12px; padding: 16px;
-            display: flex; align-items: center; gap: 14px;
-            cursor: pointer; transition: all 0.25s ease;
-            background: rgba(255,255,255,0.02);
-        }
-
-        .pdf-upload-area:hover {
-            border-color: rgba(220,38,38,0.3);
-            background: rgba(220,38,38,0.04);
-        }
-
-        .pdf-upload-area.has-file {
-            border-color: rgba(220,38,38,0.35);
-            border-style: solid;
-            background: rgba(220,38,38,0.05);
-        }
-
-        .pdf-icon-box {
-            width: 42px; height: 42px; border-radius: 10px;
-            background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-            transition: all 0.25s ease;
-        }
-
-        .pdf-upload-area:hover .pdf-icon-box,
-        .pdf-upload-area.has-file .pdf-icon-box {
-            background: var(--red-soft); border-color: rgba(220,38,38,0.25);
-        }
-
-        .pdf-icon-box svg { width: 18px; height: 18px; color: rgba(255,255,255,0.2); transition: color 0.25s ease; }
-        .pdf-upload-area:hover .pdf-icon-box svg,
-        .pdf-upload-area.has-file .pdf-icon-box svg { color: var(--red); }
-
-        .pdf-text-main {
-            font-size: 0.8rem; font-weight: 700; color: rgba(255,255,255,0.4);
-            transition: color 0.25s ease;
-        }
-
-        .pdf-upload-area:hover .pdf-text-main { color: rgba(255,255,255,0.65); }
-        .pdf-upload-area.has-file .pdf-text-main { color: #fca5a5; }
-
-        .pdf-text-sub { font-size: 0.68rem; color: rgba(255,255,255,0.18); margin-top: 2px; }
-
-        /* ── SUBMIT ── */
-        .btn-submit {
-            width: 100%;
-            background: var(--red); color: white; border: none;
-            border-radius: 12px; padding: 15px 24px;
-            font-size: 0.9rem; font-weight: 800;
-            font-family: 'Inter', sans-serif;
-            letter-spacing: 0.3px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            position: relative; overflow: hidden;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(220,38,38,0.3);
-        }
-
-        .btn-submit::before {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(135deg, #b91c1c, #ef4444);
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-
-        .btn-submit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px var(--red-glow), 0 0 0 4px rgba(220,38,38,0.15);
-        }
-
-        .btn-submit:hover::before { opacity: 1; }
-        .btn-submit:active { transform: translateY(0); }
-        .btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
-        .btn-submit svg { width: 18px; height: 18px; }
-
-        /* ── TIPS ── */
-        .tips-card {
-            background: rgba(220,38,38,0.05);
-            border: 1px solid rgba(220,38,38,0.15);
-            border-radius: 14px; padding: 18px;
-        }
-
-        .tips-title {
-            font-size: 0.7rem; font-weight: 800;
-            letter-spacing: 1.5px; text-transform: uppercase;
-            color: rgba(220,38,38,0.7); margin-bottom: 12px;
-            display: flex; align-items: center; gap: 7px;
-        }
-
-        .tips-title svg { width: 13px; height: 13px; }
-
-        .tips-item {
-            display: flex; align-items: flex-start; gap: 8px;
-            font-size: 0.75rem; color: rgba(255,255,255,0.3);
-            line-height: 1.6; margin-bottom: 8px; font-weight: 500;
-        }
-
-        .tips-item:last-child { margin-bottom: 0; }
-
-        .tips-bullet {
-            width: 4px; height: 4px; border-radius: 50%;
-            background: var(--red); margin-top: 7px; flex-shrink: 0;
-            box-shadow: 0 0 6px var(--red-glow);
-        }
-
-        /* ── INFO BANNER ── */
-        .info-banner {
-            display: flex; align-items: flex-start; gap: 12px;
-            background: rgba(251,191,36,0.06);
-            border: 1px solid rgba(251,191,36,0.15);
-            border-radius: 12px; padding: 14px 16px;
-            margin-bottom: 28px;
-        }
-
-        .info-banner svg { width: 16px; height: 16px; color: #fbbf24; flex-shrink: 0; margin-top: 1px; }
-
-        .info-banner-text {
-            font-size: 0.78rem; color: rgba(251,191,36,0.7);
-            font-weight: 600; line-height: 1.6;
-        }
-
-        .info-banner-text strong { color: rgba(251,191,36,0.9); }
-    </style>
-</head>
-<body>
-
-<div class="bg-grid"></div>
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
+{{-- MIGRASI: sebelumnya halaman ini masih memakai dark theme legacy mandiri
+     (HTML/head/body sendiri, font Inter, #080808, var(--red)/var(--border)).
+     Sekarang dipindahkan ke sistem editorial "Kertas & Oxblood" yang sama
+     dengan resources/views/siswa/profile/edit.blade.php dan
+     resources/views/siswa/achievement/edit.blade.php — memakai
+     @extends('layouts.app'), shell sidebar/topbar bersama
+     (resources/css/components/dashboard-shell-siswa.css), dan token warna
+     var(--color-*) / var(--font-*) resmi. Backend (route, controller,
+     nama field, validasi, method form) TIDAK diubah sama sekali. --}}
+@extends('layouts.app')
+
+@section('title', 'Edit Karya — DKV SMEKDA Portal')
+
+{{-- Halaman ini punya sidebar + topbar sendiri (pola yang sama dengan
+     siswa/dashboard.blade.php & siswa/profile/edit.blade.php), jadi
+     navbar/footer bawaan layout tidak dipakai di sini. --}}
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
+<style>
+    :root {
+        --hairline:        rgba(25,24,22,0.10);
+        --hairline-strong: rgba(25,24,22,0.18);
+        --surface-sunk:    #F6F1E7;
+        --oxblood-soft:    rgba(122,46,46,0.08);
+        --oxblood-border:  rgba(122,46,46,0.26);
+        --oxblood-ink:     #6E2A2A;
+        --shadow-paper:    0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+        height: 100%;
+        font-family: var(--font-sans);
+        background-color: var(--color-paper);
+        color: var(--color-ink);
+        overflow-x: hidden;
+    }
+
+    body::before {
+        content: '';
+        position: fixed; inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+        pointer-events: none; z-index: 0;
+        mix-blend-mode: multiply;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--oxblood-border); }
+
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+        outline: 2px solid var(--color-accent-600);
+        outline-offset: 3px;
+        border-radius: 6px;
+    }
+
+    .skip-link {
+        position: fixed; top: -100px; left: 16px; z-index: 100;
+        background: var(--color-ink); color: var(--color-paper);
+        padding: 10px 18px; border-radius: 8px;
+        font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;
+        text-decoration: none; transition: top 0.2s ease;
+    }
+    .skip-link:focus { top: 16px; }
+
+    /* ── SIDEBAR + TOPBAR + MAIN-CONTENT ──
+       Dipakai dari resources/css/components/dashboard-shell-siswa.css
+       (identik dengan siswa/dashboard.blade.php & siswa/profile/edit.blade.php).
+       Yang tetap di sini: .badge-pill (elemen topbar kanan khusus halaman
+       ini — menampilkan tanggal, bukan NIS/role seperti di profile/edit). */
+    .badge-pill {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--hairline-strong); border-radius: 30px; padding: 6px 14px;
+        font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.5px; white-space: nowrap;
+    }
+
+    /* ── BACK BUTTON ── */
+    .btn-back {
+        display: inline-flex; align-items: center; gap: 8px;
+        color: var(--color-ink-faint); font-family: var(--font-sans); font-size: 0.78rem; font-weight: 700;
+        text-decoration: none; padding: 9px 14px; min-height: 40px;
+        border: 1px solid var(--hairline-strong); border-radius: 10px;
+        background: var(--color-paper-elevated);
+        transition: all 0.22s ease; margin-bottom: 26px;
+        width: fit-content;
+    }
+    .btn-back:hover { color: var(--oxblood-ink); border-color: var(--oxblood-border); background: var(--oxblood-soft); }
+    .btn-back svg { width: 14px; height: 14px; transition: transform 0.22s ease; flex-shrink: 0; }
+    .btn-back:hover svg { transform: translateX(-3px); }
+
+    /* ── PAGE HEADER ── */
+    .page-header-block { margin-bottom: 30px; }
+    .edit-eyebrow {
+        display: flex; align-items: center; gap: 6px;
+        font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700;
+        letter-spacing: 3px; text-transform: uppercase; color: var(--color-accent-600);
+        margin-bottom: 12px;
+    }
+    .form-headline {
+        font-family: var(--font-serif); font-size: clamp(1.6rem, 2.6vw, 2.15rem); font-weight: 600;
+        letter-spacing: -0.4px; line-height: 1.16; color: var(--color-ink); margin-bottom: 8px;
+    }
+    .form-headline .hl { color: var(--color-accent-600); }
+    .form-sub { font-family: var(--font-sans); font-size: 0.92rem; color: var(--color-ink-muted); line-height: 1.6; max-width: 62ch; }
+
+    /* ── ERROR SUMMARY ── */
+    .error-alert {
+        background: color-mix(in srgb, var(--color-accent-600) 8%, transparent);
+        border: 1px solid color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+        border-left: 3px solid var(--color-accent-600); border-radius: 14px;
+        padding: 16px 20px; margin-bottom: 24px;
+    }
+    .error-alert-title { font-family: var(--font-sans); font-size: 0.8rem; font-weight: 800; color: var(--color-accent-700); display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .error-alert-title svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .error-alert-list { list-style: none; }
+    .error-alert-list li { font-family: var(--font-sans); font-size: 0.75rem; color: var(--color-ink-muted); padding: 3px 0; display: flex; align-items: flex-start; gap: 7px; }
+    .error-alert-list li::before { content: '✕'; color: var(--color-accent-600); font-weight: 900; font-size: 0.65rem; margin-top: 2px; flex-shrink: 0; }
+
+    /* ── FORM GRID ── */
+    .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+
+    /* ── FORM CARD ── */
+    .form-card {
+        background: var(--color-paper-elevated); border: 1px solid var(--hairline);
+        border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-paper);
+        position: relative;
+    }
+    .form-card-header { padding: 18px 24px; border-bottom: 1px solid var(--hairline); display: flex; align-items: center; gap: 12px; }
+    .card-header-icon {
+        width: 36px; height: 36px; border-radius: 10px;
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .card-header-icon svg { width: 16px; height: 16px; color: var(--color-accent-600); }
+    .card-header-title { font-family: var(--font-serif); font-size: 0.95rem; font-weight: 600; color: var(--color-ink); }
+    .card-header-sub { font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-ink-faint); margin-top: 2px; }
+    .form-card-body { padding: 24px; }
+
+    /* ── FIELD ── */
+    .field-wrap { margin-bottom: 20px; }
+    .field-wrap:last-child { margin-bottom: 0; }
+    .field-label {
+        display: block; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 500;
+        letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-muted); margin-bottom: 9px;
+    }
+    .field-label .req { color: var(--color-accent-600); margin-left: 3px; }
+    .field-label .opt-hint { color: var(--color-ink-faint); font-weight: 400; text-transform: none; letter-spacing: 0; margin-left: 6px; font-size: 0.65rem; }
+
+    .input-wrap { position: relative; }
+    .input-icon {
+        position: absolute; top: 50%; left: 14px; transform: translateY(-50%);
+        width: 15px; height: 15px; color: var(--color-ink-faint);
+        pointer-events: none; transition: color 0.22s ease;
+    }
+    .input-wrap:focus-within .input-icon { color: var(--color-accent-600); }
+
+    .form-input, .form-textarea, .form-select {
+        width: 100%; font-family: var(--font-sans); font-size: 0.88rem; font-weight: 500;
+        color: var(--color-ink); background: var(--color-paper);
+        border: 1.5px solid var(--color-paper-border); border-radius: var(--radius-sm, 8px);
+        padding: 12px 14px 12px 42px; outline: none; min-height: 46px;
+        transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-textarea { padding-left: 16px; resize: vertical; min-height: 130px; line-height: 1.65; }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--color-ink-faint); font-weight: 400; }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+        border-color: var(--color-accent-600);
+        background: color-mix(in srgb, var(--color-accent-600) 4%, var(--color-paper));
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 16%, transparent);
+    }
+    .form-input.is-error, .form-textarea.is-error, .form-select.is-error {
+        border-color: var(--color-accent-500) !important;
+        background: color-mix(in srgb, var(--color-accent-500) 6%, transparent) !important;
+    }
+
+    .form-select { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 40px; color: var(--color-ink-muted); }
+    .form-select:focus { color: var(--color-ink); }
+    .form-select option { background: var(--color-paper-elevated); color: var(--color-ink); }
+    .select-arrow {
+        position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
+        width: 14px; height: 14px; color: var(--color-ink-faint); pointer-events: none;
+    }
+
+    .field-error {
+        margin-top: 7px; font-family: var(--font-sans); font-size: 0.76rem; font-weight: 600;
+        color: var(--color-accent-700); display: flex; align-items: center; gap: 6px;
+    }
+    .field-error svg { width: 12px; height: 12px; flex-shrink: 0; }
+
+    /* ── IMAGE DROP ZONE ── */
+    .drop-zone {
+        position: relative;
+        border: 2px dashed var(--color-paper-border);
+        border-radius: 16px;
+        min-height: 320px;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        cursor: pointer; overflow: hidden;
+        transition: all 0.3s ease;
+        background: var(--surface-sunk);
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+        border-color: var(--color-accent-600);
+        background: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+    }
+    .drop-zone.has-preview { border-color: color-mix(in srgb, var(--color-accent-600) 40%, transparent); border-style: solid; }
+
+    @keyframes borderPulse {
+        0%, 100% { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent); }
+        50%      { border-color: var(--color-accent-500); box-shadow: 0 0 0 5px color-mix(in srgb, var(--color-accent-600) 18%, transparent); }
+    }
+    .drop-zone.drag-over { animation: borderPulse 1.1s ease-in-out infinite; }
+
+    .drop-zone-prompt {
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 14px; padding: 36px 24px; text-align: center;
+    }
+    .drop-icon-wrap {
+        width: 68px; height: 68px; border-radius: 20px;
+        background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
+        display: flex; align-items: center; justify-content: center;
+        transition: all 0.3s ease;
+    }
+    .drop-zone:hover .drop-icon-wrap, .drop-zone.drag-over .drop-icon-wrap {
+        background: var(--color-accent-50); border-color: var(--color-accent-200);
+    }
+    .drop-icon-wrap svg { width: 30px; height: 30px; color: var(--color-ink-faint); transition: color 0.3s ease; }
+    .drop-zone:hover .drop-icon-wrap svg, .drop-zone.drag-over .drop-icon-wrap svg { color: var(--color-accent-600); }
+    .drop-title { font-family: var(--font-sans); font-size: 0.87rem; font-weight: 800; color: var(--color-ink-muted); transition: color 0.3s ease; }
+    .drop-zone:hover .drop-title, .drop-zone.drag-over .drop-title { color: var(--color-ink); }
+    .drop-sub { font-family: var(--font-sans); font-size: 0.72rem; color: var(--color-ink-faint); line-height: 1.6; }
+    .drop-types { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .drop-type-pill {
+        font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+        padding: 3px 9px; border-radius: 20px;
+        background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border); color: var(--color-ink-faint);
+    }
+
+    /* ── IMAGE PREVIEW ── */
+    .preview-wrap { position: absolute; inset: 0; }
+    .preview-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .preview-overlay {
+        position: absolute; inset: 0;
+        background: color-mix(in srgb, var(--color-ink) 58%, transparent);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: 10px; opacity: 0; transition: opacity 0.3s ease;
+    }
+    .drop-zone:hover .preview-overlay, .drop-zone:focus-within .preview-overlay { opacity: 1; }
+    .preview-change-btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        background: color-mix(in srgb, var(--color-accent-600) 92%, transparent);
+        color: var(--color-paper); padding: 10px 20px; border-radius: 10px;
+        font-family: var(--font-sans); font-size: 0.8rem; font-weight: 800;
+        cursor: pointer; border: none;
+        box-shadow: 0 4px 22px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+        transition: all 0.22s ease;
+    }
+    .preview-change-btn:hover { background: var(--color-accent-700); }
+    .preview-change-btn svg { width: 14px; height: 14px; }
+    .preview-name {
+        font-family: var(--font-sans); font-size: 0.72rem; color: color-mix(in srgb, var(--color-paper) 75%, transparent);
+        font-weight: 600; max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .preview-badge {
+        position: absolute; top: 12px; left: 12px;
+        background: color-mix(in srgb, var(--color-ink) 78%, transparent); backdrop-filter: blur(10px);
+        border: 1px solid color-mix(in srgb, var(--color-accent-500) 45%, transparent);
+        color: var(--color-accent-200); padding: 4px 10px; border-radius: 20px;
+        font-family: var(--font-mono); font-size: 0.63rem; font-weight: 700;
+        letter-spacing: 0.8px; text-transform: uppercase;
+    }
+    .existing-badge {
+        position: absolute; top: 12px; right: 12px;
+        background: color-mix(in srgb, var(--color-ink) 68%, transparent); backdrop-filter: blur(10px);
+        border: 1px solid color-mix(in srgb, var(--color-paper) 22%, transparent);
+        color: color-mix(in srgb, var(--color-paper) 78%, transparent); padding: 4px 10px; border-radius: 20px;
+        font-family: var(--font-mono); font-size: 0.6rem; font-weight: 600;
+        letter-spacing: 0.5px; text-transform: uppercase;
+    }
+
+    /* ── EXISTING FILE BOX (dipakai untuk indikator PDF lama) ── */
+    .current-file-box {
+        display: flex; align-items: center; gap: 12px;
+        background: var(--surface-sunk); border: 1px solid var(--hairline);
+        border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+    }
+    .current-file-icon {
+        width: 40px; height: 40px; border-radius: 10px;
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .current-file-icon svg { width: 17px; height: 17px; color: var(--color-accent-600); }
+    .current-file-text { font-family: var(--font-sans); font-size: 0.78rem; font-weight: 700; color: var(--color-ink); }
+    .current-file-sub { font-family: var(--font-sans); font-size: 0.7rem; color: var(--color-ink-faint); margin-top: 1px; line-height: 1.5; }
+
+    /* ── PDF UPLOAD CONTROL ── */
+    .pdf-upload-area {
+        border: 1.5px dashed var(--color-paper-border); border-radius: 12px; padding: 15px;
+        display: flex; align-items: center; gap: 14px;
+        cursor: pointer; transition: all 0.25s ease;
+        background: var(--surface-sunk); min-height: 44px;
+    }
+    .pdf-upload-area:hover, .pdf-upload-area:focus-within {
+        border-color: color-mix(in srgb, var(--color-accent-600) 45%, transparent);
+        background: color-mix(in srgb, var(--color-accent-600) 4%, transparent);
+    }
+    .pdf-upload-area.has-file {
+        border-style: solid; border-color: color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+        background: color-mix(in srgb, var(--color-accent-600) 5%, transparent);
+    }
+    .pdf-icon-box {
+        width: 40px; height: 40px; border-radius: 10px;
+        background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        transition: all 0.25s ease;
+    }
+    .pdf-upload-area:hover .pdf-icon-box, .pdf-upload-area.has-file .pdf-icon-box {
+        background: var(--oxblood-soft); border-color: var(--oxblood-border);
+    }
+    .pdf-icon-box svg { width: 18px; height: 18px; color: var(--color-ink-faint); transition: color 0.25s ease; }
+    .pdf-upload-area:hover .pdf-icon-box svg, .pdf-upload-area.has-file .pdf-icon-box svg { color: var(--color-accent-600); }
+    .pdf-text-main { font-family: var(--font-sans); font-size: 0.8rem; font-weight: 700; color: var(--color-ink-muted); transition: color 0.25s ease; }
+    .pdf-upload-area:hover .pdf-text-main { color: var(--color-ink); }
+    .pdf-upload-area.has-file .pdf-text-main { color: var(--oxblood-ink); }
+    .pdf-text-sub { font-family: var(--font-sans); font-size: 0.68rem; color: var(--color-ink-faint); margin-top: 2px; }
+    .pdf-browse-pill {
+        font-family: var(--font-mono); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase;
+        color: var(--color-ink-faint); background: var(--color-paper-elevated); border: 1px solid var(--color-paper-border);
+        padding: 3px 9px; border-radius: 6px; flex-shrink: 0;
+    }
+
+    /* ── TIPS ── */
+    .tips-card {
+        background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
+        border-radius: 14px; padding: 18px; margin-top: 16px;
+    }
+    .tips-title {
+        font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700;
+        letter-spacing: 1.5px; text-transform: uppercase; color: var(--oxblood-ink);
+        margin-bottom: 12px; display: flex; align-items: center; gap: 7px;
+    }
+    .tips-title svg { width: 13px; height: 13px; }
+    .tips-item {
+        display: flex; align-items: flex-start; gap: 8px;
+        font-family: var(--font-sans); font-size: 0.76rem; color: var(--color-ink-muted);
+        line-height: 1.6; margin-bottom: 8px; font-weight: 500;
+    }
+    .tips-item:last-child { margin-bottom: 0; }
+    .tips-item strong { color: var(--color-ink); }
+    .tips-bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--color-accent-600); margin-top: 7px; flex-shrink: 0; }
+
+    /* ── INFO BANNER (dipakai .flash-note dari shell bersama) ── */
+    .flash-note strong { color: var(--color-ink); }
+
+    /* ── ACTIONS ── */
+    .btn-submit {
+        width: 100%; background: var(--color-accent-600); color: var(--color-paper); border: none;
+        border-radius: 12px; padding: 15px 24px; min-height: 46px;
+        font-family: var(--font-sans); font-size: 0.9rem; font-weight: 800;
+        letter-spacing: 0.3px; cursor: pointer;
+        display: flex; align-items: center; justify-content: center; gap: 10px;
+        position: relative; overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+    }
+    .btn-submit::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-500));
+        opacity: 0; transition: opacity 0.3s ease;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 40px color-mix(in srgb, var(--color-accent-600) 45%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 15%, transparent); }
+    .btn-submit:hover::before { opacity: 1; }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit span, .btn-submit svg { position: relative; z-index: 1; }
+    .btn-submit svg { width: 18px; height: 18px; }
+    .btn-submit:disabled { opacity: 0.65; cursor: not-allowed; transform: none; }
+
+    .btn-plain-cancel {
+        display: block; text-align: center; margin-top: 12px; min-height: 20px;
+        font-family: var(--font-sans); font-size: 0.78rem; font-weight: 700;
+        color: var(--color-ink-faint); text-decoration: none; transition: color 0.22s ease;
+    }
+    .btn-plain-cancel:hover { color: var(--oxblood-ink); }
+
+    .form-actions-wrap { padding-top: 8px; border-top: 1px solid var(--hairline); margin-top: 4px; }
+
+    /* ── PAGE FOOTER NOTE ── */
+    .page-footer-note {
+        margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--hairline);
+        display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;
+    }
+    .page-footer-note span { font-family: var(--font-sans); font-size: 0.7rem; color: var(--color-ink-faint); }
+    .page-footer-note strong { color: var(--color-ink-muted); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 980px) {
+        .edit-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px) {
+        .page-inner { padding: 26px 18px 50px; }
+        .form-card-header { padding: 16px 18px; }
+        .form-card-body { padding: 18px; }
+        .drop-zone { min-height: 260px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+</style>
+@endpush
+
+@section('content')
+<a href="#kontenEditKarya" class="skip-link">Lompat ke konten utama</a>
+<div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
 
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-<aside class="sidebar">
+<aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
 
     <div class="sidebar-logo">
-    <div class="logo-wordmark">
-        
-        <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
-            <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+                <div class="logo-wordmark">
+                    <div class="logo-mark">
+                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                    </div>
+                    DKV<span class="dot">.</span>SMEKDA
+                </div>
+                <div class="logo-sub">Portal Siswa</div>
+            </div>
+            <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
-        
-        DKV<span style="color:var(--red);">.</span>SMEKDA
-    </div>
-    <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
-        Portal Siswa
-    </div>
     </div>
 
     <div class="sidebar-profile">
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-            <div class="profile-avatar" style="overflow: hidden;">
-    @if(auth()->user()->photo)
-        <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
-    @else
-        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-    @endif
-</div>
+            <div class="profile-avatar" style="overflow:hidden;">
+                @if(auth()->user()->photo)
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @endif
+            </div>
             <div style="flex:1; min-width:0;">
                 <div class="profile-name">{{ auth()->user()->name }}</div>
-                <div class="profile-nis">NIS: {{ auth()->user()->nis_nip ?? '—' }}</div>
+                <div class="profile-nis">NIS {{ auth()->user()->nis_nip ?? '—' }}</div>
             </div>
         </div>
         <div class="badge-role">
-            <div class="live-dot"></div>
+            <span class="badge-role-dot" aria-hidden="true"></span>
             Siswa DKV
         </div>
     </div>
 
-    <nav class="sidebar-nav">
+    <nav class="sidebar-nav" aria-label="Menu utama">
         <div class="nav-label">Menu Utama</div>
 
         <a href="{{ route('siswa.dashboard') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            Dashboard
+            <span class="nav-index">01</span><span>Dashboard</span>
         </a>
-
         <a href="{{ route('siswa.portfolio.create') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Tambah Karya
+            <span class="nav-index">02</span><span>Tambah Karya</span>
         </a>
-
         <a href="{{ route('siswa.portfolio.print') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-            </svg>
-            Export PDF
+            <span class="nav-index">03</span><span>Export PDF</span>
         </a>
 
         <div class="nav-label" style="margin-top:20px;">Akun</div>
 
         <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-            </svg>
-            Profil Saya
+            <span class="nav-index">04</span><span>Profil Saya</span>
         </a>
     </nav>
 
@@ -750,8 +491,8 @@
         <form method="POST" action="{{ route('logout') }}">
             @csrf
             <button type="submit" class="btn-logout">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
                 </svg>
                 Keluar dari Portal
@@ -763,32 +504,42 @@
 {{-- ================================================================
      MAIN CONTENT
 ================================================================ --}}
-<div class="main-content">
+<main class="main-content" id="kontenEditKarya">
 
-    <div class="topbar">
-        <div class="topbar-title">
-            Portal DKV SMEKDA <span>/</span> Edit Karya
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+            <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
+                    aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+            <div class="topbar-title">
+                <span>Portal DKV SMEKDA</span>
+                <span class="topbar-crumb-sep">/</span>
+                <span class="topbar-crumb-current">Edit Karya</span>
+            </div>
         </div>
-        <div class="topbar-pill">
-            <div class="live-dot"></div>
+        <div class="badge-pill">
+            <span class="badge-role-dot" aria-hidden="true"></span>
             {{ now()->translatedFormat('d F Y') }}
         </div>
-    </div>
+    </header>
 
     <div class="page-inner">
 
         {{-- Back --}}
         <a href="{{ route('siswa.dashboard') }}" class="btn-back">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
             </svg>
             Kembali ke Dashboard
         </a>
 
         {{-- Header --}}
-        <div style="margin-bottom:28px;">
-            <div style="font-size:0.68rem; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:rgba(220,38,38,0.65); margin-bottom:10px;">
-                &#9998; Mode Edit Karya
+        <div class="page-header-block">
+            <div class="edit-eyebrow">
+                <span aria-hidden="true">&#9998;</span> Mode Edit Karya
             </div>
             <h1 class="form-headline">
                 Perbarui <span class="hl">Karya Anda</span>
@@ -797,16 +548,34 @@
         </div>
 
         {{-- Info Banner --}}
-        <div class="info-banner">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        <div class="flash-note" role="status">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
-            <div class="info-banner-text">
+            <span>
                 Anda sedang mengedit karya: <strong>{{ $portfolio->title }}</strong>.
                 Kosongkan field gambar atau PDF jika tidak ingin menggantinya — file lama akan tetap dipertahankan.
-            </div>
+            </span>
         </div>
+
+        {{-- Error Summary --}}
+        @if ($errors->any())
+            <div class="error-alert" role="alert">
+                <div class="error-alert-title">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                    </svg>
+                    Form gagal disimpan — ada {{ $errors->count() }} kesalahan yang harus diperbaiki:
+                </div>
+                <ul class="error-alert-list">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         {{-- ── FORM ── --}}
         <form
@@ -818,14 +587,14 @@
             @csrf
             @method('PUT')
 
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start;">
+            <div class="edit-grid">
 
                 {{-- ============ LEFT: IMAGE ============ --}}
                 <div>
                     <div class="form-card">
                         <div class="form-card-header">
                             <div class="card-header-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
@@ -846,7 +615,7 @@
                                 {{-- Hidden prompt (shown when no existing image somehow) --}}
                                 <div class="drop-zone-prompt" id="imagePrompt" style="display:none;">
                                     <div class="drop-icon-wrap">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                                   d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                         </svg>
@@ -879,7 +648,7 @@
                                             class="preview-change-btn"
                                             onclick="event.stopPropagation(); document.getElementById('imageInput').click()"
                                         >
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                             </svg>
@@ -902,7 +671,7 @@
 
                             @error('image')
                                 <div class="field-error" style="margin-top:10px;">
-                                    <svg fill="currentColor" viewBox="0 0 20 20">
+                                    <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                         <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                     </svg>
                                     {{ $message }}
@@ -913,9 +682,9 @@
                     </div>
 
                     {{-- Tips --}}
-                    <div class="tips-card" style="margin-top:16px;">
+                    <div class="tips-card">
                         <div class="tips-title">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
@@ -931,7 +700,7 @@
                         </div>
                         <div class="tips-item">
                             <div class="tips-bullet"></div>
-                            Gunakan resolusi minimal <strong style="color:rgba(255,255,255,0.45);">800×600px</strong> untuk tampilan terbaik.
+                            Gunakan resolusi minimal <strong>800&times;600px</strong> untuk tampilan terbaik.
                         </div>
                     </div>
                 </div>
@@ -941,7 +710,7 @@
                     <div class="form-card">
                         <div class="form-card-header">
                             <div class="card-header-icon">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
@@ -959,7 +728,7 @@
                                     Judul Karya <span class="req">*</span>
                                 </label>
                                 <div class="input-wrap">
-                                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                     </svg>
@@ -974,7 +743,7 @@
                                 </div>
                                 @error('title')
                                     <div class="field-error">
-                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
                                         {{ $message }}
@@ -988,7 +757,7 @@
                                     Kategori <span class="req">*</span>
                                 </label>
                                 <div class="input-wrap">
-                                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                               d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                                     </svg>
@@ -1007,13 +776,13 @@
                                             </option>
                                         @endforeach
                                     </select>
-                                    <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                     </svg>
                                 </div>
                                 @error('category_id')
                                     <div class="field-error">
-                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
                                         {{ $message }}
@@ -1035,7 +804,7 @@
                                 >{{ old('description', $portfolio->description) }}</textarea>
                                 @error('description')
                                     <div class="field-error">
-                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
                                         {{ $message }}
@@ -1047,8 +816,24 @@
                             <div class="field-wrap">
                                 <label class="field-label">
                                     File Dokumen PDF
-                                    <span style="color:rgba(255,255,255,0.2); font-weight:500; text-transform:none; letter-spacing:0; margin-left:6px; font-size:0.65rem;">(Opsional — ganti atau pertahankan)</span>
+                                    <span class="opt-hint">(Opsional — ganti atau pertahankan)</span>
                                 </label>
+
+                                {{-- Existing PDF indicator --}}
+                                @if($portfolio->file_pdf_path)
+                                    <div class="current-file-box">
+                                        <div class="current-file-icon">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="current-file-text">File PDF saat ini: Tersimpan.</div>
+                                            <div class="current-file-sub">Unggah file baru di bawah untuk menimpanya.</div>
+                                        </div>
+                                    </div>
+                                @endif
 
                                 <div
                                     class="pdf-upload-area"
@@ -1056,7 +841,7 @@
                                     onclick="document.getElementById('pdfInput').click()"
                                 >
                                     <div class="pdf-icon-box">
-                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                         </svg>
@@ -1068,9 +853,7 @@
                                         <div class="pdf-text-sub">Format PDF &bull; Maksimal 5MB</div>
                                     </div>
                                     <div style="flex-shrink:0;">
-                                        <span style="font-size:0.65rem; font-weight:800; color:rgba(255,255,255,0.18); background:rgba(255,255,255,0.04); border:1px solid var(--border); padding:3px 9px; border-radius:6px; letter-spacing:0.5px; text-transform:uppercase;">
-                                            Browse
-                                        </span>
+                                        <span class="pdf-browse-pill">Browse</span>
                                     </div>
                                 </div>
 
@@ -1082,22 +865,9 @@
                                     style="display:none;"
                                 >
 
-                                {{-- Existing PDF indicator --}}
-                                @if($portfolio->file_pdf_path)
-                                    <div style="margin-top:10px; display:flex; align-items:center; gap:8px; background:rgba(34,197,94,0.06); border:1px solid rgba(34,197,94,0.18); border-radius:10px; padding:10px 14px;">
-                                        <svg style="width:14px;height:14px;color:#4ade80;flex-shrink:0;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
-                                        <span style="font-size:0.72rem; font-weight:600; color:rgba(74,222,128,0.8); line-height:1.5;">
-                                            File PDF saat ini: <strong style="color:#4ade80;">Tersimpan.</strong>
-                                            Unggah file baru untuk menimpanya.
-                                        </span>
-                                    </div>
-                                @endif
-
                                 @error('file_pdf')
                                     <div class="field-error" style="margin-top:8px;">
-                                        <svg fill="currentColor" viewBox="0 0 20 20">
+                                        <svg fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                                             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                         </svg>
                                         {{ $message }}
@@ -1106,19 +876,16 @@
                             </div>
 
                             {{-- Buttons --}}
-                            <div style="padding-top:8px; border-top:1px solid var(--border); margin-top:4px;">
-                                <button type="submit" class="btn-submit">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="form-actions-wrap">
+                                <button type="submit" class="btn-submit" id="editSubmitBtn">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                               d="M5 13l4 4L19 7"/>
                                     </svg>
-                                    <span>Simpan Perubahan</span>
+                                    <span id="editSubmitText">Simpan Perubahan</span>
                                 </button>
 
-                                <a href="{{ route('siswa.dashboard') }}"
-                                   style="display:block; text-align:center; margin-top:12px; font-size:0.78rem; font-weight:700; color:rgba(255,255,255,0.2); text-decoration:none; transition:color 0.22s ease;"
-                                   onmouseover="this.style.color='rgba(255,255,255,0.5)'"
-                                   onmouseout="this.style.color='rgba(255,255,255,0.2)'">
+                                <a href="{{ route('siswa.dashboard') }}" class="btn-plain-cancel">
                                     Batalkan &amp; Kembali
                                 </a>
                             </div>
@@ -1131,23 +898,92 @@
         </form>
 
         {{-- Footer --}}
-        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.14);">
-                &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.26);">DKV SMEKDA</strong>
+        <div class="page-footer-note">
+            <span>
+                &copy; {{ date('Y') }} <strong>DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
             </span>
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.12);">
-                Dikembangkan untuk Skripsi oleh <strong style="color:rgba(255,255,255,0.22);">Rafli</strong> &mdash; 2026
+            <span>
+                Dikembangkan untuk Skripsi oleh <strong>Rafli</strong> &mdash; 2026
             </span>
         </div>
 
     </div>
-</div>
+</main>
+@endsection
 
 {{-- ================================================================
      JAVASCRIPT
 ================================================================ --}}
+@push('scripts')
 <script>
+    /* ── OFF-CANVAS SIDEBAR (mobile) — identik dengan siswa/profile/edit.blade.php ── */
+    (function () {
+        var sidebar  = document.getElementById('siswaSidebar');
+        var overlay  = document.getElementById('siswaSidebarOverlay');
+        var openBtn  = document.getElementById('siswaSidebarOpen');
+        var closeBtn = document.getElementById('siswaSidebarClose');
+
+        if (!sidebar || !overlay || !openBtn) return;
+
+        function isMobile() { return window.innerWidth <= 860; }
+
+        function syncA11y() {
+            if (isMobile() && !sidebar.classList.contains('sidebar-open')) {
+                sidebar.setAttribute('aria-hidden', 'true');
+            } else {
+                sidebar.removeAttribute('aria-hidden');
+            }
+        }
+
+        function openSidebar() {
+            sidebar.classList.add('sidebar-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openBtn.setAttribute('aria-expanded', 'true');
+            syncA11y();
+            window.requestAnimationFrame(function () { if (closeBtn) closeBtn.focus(); });
+        }
+
+        function closeSidebar(returnFocus) {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            openBtn.setAttribute('aria-expanded', 'false');
+            syncA11y();
+            if (returnFocus !== false) openBtn.focus();
+        }
+
+        function trapFocus(e) {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('sidebar-open')) return;
+            var focusable = sidebar.querySelectorAll('a[href], button:not([disabled])');
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', function () { closeSidebar(); });
+        overlay.addEventListener('click', function () { closeSidebar(); });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) closeSidebar();
+            trapFocus(e);
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
+            el.addEventListener('click', function () { closeSidebar(false); });
+        });
+
+        window.addEventListener('resize', function () {
+            if (!isMobile()) closeSidebar(false); else syncA11y();
+        });
+
+        syncA11y();
+    })();
+
     /* ── IMAGE LIVE PREVIEW ── */
     const imageInput       = document.getElementById('imageInput');
     const imageDropZone    = document.getElementById('imageDropZone');
@@ -1169,8 +1005,8 @@
             // Update badges
             previewBadge.textContent   = '✓ Foto Baru';
             previewBadge.style.display = 'block';
-            previewBadge.style.borderColor = 'rgba(220,38,38,0.5)';
-            previewBadge.style.color   = '#fca5a5';
+            previewBadge.style.borderColor = 'color-mix(in srgb, var(--color-accent-500) 55%, transparent)';
+            previewBadge.style.color   = 'var(--color-accent-200)';
 
             if (existingBadge) existingBadge.style.display = 'none';
 
@@ -1237,10 +1073,30 @@
         const wrap = el.closest('.input-wrap');
         const icon = wrap?.querySelector('.input-icon');
         if (!icon) return;
-        el.addEventListener('focus',  () => { icon.style.color = 'var(--red)'; });
-        el.addEventListener('blur',   () => { icon.style.color = 'rgba(255,255,255,0.2)'; });
+        el.addEventListener('focus', () => { icon.style.color = 'var(--color-accent-600)'; });
+        el.addEventListener('blur',  () => { icon.style.color = 'var(--color-ink-faint)'; });
     });
-</script>
 
-</body>
-</html>
+    /* ── SUBMIT LOADING STATE (cegah submit ganda) ── */
+    (function () {
+        var form = document.getElementById('editForm');
+        var btn  = document.getElementById('editSubmitBtn');
+        var text = document.getElementById('editSubmitText');
+        if (!form || !btn || !text) return;
+        var originalText = text.textContent;
+
+        form.addEventListener('submit', function () {
+            if (btn.disabled) return;
+            btn.disabled = true;
+            text.textContent = 'Menyimpan...';
+        });
+
+        window.addEventListener('pageshow', function (e) {
+            if (e.persisted) {
+                btn.disabled = false;
+                text.textContent = originalText;
+            }
+        });
+    })();
+</script>
+@endpush
