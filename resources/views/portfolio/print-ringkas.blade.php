@@ -1,13 +1,22 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.app')
 
-    <title>Portfolio {{ $user->name }} — Cetak PDF</title>
+{{-- Halaman "Cek/Cetak Portfolio" siswa.
+     Sebelumnya file ini adalah dokumen HTML standalone (tanpa Student Portal
+     shell). Sekarang di-extend dari layouts.app dan memakai shell sidebar
+     bersama resources/css/components/dashboard-shell-siswa.css — identik
+     dengan siswa/dashboard.blade.php, siswa/achievement/index.blade.php,
+     dkk. Seluruh markup & style A4/print (.stage/.sheet) TIDAK diubah,
+     hanya dipindahkan ke @section('content'). Aturan "html, body" lama
+     (font Inter & backdrop abu-abu mode preview cetak) dipindahkan ke
+     selector .pr-page supaya tidak kalah spesifisitas melawan class
+     Tailwind pada <body> milik layouts.app. --}}
 
-    @vite(['resources/css/app.css'])
+@section('title', 'Portfolio ' . $user->name . ' — Cetak PDF')
 
+@section('navbar')@endsection
+@section('footer')@endsection
+
+@push('styles')
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -33,15 +42,15 @@
             padding: 0;
         }
 
-        html,
-        body {
+        /* Sebelumnya "html, body" — diganti ke .pr-page (class ditaruh di
+           <main class="main-content pr-page">) supaya tidak kalah
+           spesifisitas melawan class Tailwind pada <body> layouts.app
+           (bg-[#FAF7F2], text-[#191816], font-sans). */
+        .pr-page {
             font-family: 'Inter', Arial, sans-serif;
             color: var(--color-ink);
             background: #f1f1ef;
             -webkit-font-smoothing: antialiased;
-        }
-
-        body {
             font-size: 11px;
         }
 
@@ -49,10 +58,11 @@
            TOOLBAR
         ========================================================= */
 
+        /* position:sticky dihapus (dulu top:0) — sekarang halaman ini
+           sudah punya topbar sticky milik shell (dashboard-shell-siswa.css),
+           dua elemen sticky top:0 akan tabrakan/tumpang tindih kalau
+           dipertahankan. Fungsi & tombol toolbar ini tidak berubah. */
         .toolbar {
-            position: sticky;
-            top: 0;
-            z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -598,14 +608,26 @@
         }
 
         @media print {
-            html,
-            body {
+            .pr-page {
                 background: #fff;
             }
 
             .toolbar,
             .no-print {
                 display: none !important;
+            }
+
+            /* Shell Student Portal (sidebar/topbar/hamburger/overlay) tidak
+               ikut tercetak — hanya lembar A4 (.stage/.sheet) yang dicetak. */
+            .sidebar,
+            .sidebar-overlay,
+            .topbar,
+            .hamburger-btn {
+                display: none !important;
+            }
+
+            .main-content {
+                margin-left: 0 !important;
             }
 
             .stage {
@@ -632,6 +654,15 @@
             .skill-group {
                 break-inside: avoid;
                 page-break-inside: avoid;
+            }
+        }
+
+        /* Elemen topbar kanan khusus halaman ini (badge tanggal) —
+           pola sama seperti siswa/achievement/index.blade.php &
+           siswa/profile/edit.blade.php: disembunyikan di layar sempit. */
+        @media (max-width: 860px) {
+            .badge-pill {
+                display: none;
             }
         }
 
@@ -692,10 +723,117 @@
             }
         }
     </style>
-</head>
+@endpush
 
-<body>
+@section('content')
+<div class="sidebar-overlay" id="siswaSidebarOverlay" aria-hidden="true"></div>
 
+{{-- ================================================================
+     SIDEBAR — shell bersama Student Portal (identik dengan
+     siswa/dashboard.blade.php, siswa/achievement/index.blade.php, dkk.)
+================================================================ --}}
+<aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
+
+    <div class="sidebar-logo">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+            <div>
+                <div class="logo-wordmark">
+                    <div class="logo-mark">
+                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                    </div>
+                    DKV<span class="dot">.</span>SMEKDA
+                </div>
+                <div class="logo-sub">Portal Siswa</div>
+            </div>
+            <button type="button" class="sidebar-close-btn" id="siswaSidebarClose" aria-label="Tutup menu navigasi">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <div class="sidebar-profile">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
+            <div class="profile-avatar" style="overflow:hidden;">
+                @if(auth()->user()->photo)
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                @else
+                    {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                @endif
+            </div>
+            <div style="flex:1; min-width:0;">
+                <div class="profile-name">{{ auth()->user()->name }}</div>
+                <div class="profile-nis">NIS {{ auth()->user()->nis_nip ?? '—' }}</div>
+            </div>
+        </div>
+        <div class="badge-role">
+            <span class="badge-role-dot" aria-hidden="true"></span>
+            Siswa DKV
+        </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Menu utama">
+        <div class="nav-label">Menu Utama</div>
+
+        <a href="{{ route('siswa.dashboard') }}" class="nav-item">
+            <span class="nav-index">01</span><span>Dashboard</span>
+        </a>
+        <a href="{{ route('siswa.portfolio.create') }}" class="nav-item">
+            <span class="nav-index">02</span><span>Tambah Karya</span>
+        </a>
+        <a href="{{ route('siswa.portfolio.print') }}" class="nav-item active" aria-current="page">
+            <span class="nav-index">03</span><span>Cetak Portfolio</span>
+        </a>
+        <a href="{{ route('siswa.achievement.index') }}" class="nav-item">
+            <span class="nav-index">04</span><span>Prestasi &amp; Sertifikat</span>
+        </a>
+
+        <div class="nav-label" style="margin-top:20px;">Akun</div>
+
+        <a href="{{ route('siswa.profile.edit') }}" class="nav-item">
+            <span class="nav-index">05</span><span>Profil Saya</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="btn-logout">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                </svg>
+                Keluar dari Portal
+            </button>
+        </form>
+    </div>
+</aside>
+
+{{-- ================================================================
+     MAIN CONTENT
+================================================================ --}}
+<main class="main-content pr-page" id="kontenCetakPortfolio">
+
+    <header class="topbar">
+        <div style="display:flex; align-items:center; gap:14px; min-width:0;">
+            <button type="button" class="hamburger-btn" id="siswaSidebarOpen"
+                    aria-label="Buka menu navigasi" aria-controls="siswaSidebar" aria-expanded="false">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+            <div class="topbar-title">
+                <span>Portal DKV SMEKDA</span>
+                <span class="topbar-crumb-sep">/</span>
+                <span class="topbar-crumb-current">Cetak Portfolio</span>
+            </div>
+        </div>
+        <div class="badge-pill">
+            <span class="badge-role-dot" aria-hidden="true"></span>
+            {{ now()->translatedFormat('d F Y') }}
+        </div>
+    </header>
 @php
 
     /*
@@ -1921,5 +2059,91 @@
 
 </div>
 
-</body>
-</html>
+<script>
+    /* ── OFF-CANVAS SIDEBAR (mobile) ── identik dengan siswa/dashboard.blade.php,
+       siswa/achievement/index.blade.php, siswa/portfolio/create.blade.php &
+       siswa/portfolio/edit.blade.php (shell bersama). ── */
+    (function () {
+        var sidebar  = document.getElementById('siswaSidebar');
+        var overlay  = document.getElementById('siswaSidebarOverlay');
+        var openBtn  = document.getElementById('siswaSidebarOpen');
+        var closeBtn = document.getElementById('siswaSidebarClose');
+
+        if (!sidebar || !overlay || !openBtn) return;
+
+        function isMobile() {
+            return window.innerWidth <= 860;
+        }
+
+        function syncA11y() {
+            if (isMobile() && !sidebar.classList.contains('sidebar-open')) {
+                sidebar.setAttribute('aria-hidden', 'true');
+            } else {
+                sidebar.removeAttribute('aria-hidden');
+            }
+        }
+
+        function openSidebar() {
+            sidebar.classList.add('sidebar-open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            openBtn.setAttribute('aria-expanded', 'true');
+            syncA11y();
+            window.requestAnimationFrame(function () {
+                if (closeBtn) closeBtn.focus();
+            });
+        }
+
+        function closeSidebar(returnFocus) {
+            sidebar.classList.remove('sidebar-open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            openBtn.setAttribute('aria-expanded', 'false');
+            syncA11y();
+            if (returnFocus !== false) openBtn.focus();
+        }
+
+        function trapFocus(e) {
+            if (e.key !== 'Tab' || !sidebar.classList.contains('sidebar-open')) return;
+            var focusable = sidebar.querySelectorAll('a[href], button:not([disabled])');
+            if (!focusable.length) return;
+            var first = focusable[0];
+            var last  = focusable[focusable.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+            }
+        }
+
+        openBtn.addEventListener('click', openSidebar);
+        if (closeBtn) closeBtn.addEventListener('click', function () { closeSidebar(); });
+        overlay.addEventListener('click', function () { closeSidebar(); });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('sidebar-open')) {
+                closeSidebar();
+            }
+            trapFocus(e);
+        });
+
+        document.querySelectorAll('.sidebar-nav .nav-item, .sidebar-footer .btn-logout').forEach(function (el) {
+            el.addEventListener('click', function () { closeSidebar(false); });
+        });
+
+        window.addEventListener('resize', function () {
+            if (!isMobile()) {
+                closeSidebar(false);
+            } else {
+                syncA11y();
+            }
+        });
+
+        syncA11y();
+    })();
+</script>
+
+</main>
+@endsection
