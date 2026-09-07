@@ -381,20 +381,20 @@
         .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--hairline); }
         .modal-title { font-family: var(--font-serif); font-size: 1rem; font-weight: 800; color: var(--color-ink); }
         .modal-close {
-            width: 30px; height: 30px; border-radius: 8px; background: none; border: 1px solid var(--border);
-            color: rgba(255,255,255,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center;
+            width: 30px; height: 30px; border-radius: 8px; background: none; border: 1px solid var(--hairline);
+            color: var(--color-ink-faint); cursor: pointer; display: flex; align-items: center; justify-content: center;
             transition: all 0.2s ease;
         }
-        .modal-close:hover { color: #fca5a5; border-color: rgba(220,38,38,0.3); background: rgba(220,38,38,0.08); }
-        .modal-close:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+        .modal-close:hover { color: var(--oxblood-ink); border-color: var(--oxblood-border); background: var(--oxblood-soft); }
+        .modal-close:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }
         .modal-close svg { width: 14px; height: 14px; }
         .modal-body { padding: 22px 24px; display: flex; flex-direction: column; gap: 16px; }
         .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px 22px; }
 
-        .detail-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+        .detail-row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--hairline); }
         .detail-row:last-child { border-bottom: none; }
-        .detail-label { font-size: 0.72rem; font-weight: 700; color: rgba(255,255,255,0.35); }
-        .detail-value { font-size: 0.82rem; font-weight: 600; color: #f5f5f5; text-align: right; }
+        .detail-label { font-size: 0.72rem; font-weight: 700; color: var(--color-ink-faint); }
+        .detail-value { font-size: 0.82rem; font-weight: 600; color: var(--color-ink); text-align: right; }
 
         /* ── RESPONSIVE ── */
         @media (max-width: 860px) {
@@ -446,12 +446,12 @@
 
     <div class="sidebar-logo">
         <div class="logo-wordmark">
-            <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--border); box-shadow: none;">
+            <div class="logo-icon" style="background: var(--surface-sunk); border: 1px solid var(--hairline); box-shadow: none;">
                 <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
             </div>
-            DKV<span style="color:var(--red);">.</span>SMEKDA
+            DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
         </div>
-        <div style="font-size:0.62rem; color:rgba(255,255,255,0.2); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
+        <div style="font-size:0.62rem; color:var(--color-ink-faint); margin-top:4px; letter-spacing:1px; text-transform:uppercase; font-weight:600; padding-left:35px;">
             Portal Guru
         </div>
     </div>
@@ -732,7 +732,7 @@
                                     data-nis="{{ $student->nis_nip }}"
                                 >
                                     <td>
-                                        <span style="font-size:0.72rem; font-weight:800; color:rgba(220,38,38,0.55);">
+                                        <span style="font-size:0.72rem; font-weight:800; color:var(--oxblood-ink);">
                                             {{ $students->firstItem() + $index }}
                                         </span>
                                     </td>
@@ -994,13 +994,13 @@
         </div>
 
         {{-- Footer Strip --}}
-        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.14);">
-                &copy; {{ date('Y') }} <strong style="color:rgba(255,255,255,0.26);">DKV SMEKDA</strong>
+        <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--hairline); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+            <span style="font-size:0.7rem; color:var(--color-ink-faint);">
+                &copy; {{ date('Y') }} <strong style="color:var(--color-ink-muted);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
             </span>
-            <span style="font-size:0.7rem; color:rgba(255,255,255,0.12);">
-                Dikembangkan untuk Skripsi oleh <strong style="color:rgba(255,255,255,0.22);">Rafli</strong> &mdash; 2026
+            <span style="font-size:0.7rem; color:var(--color-ink-faint);">
+                Dikembangkan untuk Skripsi oleh <strong style="color:var(--color-ink-muted);">Rafli</strong> &mdash; 2026
             </span>
         </div>
 
