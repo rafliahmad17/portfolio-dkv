@@ -78,6 +78,7 @@
         .sidebar {
             backdrop-filter: blur(28px);
             -webkit-backdrop-filter: blur(28px);
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), box-shadow 0.35s ease;
         }
 
         /* ================================================================
@@ -90,19 +91,59 @@
         .topbar-title {
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .mobile-menu-btn {
-            display: none; width: 36px; height: 36px; border-radius: 9px;
-            background: var(--surface-sunk); border: 1px solid var(--hairline);
-            color: var(--color-ink-muted); cursor: pointer; flex-shrink: 0;
+        /* ── Off-canvas drawer sidebar (mobile ≤860px) ──
+           Pola disatukan dengan guru/dashboard.blade.php &
+           guru/profile.blade.php (Fase 5.5.2). ── */
+        .sidebar-logo-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+        }
+        .sidebar-close-btn {
+            display: none;
+            width: 36px; height: 36px; flex-shrink: 0;
             align-items: center; justify-content: center;
+            background: var(--surface-sunk);
+            border: 1px solid var(--hairline);
+            border-radius: 9px;
+            color: var(--color-ink-faint);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .mobile-menu-btn svg { width: 18px; height: 18px; }
-        .mobile-menu-btn:hover { background: var(--oxblood-soft); color: var(--oxblood-ink); }
-        .sidebar-backdrop {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 45;
-            opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
+        .sidebar-close-btn:hover { color: var(--oxblood-ink); background: var(--oxblood-soft); border-color: var(--oxblood-border); }
+        .sidebar-close-btn svg { width: 16px; height: 16px; }
+
+        .sidebar-overlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+            z-index: 45;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        .sidebar-backdrop.show { opacity: 1; visibility: visible; }
+        .sidebar-overlay.is-visible { opacity: 1; pointer-events: auto; }
+
+        .hamburger-btn {
+            display: none;
+            width: 44px; height: 44px; flex-shrink: 0;
+            align-items: center; justify-content: center; flex-direction: column; gap: 5px;
+            background: var(--surface-sunk);
+            border: 1px solid var(--hairline);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+        .hamburger-btn:hover { background: var(--oxblood-soft); border-color: var(--oxblood-border); }
+        .hamburger-bar {
+            display: block; width: 18px; height: 2px; border-radius: 2px;
+            background: var(--color-ink);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        .hamburger-btn.is-active .hamburger-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger-btn.is-active .hamburger-bar:nth-child(2) { opacity: 0; }
+        .hamburger-btn.is-active .hamburger-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        body.no-scroll { overflow: hidden; }
 
         .eyebrow {
             font-family: var(--font-mono);
@@ -398,10 +439,14 @@
 
         /* ── RESPONSIVE ── */
         @media (max-width: 860px) {
-            .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; box-shadow: 20px 0 60px rgba(0,0,0,0.5); }
-            .sidebar.open { transform: translateX(0); }
+            .hamburger-btn      { display: flex; }
+            .sidebar-close-btn  { display: flex; }
+            .sidebar-overlay    { display: block; }
+
+            .sidebar { transform: translateX(-100%); box-shadow: none; }
+            .sidebar.is-open { transform: translateX(0); box-shadow: 20px 0 60px rgba(0,0,0,0.5); }
             .main-content { margin-left: 0; }
-            .mobile-menu-btn { display: flex; width: 44px; height: 44px; }
+            .topbar-crumb { display: none; }
 
             /* Tabel → kartu, supaya data siswa tidak butuh scroll horizontal */
             .table-responsive-wrap { display: none; }
@@ -437,19 +482,19 @@
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
-<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 {{-- ================================================================
      SIDEBAR
 ================================================================ --}}
-@include('guru.partials.sidebar', ['sidebarAvatarPath' => auth()->user()->photo])
+@include('guru.partials.sidebar', ['showSidebarClose' => true, 'sidebarAvatarPath' => auth()->user()->photo])
 
 {{-- ================================================================
      MAIN CONTENT
 ================================================================ --}}
 <div class="main-content">
 
-    @include('guru.partials.topbar', ['topbarTitle' => 'Data Siswa', 'topbarToggle' => 'hamburger'])
+    @include('guru.partials.topbar', ['topbarTitle' => 'Data Siswa', 'topbarToggle' => 'bars'])
 
     <div class="page-inner">
 
@@ -1099,19 +1144,70 @@
 
 @push('scripts')
 <script>
-    // ── Toggle sidebar di layar sempit (<=860px) ──
+    // ── Sidebar Off-canvas Drawer (mobile ≤860px) ──
+    // Pola disatukan dengan guru/dashboard.blade.php & guru/profile.blade.php (Fase 5.5.2).
     (function () {
-        const sidebar  = document.querySelector('.sidebar');
-        const backdrop = document.getElementById('sidebarBackdrop');
-        const btnMenu  = document.getElementById('btnMobileMenu');
+        var sidebar   = document.getElementById('guruSidebar');
+        var overlay   = document.getElementById('sidebarOverlay');
+        var toggleBtn = document.getElementById('sidebarToggle');
+        var closeBtn  = document.getElementById('sidebarClose');
 
-        function openSidebar()  { sidebar.classList.add('open');    backdrop.classList.add('show'); }
-        function closeSidebar() { sidebar.classList.remove('open'); backdrop.classList.remove('show'); }
+        function openSidebar() {
+            sidebar.classList.add('is-open');
+            overlay.classList.add('is-visible');
+            toggleBtn.classList.add('is-active');
+            toggleBtn.setAttribute('aria-expanded', 'true');
+            document.body.classList.add('no-scroll');
+        }
 
-        btnMenu?.addEventListener('click', function () {
-            sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+        function closeSidebar() {
+            sidebar.classList.remove('is-open');
+            overlay.classList.remove('is-visible');
+            toggleBtn.classList.remove('is-active');
+            toggleBtn.setAttribute('aria-expanded', 'false');
+            document.body.classList.remove('no-scroll');
+        }
+
+        toggleBtn.addEventListener('click', function () {
+            if (sidebar.classList.contains('is-open')) {
+                closeSidebar();
+            } else {
+                openSidebar();
+            }
         });
-        backdrop?.addEventListener('click', closeSidebar);
+
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && sidebar.classList.contains('is-open')) {
+                closeSidebar();
+            }
+        });
+
+        /* Tutup drawer otomatis saat memilih menu navigasi di mobile */
+        sidebar.querySelectorAll('.nav-item:not(.nav-item-disabled)').forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.innerWidth <= 860) {
+                    closeSidebar();
+                }
+            });
+        });
+
+        /* Reset state saat layar di-resize melewati breakpoint desktop */
+        var resizeTimer;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function () {
+                if (window.innerWidth > 860) {
+                    closeSidebar();
+                }
+            }, 150);
+        });
+
+        /* Dipertahankan untuk kompatibilitas — handler Escape modal di
+           bawah ("Escape menutup modal/sidebar yang terbuka") memanggil
+           ini. JANGAN dihapus. */
         window.closeSidebarOnEscape = closeSidebar;
     })();
 
