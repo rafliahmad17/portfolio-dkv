@@ -316,26 +316,26 @@
     .field-group { margin-bottom: 18px; }
     .field-label {
         display: block; font-size: 0.68rem; font-weight: 700;
-        color: rgba(255,255,255,0.35); letter-spacing: 0.5px;
+        color: var(--color-ink-muted); letter-spacing: 0.5px;
         text-transform: uppercase; margin-bottom: 8px;
     }
     .input-wrap { position: relative; }
     .input-icon {
         position: absolute; top: 50%; left: 14px;
         transform: translateY(-50%);
-        width: 15px; height: 15px; color: rgba(255,255,255,0.18);
+        width: 15px; height: 15px; color: var(--color-ink-faint);
         pointer-events: none; transition: color 0.22s ease; flex-shrink: 0;
     }
     .form-input {
         width: 100%;
-        background: rgba(255,255,255,0.04);
-        border: 1.5px solid rgba(255,255,255,0.08);
+        background: var(--surface-sunk);
+        border: 1.5px solid var(--hairline);
         border-radius: 11px; padding: 12px 14px 12px 42px;
-        font-size: 0.82rem; font-weight: 500; font-family: 'Inter', sans-serif;
+        font-size: 0.82rem; font-weight: 500; font-family: var(--font-sans);
         color: var(--color-ink); outline: none; caret-color: var(--color-accent-600);
         transition: all 0.25s ease;
     }
-    .form-input::placeholder { color: rgba(255,255,255,0.14); }
+    .form-input::placeholder { color: var(--color-ink-faint); }
     .form-input:focus {
         border-color: var(--color-accent-600);
         background: rgba(220,38,38,0.05);
@@ -347,12 +347,12 @@
         position: absolute; top: 50%; right: 12px;
         transform: translateY(-50%);
         background: none; border: none; cursor: pointer;
-        color: rgba(255,255,255,0.2); padding: 4px;
+        color: var(--color-ink-faint); padding: 4px;
         display: flex; align-items: center; justify-content: center;
         transition: color 0.22s ease, background 0.22s ease;
         border-radius: 8px;
     }
-    .pw-toggle:hover { color: rgba(255,255,255,0.5); }
+    .pw-toggle:hover { color: var(--color-ink-muted); }
     .pw-toggle svg { width: 16px; height: 16px; }
     .error-msg {
         display: flex; align-items: center; gap: 5px;
@@ -367,9 +367,9 @@
 
     /* ── Password Strength ── */
     .strength-wrap { margin-top: 10px; display: flex; align-items: center; gap: 10px; }
-    .strength-track { flex: 1; height: 3px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .strength-track { flex: 1; height: 3px; background: var(--hairline); border-radius: 3px; overflow: hidden; }
     .strength-fill { height: 100%; width: 0; border-radius: 3px; transition: width 0.35s ease, background 0.35s ease, box-shadow 0.35s ease; }
-    .strength-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: rgba(255,255,255,0.2); min-width: 60px; transition: color 0.3s ease; }
+    .strength-label { font-size: 0.62rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; color: var(--color-ink-faint); min-width: 60px; transition: color 0.3s ease; }
 
     /* ── Buttons ── */
     .form-actions { display: flex; align-items: center; gap: 14px; padding-top: 6px; }
@@ -377,7 +377,7 @@
         display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         background: var(--color-accent-600); color: var(--color-paper); border: none;
         border-radius: 11px; padding: 13px 24px;
-        font-size: 0.82rem; font-weight: 800; font-family: 'Inter', sans-serif;
+        font-size: 0.82rem; font-weight: 800; font-family: var(--font-sans);
         cursor: pointer; letter-spacing: 0.2px; transition: all 0.3s ease;
     }
     .btn-red:hover { background: var(--color-accent-700); box-shadow: 0 8px 28px rgba(122,46,46,0.35); transform: translateY(-2px); }
@@ -386,11 +386,11 @@
     .btn-ghost {
         display: inline-flex; align-items: center; justify-content: center;
         background: none; border: none; cursor: pointer;
-        font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.22);
-        font-family: 'Inter', sans-serif; padding: 6px 0;
+        font-size: 0.75rem; font-weight: 700; color: var(--color-ink-faint);
+        font-family: var(--font-sans); padding: 6px 0;
         text-decoration: none; transition: color 0.2s ease;
     }
-    .btn-ghost:hover { color: rgba(255,255,255,0.5); }
+    .btn-ghost:hover { color: var(--color-ink-muted); }
 
     /* ── Avatar Info Banner ── */
     .avatar-info-banner {
@@ -422,20 +422,20 @@
     .flash-icon.error   { background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.2); }
     .flash-close {
         position: absolute; top: 12px; right: 14px; background: none; border: none;
-        color: rgba(255,255,255,0.2); cursor: pointer; padding: 4px;
+        color: var(--color-ink-faint); cursor: pointer; padding: 4px;
         display: flex; align-items: center; justify-content: center; transition: color 0.2s ease;
         border-radius: 8px;
     }
-    .flash-close:hover { color: rgba(255,255,255,0.5); }
+    .flash-close:hover { color: var(--color-ink-muted); }
     .flash-close svg { width: 14px; height: 14px; }
 
     /* ── Security Tips ── */
     .tips-box {
-        background: rgba(255,255,255,0.025); border: 1px solid var(--hairline);
+        background: var(--surface-sunk); border: 1px solid var(--hairline);
         border-radius: 11px; padding: 14px 16px; margin-bottom: 24px;
     }
-    .tips-box-title { font-size: 0.6rem; font-weight: 800; color: rgba(255,255,255,0.2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-    .tip-item { display: flex; align-items: center; gap: 8px; font-size: 0.71rem; color: rgba(255,255,255,0.22); }
+    .tips-box-title { font-size: 0.6rem; font-weight: 800; color: var(--color-ink-faint); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .tip-item { display: flex; align-items: center; gap: 8px; font-size: 0.71rem; color: var(--color-ink-muted); }
     .tip-item + .tip-item { margin-top: 6px; }
     .tip-item svg { width: 11px; height: 11px; flex-shrink: 0; color: rgba(220,38,38,0.5); }
 
@@ -447,7 +447,7 @@
     /* ── Section Header ── */
     .section-eyebrow { font-size: 0.62rem; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(220,38,38,0.65); margin-bottom: 8px; }
     .section-headline { font-size: clamp(1.35rem, 2vw, 1.75rem); font-weight: 900; letter-spacing: -0.8px; color: var(--color-ink); line-height: 1.2; margin-bottom: 6px; }
-    .section-sub { font-size: 0.82rem; color: rgba(255,255,255,0.24); font-weight: 400; }
+    .section-sub { font-size: 0.82rem; color: var(--color-ink-muted); font-weight: 400; }
 
     /* ================================================================
        RESPONSIVE — MOBILE (≤ 860px)
@@ -555,7 +555,7 @@
     <div class="sidebar-logo">
         <div class="sidebar-logo-row">
             <div class="logo-wordmark">
-                <div class="logo-icon" style="background: rgba(255,255,255,0.04); border: 1px solid var(--hairline); box-shadow: none;">
+                <div class="logo-icon" style="background: var(--surface-sunk); border: 1px solid var(--hairline); box-shadow: none;">
                     <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
                 </div>
                 DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
@@ -566,7 +566,7 @@
                 </svg>
             </button>
         </div>
-        <div style="font-size:0.62rem;color:rgba(255,255,255,0.2);margin-top:4px;letter-spacing:1px;text-transform:uppercase;font-weight:600;padding-left:35px;">
+        <div style="font-size:0.62rem;color:var(--color-ink-faint);margin-top:4px;letter-spacing:1px;text-transform:uppercase;font-weight:600;padding-left:35px;">
             Portal Guru
         </div>
     </div>
@@ -771,7 +771,7 @@
                             <span>Ubah Foto</span>
                         </div>
                     </div>
-                    <div style="font-size:0.6rem;color:rgba(255,255,255,0.15);margin-top:10px;font-weight:500;">
+                    <div style="font-size:0.6rem;color:var(--color-ink-faint);margin-top:10px;font-weight:500;">
                         Klik avatar untuk mengubah foto
                     </div>
                 </div>
@@ -1091,14 +1091,14 @@
 
         {{-- ── Footer ── --}}
         <div style="margin-top:48px;padding-top:24px;border-top:1px solid var(--hairline);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-            <span style="font-size:0.7rem;color:rgba(255,255,255,0.14);">
+            <span style="font-size:0.7rem;color:var(--color-ink-faint);">
                 &copy; {{ date('Y') }}
-                <strong style="color:rgba(255,255,255,0.26);">DKV SMEKDA</strong>
+                <strong style="color:var(--color-ink-muted);">DKV SMEKDA</strong>
                 &nbsp;&bull;&nbsp; SMK Negeri 2 Padang Panjang
             </span>
-            <span style="font-size:0.7rem;color:rgba(255,255,255,0.12);">
+            <span style="font-size:0.7rem;color:var(--color-ink-faint);">
                 Dikembangkan untuk Skripsi oleh
-                <strong style="color:rgba(255,255,255,0.22);">Rafli</strong> &mdash; 2026
+                <strong style="color:var(--color-ink-muted);">Rafli</strong> &mdash; 2026
             </span>
         </div>
 
