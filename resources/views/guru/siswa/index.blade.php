@@ -511,13 +511,13 @@
         @if(session('success'))
             <div class="flash-success" id="flashSuccess">
                 <div class="flash-icon success">
-                    <svg width="18" height="18" fill="none" stroke="#86efac" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg width="18" height="18" fill="none" stroke="#166534" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
                 <div style="flex:1;">
-                    <div style="font-size:0.78rem;font-weight:800;color:#86efac;margin-bottom:3px;">Berhasil!</div>
-                    <div style="font-size:0.72rem;color:rgba(134,239,172,0.65);font-weight:500;">{{ session('success') }}</div>
+                    <div style="font-size:0.78rem;font-weight:800;color:#166534;margin-bottom:3px;">Berhasil!</div>
+                    <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('success') }}</div>
                 </div>
                 <button type="button" class="flash-close" onclick="document.getElementById('flashSuccess').remove()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -531,13 +531,13 @@
         @if(session('error'))
             <div class="flash-error" id="flashError">
                 <div class="flash-icon error">
-                    <svg width="18" height="18" fill="none" stroke="#fca5a5" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg width="18" height="18" fill="none" stroke="var(--oxblood-ink)" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
                 <div style="flex:1;">
-                    <div style="font-size:0.78rem;font-weight:800;color:#fca5a5;margin-bottom:3px;">Tidak Bisa Diproses</div>
-                    <div style="font-size:0.72rem;color:rgba(252,165,165,0.65);font-weight:500;">{{ session('error') }}</div>
+                    <div style="font-size:0.78rem;font-weight:800;color:var(--oxblood-ink);margin-bottom:3px;">Tidak Bisa Diproses</div>
+                    <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('error') }}</div>
                 </div>
                 <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
