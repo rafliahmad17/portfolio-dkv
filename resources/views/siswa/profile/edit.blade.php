@@ -452,7 +452,7 @@
             <p class="profile-sub">Kelola informasi pribadi dan tampilan profil portofolio publik Anda.</p>
         </div>
 
-        <form method="POST" action="{{ route('siswa.profile.update') }}" enctype="multipart/form-data" novalidate>
+        <form method="POST" action="{{ route('siswa.profile.update') }}" enctype="multipart/form-data" novalidate class="js-loading-form" data-loading-text="Menyimpan...">
             @csrf
             @method('PUT')
 
@@ -953,5 +953,20 @@
     }
     setupPasswordToggle('pwTogglePassword', 'password');
     setupPasswordToggle('pwToggleConfirm', 'password_confirmation');
+</script>
+<script>
+    // ── Loading state ringan pada submit form (cegah submit ganda) ──
+    // Pola sama seperti resources/views/siswa/achievement/index.blade.php
+    document.querySelectorAll('.js-loading-form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            var btn = form.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
+            btn.disabled = true;
+            var label = btn.querySelector('span');
+            if (label && form.dataset.loadingText) label.textContent = form.dataset.loadingText;
+            btn.style.opacity = '0.65';
+            btn.style.cursor = 'not-allowed';
+        });
+    });
 </script>
 @endpush

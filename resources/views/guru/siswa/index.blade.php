@@ -701,12 +701,12 @@
 
                                             @if($showTrashed)
                                                 {{-- Pulihkan --}}
-                                                <form method="POST" action="{{ route('guru.siswa.restore', $student) }}">
+                                                <form method="POST" action="{{ route('guru.siswa.restore', $student) }}" class="js-loading-form" data-loading-text="Memulihkan...">
                                                     @csrf
                                                     @method('PUT')
                                                     <button type="submit" class="btn-icon-success">
                                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                                        Pulihkan
+                                                        <span>Pulihkan</span>
                                                     </button>
                                                 </form>
 
@@ -715,12 +715,14 @@
                                                     method="POST"
                                                     action="{{ route('guru.siswa.force-delete', $student) }}"
                                                     onsubmit="return confirm('Akun ini beserta SELURUH portofolio & prestasinya akan dihapus permanen dan tidak bisa dikembalikan. Lanjutkan?')"
+                                                    class="js-loading-form"
+                                                    data-loading-text="Menghapus Permanen..."
                                                 >
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn-icon-danger">
                                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                        Hapus Permanen
+                                                        <span>Hapus Permanen</span>
                                                     </button>
                                                 </form>
                                             @else
@@ -743,12 +745,14 @@
                                                     method="POST"
                                                     action="{{ route('guru.siswa.destroy', $student) }}"
                                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan.')"
+                                                    class="js-loading-form"
+                                                    data-loading-text="Menghapus..."
                                                 >
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit" class="btn-icon-danger">
                                                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                                        Hapus
+                                                        <span>Hapus</span>
                                                     </button>
                                                 </form>
                                             @endif
@@ -808,12 +812,12 @@
 
                                 @if($showTrashed)
                                     {{-- Pulihkan --}}
-                                    <form method="POST" action="{{ route('guru.siswa.restore', $student) }}">
+                                    <form method="POST" action="{{ route('guru.siswa.restore', $student) }}" class="js-loading-form" data-loading-text="Memulihkan...">
                                         @csrf
                                         @method('PUT')
                                         <button type="submit" class="btn-icon-success card-action-btn">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-                                            Pulihkan
+                                            <span>Pulihkan</span>
                                         </button>
                                     </form>
 
@@ -822,12 +826,14 @@
                                         method="POST"
                                         action="{{ route('guru.siswa.force-delete', $student) }}"
                                         onsubmit="return confirm('Akun ini beserta SELURUH portofolio & prestasinya akan dihapus permanen dan tidak bisa dikembalikan. Lanjutkan?')"
+                                        class="js-loading-form"
+                                        data-loading-text="Menghapus Permanen..."
                                     >
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-icon-danger card-action-btn">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                            Hapus Permanen
+                                            <span>Hapus Permanen</span>
                                         </button>
                                     </form>
                                 @else
@@ -850,12 +856,14 @@
                                         method="POST"
                                         action="{{ route('guru.siswa.destroy', $student) }}"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus data siswa ini? Tindakan ini tidak dapat dibatalkan.')"
+                                        class="js-loading-form"
+                                        data-loading-text="Menghapus..."
                                     >
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-icon-danger card-action-btn">
                                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                                            Hapus
+                                            <span>Hapus</span>
                                         </button>
                                     </form>
                                 @endif
@@ -1432,6 +1440,21 @@
             btn.disabled = true;
             const label = btn.querySelector('.btn-label');
             if (label) label.textContent = 'Menyimpan...';
+        });
+    });
+
+    // ── Loading state ringan pada form aksi destruktif (Restore/Hapus/Hapus Permanen) ──
+    // Pola sama seperti resources/views/siswa/achievement/index.blade.php
+    // (cegah submit ganda; confirm() pada onsubmit tetap berjalan lebih dulu).
+    document.querySelectorAll('.js-loading-form').forEach(function (form) {
+        form.addEventListener('submit', function () {
+            var btn = form.querySelector('button[type="submit"]');
+            if (!btn || btn.disabled) return;
+            btn.disabled = true;
+            var label = btn.querySelector('span');
+            if (label && form.dataset.loadingText) label.textContent = form.dataset.loadingText;
+            btn.style.opacity = '0.65';
+            btn.style.cursor = 'not-allowed';
         });
     });
 
