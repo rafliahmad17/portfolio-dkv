@@ -942,6 +942,7 @@
 <div
     class="modal-overlay"
     id="modalTambahSiswa"
+    aria-hidden="true"
     data-auto-open="{{ (!old('id') && $errors->any()) ? '1' : '0' }}"
 >
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTambahTitle">
@@ -1026,6 +1027,7 @@
 <div
     class="modal-overlay"
     id="modalEditSiswa"
+    aria-hidden="true"
     data-auto-open="{{ (old('id') && $errors->hasBag('editStudent'.old('id'))) ? '1' : '0' }}"
     data-reopen-id="{{ old('id') }}"
     data-reopen-name="{{ old('name') }}"
@@ -1116,7 +1118,7 @@
 {{-- ================================================================
      MODAL: DETAIL SISWA (read-only)
 ================================================================ --}}
-<div class="modal-overlay" id="modalDetailSiswa">
+<div class="modal-overlay" id="modalDetailSiswa" aria-hidden="true">
     <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalDetailTitle">
         <div class="modal-header">
             <h3 class="modal-title" id="modalDetailTitle">Detail Siswa</h3>
@@ -1144,6 +1146,15 @@
 
 @push('scripts')
 <script>
+    // ── Util: daftar elemen yang bisa menerima fokus di dalam container ──
+    // (pola sama seperti resources/views/siswa/achievement/index.blade.php)
+    function getFocusable(container) {
+        if (!container) return [];
+        return Array.from(container.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter(function (el) { return el.offsetParent !== null; });
+    }
+
     // ── Sidebar Off-canvas Drawer (mobile ≤860px) ──
     // Pola disatukan dengan guru/dashboard.blade.php & guru/profile.blade.php (Fase 5.5.2).
     (function () {
@@ -1212,25 +1223,57 @@
     })();
 
     // ── Modal Tambah Siswa ──
+    // Focus-trap & focus-return mengikuti pola siswa/achievement/index.blade.php
+    // (getFocusable() + lastFocusedBeforeModal).
     (function () {
         const overlay = document.getElementById('modalTambahSiswa');
         const btnOpen = document.getElementById('btnBukaTambahSiswa');
         const btnClose = document.getElementById('btnCloseModalTambah');
         const btnBatal = document.getElementById('btnBatalTambah');
+        let lastFocusedBeforeModal = null;
 
-        function open()  { overlay.classList.add('open'); }
-        function close() { overlay.classList.remove('open'); }
+        function open() {
+            lastFocusedBeforeModal = document.activeElement;
+            overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            setTimeout(function () {
+                var focusables = getFocusable(overlay.querySelector('.modal-box'));
+                if (focusables.length) focusables[0].focus();
+            }, 50);
+        }
+        function close() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+                lastFocusedBeforeModal.focus();
+            }
+        }
 
         btnOpen?.addEventListener('click', open);
         btnClose?.addEventListener('click', close);
         btnBatal?.addEventListener('click', close);
         overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
 
+        // Trap fokus (Tab / Shift+Tab) selama modal terbuka
+        overlay.addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+            var focusables = getFocusable(overlay.querySelector('.modal-box'));
+            if (!focusables.length) return;
+            var first = focusables[0];
+            var last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault(); last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault(); first.focus();
+            }
+        });
+
         if (overlay.dataset.autoOpen === '1') open();
         window.closeTambahModal = close;
     })();
 
     // ── Modal Edit Siswa (form dipakai ulang, action ditulis lewat JS) ──
+    // Focus-trap & focus-return mengikuti pola siswa/achievement/index.blade.php.
     (function () {
         const overlay    = document.getElementById('modalEditSiswa');
         const form       = document.getElementById('formEditSiswa');
@@ -1239,17 +1282,29 @@
         const inputEmail = document.getElementById('editEmail');
         const inputNis   = document.getElementById('editNis');
         const urlTemplate = form.dataset.urlTemplate;
+        let lastFocusedBeforeModal = null;
 
         function openEditModal(id, name, email, nis) {
+            lastFocusedBeforeModal = document.activeElement;
             form.action = urlTemplate.replace('__ID__', id);
             inputId.value = id;
             inputName.value = name;
             inputEmail.value = email;
             inputNis.value = nis === 'null' ? '' : nis;
             overlay.classList.add('open');
-            setTimeout(() => inputName.focus(), 50);
+            overlay.setAttribute('aria-hidden', 'false');
+            setTimeout(function () {
+                var focusables = getFocusable(overlay.querySelector('.modal-box'));
+                if (focusables.length) focusables[0].focus();
+            }, 50);
         }
-        function closeEditModal() { overlay.classList.remove('open'); }
+        function closeEditModal() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+                lastFocusedBeforeModal.focus();
+            }
+        }
 
         document.querySelectorAll('[data-edit-btn]').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -1261,13 +1316,29 @@
         document.getElementById('btnBatalEdit').addEventListener('click', closeEditModal);
         overlay.addEventListener('click', function (e) { if (e.target === overlay) closeEditModal(); });
 
+        // Trap fokus (Tab / Shift+Tab) selama modal terbuka
+        overlay.addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+            var focusables = getFocusable(overlay.querySelector('.modal-box'));
+            if (!focusables.length) return;
+            var first = focusables[0];
+            var last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault(); last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault(); first.focus();
+            }
+        });
+
         if (overlay.dataset.autoOpen === '1') {
             openEditModal(overlay.dataset.reopenId, overlay.dataset.reopenName, overlay.dataset.reopenEmail, overlay.dataset.reopenNis);
         }
         window.openEditModal = openEditModal;
+        window.closeEditModal = closeEditModal;
     })();
 
     // ── Modal Detail Siswa (read-only, tanpa request baru) ──
+    // Focus-trap & focus-return mengikuti pola siswa/achievement/index.blade.php.
     (function () {
         const overlay = document.getElementById('modalDetailSiswa');
         const els = {
@@ -1278,8 +1349,10 @@
             achievements: document.getElementById('detailAchievements'),
             joined: document.getElementById('detailJoined'),
         };
+        let lastFocusedBeforeModal = null;
 
         function openDetailModal(data) {
+            lastFocusedBeforeModal = document.activeElement;
             els.name.textContent = data.name;
             els.email.textContent = data.email;
             els.nis.textContent = data.nis;
@@ -1287,8 +1360,19 @@
             els.achievements.textContent = data.achievements;
             els.joined.textContent = data.joined;
             overlay.classList.add('open');
+            overlay.setAttribute('aria-hidden', 'false');
+            setTimeout(function () {
+                var focusables = getFocusable(overlay.querySelector('.modal-box'));
+                if (focusables.length) focusables[0].focus();
+            }, 50);
         }
-        function closeDetailModal() { overlay.classList.remove('open'); }
+        function closeDetailModal() {
+            overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+                lastFocusedBeforeModal.focus();
+            }
+        }
 
         document.querySelectorAll('[data-detail-btn]').forEach(function (btn) {
             btn.addEventListener('click', function () {
@@ -1306,12 +1390,35 @@
         document.getElementById('btnCloseModalDetail').addEventListener('click', closeDetailModal);
         document.getElementById('btnTutupDetail').addEventListener('click', closeDetailModal);
         overlay.addEventListener('click', function (e) { if (e.target === overlay) closeDetailModal(); });
+
+        // Trap fokus (Tab / Shift+Tab) selama modal terbuka
+        overlay.addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+            var focusables = getFocusable(overlay.querySelector('.modal-box'));
+            if (!focusables.length) return;
+            var first = focusables[0];
+            var last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault(); last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault(); first.focus();
+            }
+        });
+
+        window.closeDetailModal = closeDetailModal;
     })();
 
     // ── Escape menutup modal/sidebar yang terbuka ──
+    // Memanggil fungsi close resmi tiap modal (bukan langsung toggle class)
+    // supaya aria-hidden & focus-return tetap konsisten lewat jalur Escape.
     document.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
-        document.querySelectorAll('.modal-overlay.open').forEach(el => el.classList.remove('open'));
+        var modalTambah = document.getElementById('modalTambahSiswa');
+        var modalEdit   = document.getElementById('modalEditSiswa');
+        var modalDetail = document.getElementById('modalDetailSiswa');
+        if (modalTambah && modalTambah.classList.contains('open') && window.closeTambahModal) window.closeTambahModal();
+        if (modalEdit && modalEdit.classList.contains('open') && window.closeEditModal) window.closeEditModal();
+        if (modalDetail && modalDetail.classList.contains('open') && window.closeDetailModal) window.closeDetailModal();
         if (window.closeSidebarOnEscape) window.closeSidebarOnEscape();
     });
 

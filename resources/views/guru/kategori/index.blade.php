@@ -1019,6 +1019,7 @@
 <div
     class="modal-overlay"
     id="modalEditKategori"
+    aria-hidden="true"
     data-auto-open="{{ $errors->editCategory->has('name') ? '1' : '0' }}"
     data-reopen-id="{{ old('category_id') }}"
     data-reopen-name="{{ old('name') }}"
@@ -1074,6 +1075,15 @@
 
 @push('scripts')
 <script>
+    // ── Util: daftar elemen yang bisa menerima fokus di dalam container ──
+    // (pola sama seperti resources/views/siswa/achievement/index.blade.php)
+    function getFocusable(container) {
+        if (!container) return [];
+        return Array.from(container.querySelectorAll(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )).filter(function (el) { return el.offsetParent !== null; });
+    }
+
     // ── Sidebar Off-canvas Drawer (mobile ≤860px) ──
     // Pola disatukan dengan guru/dashboard.blade.php & guru/profile.blade.php (Fase 5.5.2).
     (function () {
@@ -1142,23 +1152,35 @@
     })();
 
     // ── Modal Edit Kategori ──
+    // Focus-trap & focus-return mengikuti pola siswa/achievement/index.blade.php
+    // (getFocusable() + lastFocusedBeforeModal), diadaptasi untuk modal ini.
     (function () {
         const overlay   = document.getElementById('modalEditKategori');
         const form      = document.getElementById('formEditKategori');
         const inputId   = document.getElementById('editCategoryId');
         const inputName = document.getElementById('editName');
         const urlTemplate = form.dataset.urlTemplate;
+        let lastFocusedBeforeModal = null;
 
         function openEditModal(id, name) {
+            lastFocusedBeforeModal = document.activeElement;
             form.action = urlTemplate.replace('__ID__', id);
             inputId.value = id;
             inputName.value = name;
             overlay.classList.add('open');
-            setTimeout(() => inputName.focus(), 50);
+            overlay.setAttribute('aria-hidden', 'false');
+            setTimeout(function () {
+                var focusables = getFocusable(overlay.querySelector('.modal-box'));
+                if (focusables.length) focusables[0].focus();
+            }, 50);
         }
 
         function closeEditModal() {
             overlay.classList.remove('open');
+            overlay.setAttribute('aria-hidden', 'true');
+            if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+                lastFocusedBeforeModal.focus();
+            }
         }
 
         document.querySelectorAll('[data-edit-btn]').forEach(function (btn) {
@@ -1173,6 +1195,20 @@
         // Tutup jika klik di luar kotak modal (area overlay gelap)
         overlay.addEventListener('click', function (e) {
             if (e.target === overlay) closeEditModal();
+        });
+
+        // Trap fokus (Tab / Shift+Tab) selama modal terbuka
+        overlay.addEventListener('keydown', function (e) {
+            if (e.key !== 'Tab') return;
+            var focusables = getFocusable(overlay.querySelector('.modal-box'));
+            if (!focusables.length) return;
+            var first = focusables[0];
+            var last = focusables[focusables.length - 1];
+            if (e.shiftKey && document.activeElement === first) {
+                e.preventDefault(); last.focus();
+            } else if (!e.shiftKey && document.activeElement === last) {
+                e.preventDefault(); first.focus();
+            }
         });
 
         // Tutup dengan tombol Escape (juga menutup sidebar mobile jika terbuka)
