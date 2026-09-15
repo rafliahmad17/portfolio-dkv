@@ -110,6 +110,19 @@ class ProfileController extends Controller
             ],
 
             /*
+             * Wajib diisi hanya jika siswa memang ingin mengganti
+             * password (field 'password' diisi). Diverifikasi dengan
+             * Hash::check() terhadap password tersimpan sebelum password
+             * baru disimpan -- pola yang sama dengan
+             * ProfileController::updatePassword() milik guru.
+             */
+            'current_password' => [
+                'nullable',
+                'required_with:password',
+                'string',
+            ],
+
+            /*
              * Skill bawaan.
              */
             'skills_active' => [
@@ -327,6 +340,29 @@ class ProfileController extends Controller
         */
 
         if (!empty($validated['password'])) {
+
+            /*
+             * Verifikasi password saat ini sebelum mengizinkan
+             * penggantian password -- mencegah pengambilalihan akun
+             * lewat form profil jika sesi/perangkat siswa diakses
+             * pihak lain tanpa mengetahui password lama.
+             */
+            if (
+                !Hash::check(
+                    $validated['current_password'],
+                    $user->password
+                )
+            ) {
+
+                return back()
+                    ->withErrors([
+                        'current_password' =>
+                            'Password saat ini yang Anda masukkan salah.',
+                    ])
+                    ->onlyInput(
+                        'current_password'
+                    );
+            }
 
             $user->password = Hash::make(
                 $validated['password']
