@@ -509,7 +509,7 @@
 
         {{-- ── FLASH: SUCCESS ── --}}
         @if(session('success'))
-            <div class="flash-success" id="flashSuccess">
+            <div class="flash-success" id="flashSuccess" role="status" aria-live="polite" aria-atomic="true">
                 <div class="flash-icon success">
                     <svg width="18" height="18" fill="none" stroke="#166534" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
@@ -519,7 +519,7 @@
                     <div style="font-size:0.78rem;font-weight:800;color:#166534;margin-bottom:3px;">Berhasil!</div>
                     <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('success') }}</div>
                 </div>
-                <button type="button" class="flash-close" onclick="document.getElementById('flashSuccess').remove()">
+                <button type="button" class="flash-close" onclick="document.getElementById('flashSuccess').remove()" aria-label="Tutup notifikasi">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
@@ -529,7 +529,7 @@
 
         {{-- ── FLASH: ERROR ── --}}
         @if(session('error'))
-            <div class="flash-error" id="flashError">
+            <div class="flash-error" id="flashError" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="flash-icon error">
                     <svg width="18" height="18" fill="none" stroke="var(--oxblood-ink)" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -539,7 +539,7 @@
                     <div style="font-size:0.78rem;font-weight:800;color:var(--oxblood-ink);margin-bottom:3px;">Tidak Bisa Diproses</div>
                     <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('error') }}</div>
                 </div>
-                <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()">
+                <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()" aria-label="Tutup notifikasi">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>

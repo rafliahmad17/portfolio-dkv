@@ -312,6 +312,7 @@
         .share-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--faint); }
         .share-url-text { flex: 1; font-family: 'IBM Plex Mono', monospace; font-size: 0.76rem; color: var(--color-ink-muted); min-width: 160px; word-break: break-all; }
         .share-copy-btn {
+            font-family: inherit; appearance: none; -webkit-appearance: none;
             font-size: 0.68rem; font-weight: 700; color: var(--oxblood-ink);
             letter-spacing: 0.4px; text-transform: uppercase; cursor: pointer;
             background: var(--oxblood-08); border: 1px solid var(--oxblood-14);
@@ -660,7 +661,7 @@
     <div class="share-bar">
         <span class="share-label">Live URL</span>
         <span class="share-url-text" id="shareUrl">{{ url('/u/' . $user->portfolio_slug) }}</span>
-        <span class="share-copy-btn" onclick="copyLink()">Copy Link</span>
+        <button type="button" class="share-copy-btn" onclick="copyLink()">Copy Link</button>
     </div>
 
     {{-- ══════════════ TENTANG ══════════════ --}}
@@ -887,7 +888,7 @@
     </button>
 </footer>
 
-<div class="toast" id="toast">
+<div class="toast" id="toast" role="status" aria-live="polite">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
     Link berhasil disalin ke clipboard!
 </div>

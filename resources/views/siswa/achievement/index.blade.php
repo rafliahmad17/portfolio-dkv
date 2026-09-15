@@ -536,7 +536,7 @@
 
         {{-- Global error alert (ditampilkan jika submit modal tambah gagal validasi) --}}
         @if($errors->any())
-            <div class="error-alert">
+            <div class="error-alert" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="error-alert-title">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"

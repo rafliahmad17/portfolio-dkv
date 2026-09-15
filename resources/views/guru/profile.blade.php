@@ -406,14 +406,15 @@
         display: flex; align-items: flex-start; gap: 14px;
         background: rgba(34,197,94,0.07); border: 1px solid rgba(34,197,94,0.2);
         border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
-        position: relative;
+        position: relative; transition: opacity 0.35s ease, transform 0.35s ease;
     }
     .flash-error {
         display: flex; align-items: flex-start; gap: 14px;
         background: var(--oxblood-soft); border: 1px solid var(--oxblood-border);
         border-radius: 14px; padding: 16px 20px; margin-bottom: 28px;
-        position: relative;
+        position: relative; transition: opacity 0.35s ease, transform 0.35s ease;
     }
+    .flash-hide { opacity: 0; transform: translateY(-8px); pointer-events: none; }
     .flash-icon {
         width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
         display: flex; align-items: center; justify-content: center;
@@ -574,7 +575,7 @@
 
         {{-- ── Flash: Success ── --}}
         @if(session('success'))
-            <div class="flash-success" id="flashSuccess">
+            <div class="flash-success" id="flashSuccess" role="status" aria-live="polite" aria-atomic="true">
                 <div class="flash-icon success">
                     <svg width="18" height="18" fill="none" stroke="#166534" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
@@ -594,7 +595,7 @@
 
         {{-- ── Flash: Error ── --}}
         @if(session('error'))
-            <div class="flash-error" id="flashError">
+            <div class="flash-error" id="flashError" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="flash-icon error">
                     <svg width="18" height="18" fill="none" stroke="var(--oxblood-ink)" stroke-width="2.5" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -1111,6 +1112,17 @@
             btn.style.opacity = '0.65';
             btn.style.cursor = 'not-allowed';
         });
+    });
+
+    /* ── Toast: hilangkan flash message otomatis setelah beberapa detik ── */
+    /* Pola sama seperti resources/views/guru/kategori/index.blade.php & guru/siswa/index.blade.php */
+    ['flashSuccess', 'flashError'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        setTimeout(function () {
+            el.classList.add('flash-hide');
+            setTimeout(function () { el.remove(); }, 400);
+        }, 4500);
     });
 
     /* ── Sidebar Off-canvas Drawer (mobile ≤860px) ── */
