@@ -41,7 +41,7 @@
 
             --ink-soft:     #3A3733;
 
-            --faint:        #8C857D;
+            --faint:        #7A736C;
             --line:         rgba(120,113,108,0.24);
             --line-soft:    rgba(120,113,108,0.14);
             --oxblood-ink:  #5E2222;

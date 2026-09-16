@@ -63,7 +63,7 @@
         --pw-ink:         #1C1A16;  /* teks utama — charcoal hangat, bukan hitam pekat */
         --pw-ink-soft:    #4A453B;  /* teks sekunder / paragraf panjang */
         --pw-stone:       #726C5A;  /* label, metadata, caption kecil */
-        --pw-stone-2:     #A39C86; /* teks tersier / placeholder halus */
+        --pw-stone-2:     #77705B; /* teks tersier / placeholder halus */
         --pw-hairline:    #E4DCC6; /* garis pemisah & border halus */
         --pw-hairline-2:  #EFE9D8; /* border lebih halus lagi, untuk kartu */
         --pw-accent:      #8B3123; /* oxblood — evolusi merah identitas sekolah */

@@ -30,7 +30,7 @@
 
             --ink-2: #374151;
 
-            --soft: #9ca3af;
+            --soft: #6C7586;
             --line: #e5e7eb;
 
             --red-soft: #fef2f2;
