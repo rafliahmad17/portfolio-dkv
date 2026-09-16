@@ -967,11 +967,11 @@
                         </div>
                         <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
                             @if($categories->onFirstPage())
-                                <span class="page-btn disabled">
+                                <span class="page-btn disabled" aria-label="Halaman sebelumnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                                 </span>
                             @else
-                                <a href="{{ $categories->previousPageUrl() }}" class="page-btn inactive">
+                                <a href="{{ $categories->previousPageUrl() }}" class="page-btn inactive" aria-label="Halaman sebelumnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
                                 </a>
                             @endif
@@ -985,11 +985,11 @@
                             @endforeach
 
                             @if($categories->hasMorePages())
-                                <a href="{{ $categories->nextPageUrl() }}" class="page-btn inactive">
+                                <a href="{{ $categories->nextPageUrl() }}" class="page-btn inactive" aria-label="Halaman berikutnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                 </a>
                             @else
-                                <span class="page-btn disabled">
+                                <span class="page-btn disabled" aria-label="Halaman berikutnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
                                 </span>
                             @endif

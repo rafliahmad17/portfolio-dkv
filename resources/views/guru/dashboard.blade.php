@@ -755,6 +755,7 @@
                             value="{{ request('search') }}"
                             placeholder="Cari judul karya atau nama siswa..."
                             class="search-input"
+                            aria-label="Cari judul karya atau nama siswa"
                         >
                     </div>
 
@@ -965,13 +966,13 @@
                         <div style="display:flex; align-items:center; gap:5px;">
                             {{-- Prev --}}
                             @if($portfolios->onFirstPage())
-                                <span class="page-btn disabled">
+                                <span class="page-btn disabled" aria-label="Halaman sebelumnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                 </span>
                             @else
-                                <a href="{{ $portfolios->previousPageUrl() }}" class="page-btn inactive">
+                                <a href="{{ $portfolios->previousPageUrl() }}" class="page-btn inactive" aria-label="Halaman sebelumnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                                     </svg>
@@ -989,13 +990,13 @@
 
                             {{-- Next --}}
                             @if($portfolios->hasMorePages())
-                                <a href="{{ $portfolios->nextPageUrl() }}" class="page-btn inactive">
+                                <a href="{{ $portfolios->nextPageUrl() }}" class="page-btn inactive" aria-label="Halaman berikutnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </a>
                             @else
-                                <span class="page-btn disabled">
+                                <span class="page-btn disabled" aria-label="Halaman berikutnya">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                                     </svg>
