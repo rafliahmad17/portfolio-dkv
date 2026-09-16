@@ -73,6 +73,18 @@
         ::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--oxblood-border); }
 
+        /* ── SKIP LINK (AKSESIBILITAS — FASE 8.3) ── */
+        .skip-link {
+            position: fixed; top: -100px; left: 16px; z-index: 100;
+            background: var(--color-ink); color: var(--color-paper);
+            padding: 10px 18px; border-radius: 8px;
+            font-family: var(--font-sans);
+            font-size: 0.8rem; font-weight: 600;
+            text-decoration: none;
+            transition: top 0.2s ease;
+        }
+        .skip-link:focus { top: 16px; }
+
         /* ================================================================
            SIDEBAR + TOPBAR + MAIN WRAPPER
            Frame dasar (.sidebar, .main-content, .topbar, dst) dipindahkan
@@ -646,6 +658,7 @@
 
 @section('content')
 
+<a href="#konten-utama" class="skip-link">Lewati ke konten utama</a>
 <div class="bg-grid"></div>
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
@@ -664,7 +677,7 @@
 {{-- ================================================================
      MAIN CONTENT
 ================================================================ --}}
-<div class="main-content">
+<div class="main-content" id="konten-utama">
 
     {{-- Topbar --}}
     @include('guru.partials.topbar', ['topbarTitle' => 'Dashboard Guru Pembimbing', 'topbarToggle' => 'bars'])
