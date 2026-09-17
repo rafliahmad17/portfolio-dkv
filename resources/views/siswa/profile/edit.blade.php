@@ -735,12 +735,15 @@
                                    placeholder="Masukkan password saat ini" autocomplete="current-password"
                                    class="input-field {{ $errors->has('current_password') ? 'is-error' : '' }}"
                                    style="padding-right:44px;">
-                            <button type="button" class="pw-toggle" id="pwToggleCurrent" tabindex="-1" aria-label="Tampilkan atau sembunyikan password saat ini">
-                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <button type="button" class="pw-toggle" id="pwToggleCurrent"
+                                    aria-label="Tampilkan password saat ini"
+                                    data-label-show="Tampilkan password saat ini"
+                                    data-label-hide="Sembunyikan password saat ini">
+                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
-                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;">
+                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
                                 </svg>
                             </button>
@@ -764,12 +767,15 @@
                                    placeholder="Minimal 8 karakter" autocomplete="new-password"
                                    class="input-field {{ $errors->has('password') ? 'is-error' : '' }}"
                                    style="padding-right:44px;">
-                            <button type="button" class="pw-toggle" id="pwTogglePassword" tabindex="-1" aria-label="Tampilkan atau sembunyikan password">
-                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <button type="button" class="pw-toggle" id="pwTogglePassword"
+                                    aria-label="Tampilkan password baru"
+                                    data-label-show="Tampilkan password baru"
+                                    data-label-hide="Sembunyikan password baru">
+                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
-                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;">
+                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
                                 </svg>
                             </button>
@@ -791,12 +797,15 @@
                             <input type="password" id="password_confirmation" name="password_confirmation"
                                    placeholder="Ulangi password baru" autocomplete="new-password"
                                    class="input-field" style="padding-right:44px;">
-                            <button type="button" class="pw-toggle" id="pwToggleConfirm" tabindex="-1" aria-label="Tampilkan atau sembunyikan password">
-                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                            <button type="button" class="pw-toggle" id="pwToggleConfirm"
+                                    aria-label="Tampilkan konfirmasi password baru"
+                                    data-label-show="Tampilkan konfirmasi password baru"
+                                    data-label-hide="Sembunyikan konfirmasi password baru">
+                                <svg class="eye-show" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                 </svg>
-                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;">
+                                <svg class="eye-hide" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" style="display:none;" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
                                 </svg>
                             </button>
@@ -966,18 +975,24 @@
     }
 </script>
 <script>
-    // Toggle tampil/sembunyi password — pola sama seperti auth/login.blade.php
+    // Toggle tampil/sembunyi password — pola sama seperti auth/login.blade.php.
+    // FASE 8.6: ditambahkan pembaruan aria-label dinamis (dibaca dari
+    // data-label-show / data-label-hide pada tiap tombol) supaya pembaca
+    // layar mengumumkan status terkini setiap kali toggle ditekan.
     function setupPasswordToggle(toggleId, inputId) {
         var toggle = document.getElementById(toggleId);
         var input  = document.getElementById(inputId);
         if (!toggle || !input) return;
-        var eyeShow = toggle.querySelector('.eye-show');
-        var eyeHide = toggle.querySelector('.eye-hide');
+        var eyeShow   = toggle.querySelector('.eye-show');
+        var eyeHide   = toggle.querySelector('.eye-hide');
+        var labelShow = toggle.dataset.labelShow || toggle.getAttribute('aria-label');
+        var labelHide = toggle.dataset.labelHide || labelShow;
         toggle.addEventListener('click', function () {
             var isHidden = input.type === 'password';
             input.type = isHidden ? 'text' : 'password';
             if (eyeShow) eyeShow.style.display = isHidden ? 'none' : 'block';
             if (eyeHide) eyeHide.style.display = isHidden ? 'block' : 'none';
+            toggle.setAttribute('aria-label', isHidden ? labelHide : labelShow);
         });
     }
     setupPasswordToggle('pwToggleCurrent', 'current_password');
