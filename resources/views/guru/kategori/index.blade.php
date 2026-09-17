@@ -819,7 +819,7 @@
 
             <div class="table-topbar">
                 <div>
-                    <div class="table-title">Daftar Kategori</div>
+                    <h2 class="table-title">Daftar Kategori</h2>
                     <div class="table-sub">
                         Menampilkan {{ $categories->firstItem() ?? 0 }}–{{ $categories->lastItem() ?? 0 }}
                         dari {{ $categories->total() }} kategori

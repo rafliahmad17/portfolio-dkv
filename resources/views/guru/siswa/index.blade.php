@@ -628,7 +628,7 @@
 
             <div class="table-topbar">
                 <div>
-                    <div class="table-title">{{ $showTrashed ? 'Arsip Akun Siswa' : 'Daftar Siswa' }}</div>
+                    <h2 class="table-title">{{ $showTrashed ? 'Arsip Akun Siswa' : 'Daftar Siswa' }}</h2>
                     <div class="table-sub">
                         Menampilkan {{ $students->firstItem() ?? 0 }}–{{ $students->lastItem() ?? 0 }}
                         dari {{ $students->total() }} akun

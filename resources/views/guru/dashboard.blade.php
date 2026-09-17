@@ -844,7 +844,7 @@
             {{-- Panel Top --}}
             <div class="table-topbar">
                 <div>
-                    <div class="table-title">Karya Portofolio Siswa</div>
+                    <h2 class="table-title">Karya Portofolio Siswa</h2>
                     <div class="table-sub">
                         Menampilkan {{ $portfolios->firstItem() ?? 0 }}–{{ $portfolios->lastItem() ?? 0 }}
                         dari {{ $portfolios->total() }} karya
