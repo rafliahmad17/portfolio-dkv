@@ -313,7 +313,7 @@
             transition: all 0.25s ease;
         }
 
-        .search-input::placeholder { color: var(--color-ink-faint); }
+        .search-input::placeholder { color: var(--color-ink-muted); }
 
         .search-input:focus {
             border-color: var(--color-accent-600);

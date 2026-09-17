@@ -241,7 +241,7 @@
             font-family: var(--font-sans); color: var(--color-ink); outline: none; caret-color: var(--color-accent-600);
             transition: all 0.25s ease;
         }
-        .form-input::placeholder { color: var(--color-ink-faint); }
+        .form-input::placeholder { color: var(--color-ink-muted); }
         .form-input:focus { border-color: var(--color-accent-600); background: var(--oxblood-soft); box-shadow: 0 0 0 3px rgba(122,46,46,0.15); }
         .form-input.has-error { border-color: var(--oxblood-ink); background: var(--oxblood-soft); }
         .form-input:focus-visible { outline: 2px solid var(--color-accent-600); outline-offset: 2px; }

@@ -335,7 +335,7 @@
         color: var(--color-ink); outline: none; caret-color: var(--color-accent-600);
         transition: all 0.25s ease;
     }
-    .form-input::placeholder { color: var(--color-ink-faint); }
+    .form-input::placeholder { color: var(--color-ink-muted); }
     .form-input:focus {
         border-color: var(--color-accent-600);
         background: rgba(220,38,38,0.05);
