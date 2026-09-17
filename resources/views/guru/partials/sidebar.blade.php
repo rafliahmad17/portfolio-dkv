@@ -13,12 +13,14 @@
      Parameter opsional:
      - $showSidebarClose (bool, default false)
          true  -> render tombol close drawer (.sidebar-close-btn) di
-                  dalam .sidebar-logo-row. HANYA dipakai oleh
-                  guru/profile.blade.php (mekanisme drawer miliknya
-                  sendiri: .hamburger-btn + .sidebar-close-btn +
-                  .sidebar-overlay). CSS untuk elemen ini TETAP di
-                  guru/profile.blade.php (tidak dipindah), karena hanya
-                  halaman itu yang mengaktifkan flag ini.
+                  dalam .sidebar-logo-row. Sejak Fase 5.5, flag ini
+                  diaktifkan oleh SEMUA halaman guru (dashboard,
+                  kategori/index, siswa/index, profile), masing-masing
+                  dengan mekanisme drawer sendiri: .hamburger-btn +
+                  .sidebar-close-btn + .sidebar-overlay. CSS untuk
+                  elemen ini tetap sebagai salinan page-specific di
+                  keempat Blade tersebut (tidak dipindah ke file
+                  bersama).
      - $sidebarAvatarPath (string|null, default null)
          Path kolom `photo` untuk foto avatar bulat di kartu sidebar.
          guru/dashboard, guru/kategori/index, guru/siswa/index mengirim
@@ -30,10 +32,10 @@
          di laporan Fase 5.4 (kemungkinan inconsistency/bug lama, bukan
          hasil ekstraksi ini).
 
-     id="guruSidebar" SELALU dipasang di <aside>. Dibutuhkan oleh JS
-     guru/profile.blade.php (document.getElementById('guruSidebar')).
-     Halaman lain memakai document.querySelector('.sidebar') sehingga
-     id ini netral/tidak mempengaruhi mereka.
+     id="guruSidebar" SELALU dipasang di <aside>. Sejak Fase 5.5, id
+     ini dibutuhkan oleh JS off-canvas drawer di SEMUA halaman guru
+     (document.getElementById('guruSidebar')), bukan hanya
+     guru/profile.blade.php seperti sebelumnya.
 ============================================================ --}}
 @php
     $showSidebarClose = $showSidebarClose ?? false;

@@ -3,29 +3,31 @@
      FASE 5.4 — Shared topbar Guru/Admin.
 
      Bagian yang identik di keempat halaman (wrapper .topbar dan
-     .topbar-pill/date) disatukan di sini. Tombol mobile-toggle SENGAJA
-     dibiarkan bercabang lewat $topbarToggle karena ketiga varian
-     markup & mekanisme JS-nya berbeda (lihat catatan besar di
-     resources/css/components/dashboard-shell.css bagian "mobile-toggle").
-     Penyatuan penuh mekanisme mobile toggle ditunda ke Fase 5.5.
+     .topbar-pill/date) disatukan di sini. Tombol mobile-toggle tetap
+     bercabang lewat $topbarToggle karena markupnya berbeda per varian.
+     Sejak penyatuan mekanisme mobile toggle di Fase 5.5, keempat
+     halaman guru (dashboard, siswa/index, kategori/index, profile)
+     sama-sama memanggil partial ini dengan topbarToggle="bars"; varian
+     'none' dan 'hamburger' di bawah tidak lagi dipakai halaman manapun
+     saat ini, tapi tetap dipertahankan di partial.
 
      Parameter:
      - $topbarTitle  (string, wajib)
          Teks halaman setelah "Portal DKV SMEKDA /".
      - $topbarToggle (string, opsional, default 'none')
-         'none'      -> guru/dashboard.blade.php
-                        (tidak ada toggle sama sekali; title langsung
-                        jadi child pertama .topbar)
-         'hamburger' -> guru/siswa/index.blade.php & guru/kategori/index.blade.php
-                        (SVG 3-garis, class="mobile-menu-btn",
-                        id="btnMobileMenu", dibungkus .topbar-left
-                        bersama title — markup & id ini byte-identik di
-                        kedua halaman asalnya)
-         'bars'      -> guru/profile.blade.php
+         'bars'      -> dipakai SEMUA halaman guru saat ini (dashboard,
+                        siswa/index, kategori/index, profile)
                         (animasi 3 batang, class="hamburger-btn",
                         id="sidebarToggle", aria-controls="guruSidebar";
                         title dibungkus <span class="topbar-crumb"> agar
                         bisa disembunyikan di mobile oleh CSS halaman itu)
+         'hamburger' -> tidak dipakai halaman manapun saat ini
+                        (SVG 3-garis, class="mobile-menu-btn",
+                        id="btnMobileMenu", dibungkus .topbar-left
+                        bersama title)
+         'none'      -> tidak dipakai halaman manapun saat ini
+                        (tidak ada toggle sama sekali; title langsung
+                        jadi child pertama .topbar)
 ============================================================ --}}
 @php($topbarToggle = $topbarToggle ?? 'none')
 
