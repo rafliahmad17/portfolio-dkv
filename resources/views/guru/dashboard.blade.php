@@ -705,7 +705,7 @@
             <div class="stat-card">
                 <div class="stat-bg-num">{{ $totalSiswa }}</div>
                 <div class="stat-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
@@ -721,7 +721,7 @@
             <div class="stat-card">
                 <div class="stat-bg-num">{{ $totalKarya }}</div>
                 <div class="stat-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
@@ -737,7 +737,7 @@
             <div class="stat-card">
                 <div class="stat-bg-num">{{ $karya7Hari }}</div>
                 <div class="stat-icon">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                               d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
@@ -758,7 +758,7 @@
 
                     {{-- Search --}}
                     <div class="search-wrap" style="flex:1; min-width:220px;">
-                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
@@ -789,14 +789,14 @@
             </option>
         @endforeach
     </select>
-    <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg class="select-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
     </svg>
 </div>
 
 {{-- Submit --}}
 <button type="submit" class="btn-filter">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
     </svg>
@@ -806,7 +806,7 @@
 {{-- Reset --}}
 @if(request('search') || request('category'))
     <a href="{{ route('guru.dashboard') }}" class="btn-reset">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
         Reset
@@ -818,7 +818,7 @@
                         <span style="font-size:0.68rem; color:var(--color-ink-faint); font-weight:600;">Filter aktif:</span>
                         @if(request('search'))
                             <span class="filter-pill">
-                                <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg width="10" height="10" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                                 "{{ request('search') }}"
@@ -860,7 +860,7 @@
             @if($portfolios->isEmpty())
                 <div class="table-empty">
                     <div class="table-empty-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                   d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
@@ -941,7 +941,7 @@
                                         <a href="{{ asset('storage/' . $portfolio->image_path) }}"
                                            target="_blank"
                                            class="btn-view">
-                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                       d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -953,7 +953,7 @@
                                             <a href="{{ asset('storage/' . $portfolio->file_pdf_path) }}"
                                                target="_blank"
                                                class="btn-pdf">
-                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                           d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                                 </svg>
@@ -980,13 +980,13 @@
                             {{-- Prev --}}
                             @if($portfolios->onFirstPage())
                                 <span class="page-btn disabled" aria-label="Halaman sebelumnya">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                 </span>
                             @else
                                 <a href="{{ $portfolios->previousPageUrl() }}" class="page-btn inactive" aria-label="Halaman sebelumnya">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/>
                                     </svg>
                                 </a>
@@ -1004,13 +1004,13 @@
                             {{-- Next --}}
                             @if($portfolios->hasMorePages())
                                 <a href="{{ $portfolios->nextPageUrl() }}" class="page-btn inactive" aria-label="Halaman berikutnya">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </a>
                             @else
                                 <span class="page-btn disabled" aria-label="Halaman berikutnya">
-                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
                                     </svg>
                                 </span>
