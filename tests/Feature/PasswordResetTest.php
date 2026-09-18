@@ -268,4 +268,44 @@ class PasswordResetTest extends TestCase
 
         $this->assertGuest();
     }
+
+    public function test_get_reset_password_page_shows_form_with_correct_token_and_email(): void
+    {
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.get.page.test@example.test',
+        ]);
+
+        // Token valid, dibuat lewat broker "users" yang sama seperti test lain
+        // -- bukan token karangan sendiri.
+        $token = Password::broker('users')->createToken($user);
+
+        // Route GET /reset-password/{token} (name: password.reset) hanya
+        // mendefinisikan {token} sebagai URI parameter (routes/web.php), jadi
+        // 'email' otomatis ditambahkan sebagai query string oleh route()
+        // -- sama seperti link yang dikirim lewat notifikasi reset password.
+        $response = $this->get(route('password.reset', [
+            'token' => $token,
+            'email' => $user->email,
+        ]));
+
+        $response->assertOk();
+        $response->assertViewIs('auth.reset-password');
+
+        // ResetPasswordController::create() mengirim $token (dari URI) dan
+        // $email (dari query string, lewat $request->query('email')) sebagai
+        // data view -- verifikasi langsung nilai yang diterima view.
+        $response->assertViewHas('token', $token);
+        $response->assertViewHas('email', $user->email);
+
+        // View auth/reset-password.blade.php menaruh token di hidden input
+        // <input type="hidden" name="token" value="{{ $token }}"> dan email
+        // di <input type="email" id="email" name="email"
+        // value="{{ old('email', $email) }}"> -- verifikasi kedua nilai
+        // benar-benar dirender ke HTML, bukan cuma ada di view data.
+        $response->assertSee('name="token"', false);
+        $response->assertSee($token);
+        $response->assertSee('id="email"', false);
+        $response->assertSee($user->email);
+    }
 }
