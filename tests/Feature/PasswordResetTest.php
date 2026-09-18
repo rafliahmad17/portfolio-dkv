@@ -127,4 +127,79 @@ class PasswordResetTest extends TestCase
         // Tidak ada sesi login yang terbentuk dari request yang ditolak ini.
         $this->assertGuest();
     }
+
+    public function test_reset_password_is_rejected_when_password_is_too_short(): void
+    {
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.short.password.test@example.test',
+        ]);
+
+        $oldPasswordHash = $user->password;
+
+        // Token valid, dibuat lewat broker "users" yang sama seperti test lain.
+        $token = Password::broker('users')->createToken($user);
+
+        $response = $this->post(route('password.update'), [
+            'token'                 => $token,
+            'email'                 => $user->email,
+            'password'              => 'short1', // 6 karakter, di bawah min:8
+            'password_confirmation' => 'short1',
+        ]);
+
+        // Rule 'min:8' pada field 'password' di ResetPasswordController::store()
+        // ditolak oleh $request->validate() sebelum Password::reset() dipanggil.
+        $response->assertSessionHasErrors('password');
+
+        $user->refresh();
+
+        // Password user tidak berubah karena request ditolak validasi.
+        $this->assertSame($oldPasswordHash, $user->password);
+
+        // Password lama tetap valid.
+        $this->assertTrue(Hash::check('password', $user->password));
+
+        // Password pendek yang dikirim tidak pernah menjadi password user.
+        $this->assertFalse(Hash::check('short1', $user->password));
+
+        $this->assertGuest();
+    }
+
+    public function test_reset_password_is_rejected_when_password_confirmation_does_not_match(): void
+    {
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.mismatch.confirmation.test@example.test',
+        ]);
+
+        $oldPasswordHash = $user->password;
+
+        // Token valid, dibuat lewat broker "users" yang sama seperti test lain.
+        $token = Password::broker('users')->createToken($user);
+
+        $response = $this->post(route('password.update'), [
+            'token'                 => $token,
+            'email'                 => $user->email,
+            'password'              => 'passwordBaru123',
+            'password_confirmation' => 'passwordBerbeda123',
+        ]);
+
+        // Rule 'confirmed' pada field 'password' di ResetPasswordController::store()
+        // menaruh error di field 'password' (bukan 'password_confirmation') ketika
+        // kedua nilai tidak cocok, dan ditolak sebelum Password::reset() dipanggil.
+        $response->assertSessionHasErrors('password');
+
+        $user->refresh();
+
+        // Password user tidak berubah karena request ditolak validasi.
+        $this->assertSame($oldPasswordHash, $user->password);
+
+        // Password lama tetap valid.
+        $this->assertTrue(Hash::check('password', $user->password));
+
+        // Password baru yang dikirim tidak pernah menjadi password user.
+        $this->assertFalse(Hash::check('passwordBaru123', $user->password));
+
+        $this->assertGuest();
+    }
 }
