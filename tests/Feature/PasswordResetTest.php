@@ -85,4 +85,46 @@ class PasswordResetTest extends TestCase
         $loginWithNewPassword->assertRedirect(route('siswa.dashboard'));
         $this->assertAuthenticatedAs($user);
     }
+
+    public function test_reset_password_is_rejected_when_token_is_invalid(): void
+    {
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.invalid.token.test@example.test',
+        ]);
+
+        // Password lama (hash) sebelum request, untuk dibandingkan nanti.
+        $oldPasswordHash = $user->password;
+
+        // Sengaja tidak memakai Password::broker('users')->createToken($user)
+        // -- token di bawah ini bukan token yang pernah dibuat/disimpan oleh
+        // broker, sehingga harus ditolak sebagai token invalid.
+        $response = $this->post(route('password.update'), [
+            'token'                 => 'token-tidak-valid-'.str()->random(20),
+            'email'                 => $user->email,
+            'password'              => 'passwordBaru123',
+            'password_confirmation' => 'passwordBaru123',
+        ]);
+
+        // ResetPasswordController::store() memetakan status selain
+        // Password::PASSWORD_RESET (di sini: Password::INVALID_TOKEN) ke
+        // field 'email' lewat ValidationException.
+        $response->assertSessionHasErrors([
+            'email' => __(Password::INVALID_TOKEN),
+        ]);
+
+        $user->refresh();
+
+        // Password user sama sekali tidak berubah.
+        $this->assertSame($oldPasswordHash, $user->password);
+
+        // Password lama tetap valid.
+        $this->assertTrue(Hash::check('password', $user->password));
+
+        // Password baru yang dikirim tidak pernah menjadi password user.
+        $this->assertFalse(Hash::check('passwordBaru123', $user->password));
+
+        // Tidak ada sesi login yang terbentuk dari request yang ditolak ini.
+        $this->assertGuest();
+    }
 }
