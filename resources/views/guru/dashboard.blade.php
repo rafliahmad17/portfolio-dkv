@@ -647,6 +647,69 @@
             font-size: 0.78rem; color: var(--color-ink-faint); line-height: 1.6;
         }
 
+        /* ================================================================
+           KARYA TERBARU — TABEL (DESKTOP) vs KARTU (MOBILE)
+           FASE 8.10.4: di layar ≤ 860px (breakpoint sama dengan sidebar
+           off-canvas di halaman ini), tabel "Karya Portofolio Siswa"
+           disembunyikan total dan diganti daftar kartu per-baris supaya
+           tidak pernah butuh scroll horizontal di mobile. Data & kolom
+           sama persis dengan tabel desktop — hanya representasi visualnya
+           yang berbeda. Pola CSS disalin dari .kategori-card di
+           guru/kategori/index.blade.php (class beda: .karya-card).
+        ================================================================ */
+        .table-desktop-wrap { overflow-x: auto; }
+
+        .karya-cards { display: none; flex-direction: column; gap: 12px; padding: 16px; }
+
+        .karya-card {
+            background: var(--color-paper-elevated);
+            border: 1px solid var(--hairline);
+            border-radius: 16px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        .karya-card::before {
+            content: '';
+            position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+            background: var(--color-accent-600); box-shadow: 0 0 8px rgba(122,46,46,0.45);
+            opacity: 0; transition: opacity 0.2s ease;
+        }
+        .karya-card:active::before,
+        .karya-card:focus-within::before { opacity: 1; }
+
+        .karya-card-top {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 10px; margin-bottom: 12px;
+        }
+        .karya-card-index {
+            font-size: 0.72rem; font-weight: 800; color: var(--color-accent-500);
+        }
+
+        .karya-card-siswa {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 14px; padding-bottom: 14px;
+            border-bottom: 1px solid var(--hairline);
+        }
+
+        .karya-card-body { margin-bottom: 14px; }
+
+        .karya-card-meta { margin-bottom: 14px; }
+
+        .karya-card-actions { display: flex; align-items: stretch; gap: 10px; }
+        .karya-card-actions .btn-view,
+        .karya-card-actions .btn-pdf {
+            flex: 1; width: 100%;
+            justify-content: center;
+            min-height: 44px;
+            font-size: 0.8rem;
+        }
+
+        @media (max-width: 860px) {
+            .table-desktop-wrap { display: none; }
+            .karya-cards { display: flex; }
+        }
+
         /* ── NAV DIVIDER ── */
         .nav-divider {
             height: 1px;
@@ -872,7 +935,7 @@
                     </div>
                 </div>
             @else
-                <div style="overflow-x:auto;">
+                <div class="table-desktop-wrap">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -966,6 +1029,80 @@
                             @endforeach
                         </tbody>
                     </table>
+                </div>
+
+                {{-- ── KARYA TERBARU: KARTU MOBILE (≤ 860px) ──
+                     Representasi data yang sama dengan tabel desktop di atas
+                     (sumber data & field identik, $portfolios & $index sama),
+                     hanya beda tampilan supaya tidak perlu scroll horizontal
+                     di layar kecil. --}}
+                <div class="karya-cards">
+                    @foreach($portfolios as $index => $portfolio)
+                    <div class="karya-card">
+                        <div class="karya-card-top">
+                            <span class="karya-card-index">#{{ $portfolios->firstItem() + $index }}</span>
+                            <div style="text-align:right;">
+                                <div class="cell-date">{{ $portfolio->created_at->format('d M Y') }}</div>
+                                <div class="cell-date-sub">{{ $portfolio->created_at->format('H:i') }} WIB</div>
+                            </div>
+                        </div>
+
+                        <div class="karya-card-siswa">
+                            <div class="cell-avatar">
+                                {{ strtoupper(substr($portfolio->user->name, 0, 1)) }}
+                            </div>
+                            <div>
+                                <div class="cell-name">{{ $portfolio->user->name }}</div>
+                                <div class="cell-nis">NIS: {{ $portfolio->user->nis_nip ?? '—' }}</div>
+                            </div>
+                        </div>
+
+                        <div class="karya-card-body">
+                            <div class="cell-title">{{ $portfolio->title }}</div>
+                            <div class="cell-category">
+                                {{ $portfolio->category?->name ?? 'Umum' }}
+                            </div>
+                        </div>
+
+                        <div class="karya-card-meta">
+                            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
+                                <span style="font-size:0.62rem; font-weight:700; color:var(--color-ink-muted); background:var(--surface-sunk); border:1px solid var(--hairline-strong); padding:2px 7px; border-radius:6px;">
+                                    IMG
+                                </span>
+                                @if($portfolio->file_pdf_path)
+                                    <span style="font-size:0.62rem; font-weight:700; color:var(--oxblood-ink); background:var(--oxblood-soft); border:1px solid var(--oxblood-border); padding:2px 7px; border-radius:6px;">
+                                        PDF
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="karya-card-actions">
+                            <a href="{{ asset('storage/' . $portfolio->image_path) }}"
+                               target="_blank"
+                               class="btn-view">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                Lihat
+                            </a>
+                            @if($portfolio->file_pdf_path)
+                                <a href="{{ asset('storage/' . $portfolio->file_pdf_path) }}"
+                                   target="_blank"
+                                   class="btn-pdf">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    PDF
+                                </a>
+                            @endif
+                        </div>
+                    </div>
+                    @endforeach
                 </div>
 
                 {{-- ── PAGINATION ── --}}

@@ -577,7 +577,7 @@
         @if(session('success'))
             <div class="flash-success" id="flashSuccess" role="status" aria-live="polite" aria-atomic="true">
                 <div class="flash-icon success">
-                    <svg width="18" height="18" fill="none" stroke="#166534" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg width="18" height="18" fill="none" stroke="#166534" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                     </svg>
                 </div>
@@ -586,7 +586,7 @@
                     <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('success') }}</div>
                 </div>
                 <button type="button" class="flash-close" onclick="document.getElementById('flashSuccess').remove()" aria-label="Tutup notifikasi">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -597,7 +597,7 @@
         @if(session('error'))
             <div class="flash-error" id="flashError" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="flash-icon error">
-                    <svg width="18" height="18" fill="none" stroke="var(--oxblood-ink)" stroke-width="2.5" viewBox="0 0 24 24">
+                    <svg width="18" height="18" fill="none" stroke="var(--oxblood-ink)" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </div>
@@ -606,7 +606,7 @@
                     <div style="font-size:0.72rem;color:var(--color-ink-muted);font-weight:500;">{{ session('error') }}</div>
                 </div>
                 <button type="button" class="flash-close" onclick="document.getElementById('flashError').remove()" aria-label="Tutup notifikasi">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
@@ -643,7 +643,7 @@
                             @endif
                         </div>
                         <div class="avatar-overlay">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -675,7 +675,7 @@
                 <div>
                     <div class="info-row">
                         <div class="info-row-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                             </svg>
@@ -688,7 +688,7 @@
 
                     <div class="info-row">
                         <div class="info-row-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                             </svg>
@@ -701,7 +701,7 @@
 
                     <div class="info-row">
                         <div class="info-row-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                       d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                             </svg>
@@ -717,7 +717,7 @@
 
                 <div style="display:flex;justify-content:center;">
                     <div class="member-badge">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
                         </svg>
@@ -737,7 +737,7 @@
                     <button type="button" class="tab-btn active" id="tab-biodata"
                             role="tab" aria-selected="true" aria-controls="panel-biodata"
                             onclick="switchTab('biodata')">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                         </svg>
@@ -746,7 +746,7 @@
                     <button type="button" class="tab-btn" id="tab-keamanan"
                             role="tab" aria-selected="false" aria-controls="panel-keamanan"
                             onclick="switchTab('keamanan')">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                         </svg>
@@ -772,7 +772,7 @@
 
                         {{-- Avatar info banner (shown after file select) --}}
                         <div id="avatarInfoBanner" class="avatar-info-banner" style="display:none;">
-                            <svg width="13" height="13" fill="none" stroke="#86efac" stroke-width="2.5" viewBox="0 0 24 24">
+                            <svg width="13" height="13" fill="none" stroke="#86efac" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
                             </svg>
                             <span id="avatarFileName">Foto baru dipilih — akan diunggah saat menyimpan.</span>
@@ -782,7 +782,7 @@
                         <div class="field-group">
                             <label class="field-label" for="name">Nama Lengkap</label>
                             <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                                 </svg>
@@ -799,7 +799,7 @@
                         <div class="field-group">
                             <label class="field-label" for="nis_nip">NIP (Nomor Induk Pegawai)</label>
                             <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/>
                                 </svg>
@@ -816,7 +816,7 @@
                         <div class="field-group">
                             <label class="field-label" for="email">Alamat Email</label>
                             <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
                                 </svg>
@@ -832,7 +832,7 @@
                         {{-- Actions --}}
                         <div class="form-actions">
                             <button type="submit" class="btn-red">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                 </svg>
                                 <span>Simpan Perubahan</span>
@@ -858,7 +858,7 @@
                         <div class="field-group">
                             <label class="field-label" for="currentPassword">Password Saat Ini</label>
                             <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
                                 </svg>
@@ -866,7 +866,7 @@
                                        class="form-input with-toggle" placeholder="••••••••••••"
                                        autocomplete="current-password">
                                 <button type="button" class="pw-toggle" onclick="togglePw('currentPassword','eyeIcon1')" aria-label="Tampilkan/sembunyikan password saat ini">
-                                    <svg id="eyeIcon1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg id="eyeIcon1" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
@@ -881,7 +881,7 @@
                         <div class="field-group">
                             <label class="field-label" for="newPassword">Password Baru</label>
                             <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
                                 </svg>
@@ -891,7 +891,7 @@
                                        autocomplete="new-password"
                                        oninput="checkStrength(this.value)">
                                 <button type="button" class="pw-toggle" onclick="togglePw('newPassword','eyeIcon2')" aria-label="Tampilkan/sembunyikan password baru">
-                                    <svg id="eyeIcon2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg id="eyeIcon2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
@@ -913,7 +913,7 @@
                         <div class="field-group">
                             <label class="field-label" for="confirmPassword">Konfirmasi Password Baru</label>
                             <div class="input-wrap">
-                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="input-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                 </svg>
@@ -922,7 +922,7 @@
                                        placeholder="Ulangi password baru"
                                        autocomplete="new-password">
                                 <button type="button" class="pw-toggle" onclick="togglePw('confirmPassword','eyeIcon3')" aria-label="Tampilkan/sembunyikan konfirmasi password">
-                                    <svg id="eyeIcon3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <svg id="eyeIcon3" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                                     </svg>
@@ -934,19 +934,19 @@
                         <div class="tips-box">
                             <div class="tips-box-title">Tips Password Kuat</div>
                             <div class="tip-item">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                 </svg>
                                 Minimal 8 karakter
                             </div>
                             <div class="tip-item">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                 </svg>
                                 Kombinasi huruf besar dan huruf kecil
                             </div>
                             <div class="tip-item">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
                                 </svg>
                                 Sertakan angka dan karakter spesial (!@#$)
@@ -956,7 +956,7 @@
                         {{-- Actions --}}
                         <div class="form-actions">
                             <button type="submit" class="btn-red">
-                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                 </svg>
