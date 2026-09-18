@@ -239,4 +239,33 @@ class PasswordResetTest extends TestCase
             }
         );
     }
+
+    public function test_forgot_password_is_rejected_for_unregistered_email(): void
+    {
+        Notification::fake();
+
+        // Email ini sengaja tidak pernah dibuat lewat factory, supaya
+        // Password::sendResetLink() tidak menemukan user manapun di
+        // provider "users" (config/auth.php).
+        $unregisteredEmail = 'tidak.terdaftar.test@example.test';
+
+        $response = $this->post(route('password.email'), [
+            'email' => $unregisteredEmail,
+        ]);
+
+        // Behavior aktual ForgotPasswordController::store(): saat
+        // Password::sendResetLink() tidak menemukan user, broker
+        // mengembalikan Password::INVALID_USER, dan controller
+        // memetakan status tersebut ke field 'email' lewat
+        // ValidationException (bukan redirect back() dengan status sukses).
+        $response->assertSessionHasErrors([
+            'email' => __(Password::INVALID_USER),
+        ]);
+
+        // Tidak ada notification reset password yang terkirim ke siapapun,
+        // karena tidak ada user yang cocok dengan email tersebut.
+        Notification::assertNothingSent();
+
+        $this->assertGuest();
+    }
 }
