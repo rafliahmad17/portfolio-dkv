@@ -3,8 +3,10 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Password;
 use Tests\TestCase;
 
@@ -201,5 +203,40 @@ class PasswordResetTest extends TestCase
         $this->assertFalse(Hash::check('passwordBaru123', $user->password));
 
         $this->assertGuest();
+    }
+
+    public function test_forgot_password_sends_reset_link_notification_for_registered_email(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'forgot.password.test@example.test',
+        ]);
+
+        // Set referer ke halaman forgot-password supaya redirect back() dari
+        // ForgotPasswordController::store() bisa diverifikasi tujuannya.
+        $response = $this->from(route('password.request'))->post(route('password.email'), [
+            'email' => $user->email,
+        ]);
+
+        // ForgotPasswordController::store(): status Password::RESET_LINK_SENT
+        // -> back()->with('status', __($status)), tanpa validation error.
+        $response->assertRedirect(route('password.request'));
+        $response->assertSessionHas('status', __(Password::RESET_LINK_SENT));
+        $response->assertSessionHasNoErrors();
+
+        // Password broker default (config/auth.php, broker "users") memanggil
+        // $user->sendPasswordResetNotification($token). App\Models\User tidak
+        // meng-override method tersebut, sehingga notifikasi yang benar-benar
+        // dikirim adalah Illuminate\Auth\Notifications\ResetPassword bawaan
+        // Laravel (lewat trait Illuminate\Auth\Passwords\CanResetPassword).
+        Notification::assertSentTo(
+            $user,
+            ResetPassword::class,
+            function (ResetPassword $notification) {
+                return ! empty($notification->token);
+            }
+        );
     }
 }
