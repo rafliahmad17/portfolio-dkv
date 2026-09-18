@@ -732,6 +732,13 @@
      SIDEBAR — shell bersama Student Portal (identik dengan
      siswa/dashboard.blade.php, siswa/achievement/index.blade.php, dkk.)
 ================================================================ --}}
+{{--
+    Sidebar ini hanya relevan untuk siswa yang sedang login (route privat
+    siswa.portfolio.print). View ini juga dipakai route publik
+    /u/{slug}/print tanpa login, sehingga dibungkus @auth agar tidak
+    diakses saat tidak ada sesi login.
+--}}
+@auth
 <aside class="sidebar" id="siswaSidebar" aria-label="Navigasi utama siswa">
 
     <div class="sidebar-logo">
@@ -809,6 +816,7 @@
         </form>
     </div>
 </aside>
+@endauth
 
 {{-- ================================================================
      MAIN CONTENT

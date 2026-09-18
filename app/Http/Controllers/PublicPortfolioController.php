@@ -11,9 +11,12 @@ class PublicPortfolioController extends Controller
 {
     public function show($slug)
     {
+        // Hanya portfolio dengan owner (User) yang masih ada & aktif
+        // (belum soft-deleted) yang boleh ditemukan di sini.
         $portfolio = Portfolio::with(['user', 'category'])
+            ->whereHas('user')
             ->where('slug', $slug)
-            ->firstOrFail(); 
+            ->firstOrFail();
 
         $relatedPortfolios = Portfolio::with('category')
             ->where('user_id', $portfolio->user_id)
