@@ -308,4 +308,233 @@ class PasswordResetTest extends TestCase
         $response->assertSee('id="email"', false);
         $response->assertSee($user->email);
     }
+
+    public function test_reset_token_cannot_be_reused_after_successful_reset(): void
+    {
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.reused.token.test@example.test',
+        ]);
+
+        $token = Password::broker('users')->createToken($user);
+
+        $firstResponse = $this->post(route('password.update'), [
+            'token'                 => $token,
+            'email'                 => $user->email,
+            'password'              => 'passwordPertama123',
+            'password_confirmation' => 'passwordPertama123',
+        ]);
+
+        $firstResponse->assertRedirect(route('login'));
+        $firstResponse->assertSessionHasNoErrors();
+
+        $user->refresh();
+        $passwordAfterFirstReset = $user->password;
+        $this->assertTrue(Hash::check('passwordPertama123', $passwordAfterFirstReset));
+
+        // DatabaseTokenRepository::delete() (dipanggil PasswordBroker::reset()
+        // setelah sukses) menghapus token dari database -- token yang sama
+        // tidak boleh bisa dipakai untuk reset kedua kalinya.
+        $secondResponse = $this->post(route('password.update'), [
+            'token'                 => $token,
+            'email'                 => $user->email,
+            'password'              => 'passwordKedua456',
+            'password_confirmation' => 'passwordKedua456',
+        ]);
+
+        $secondResponse->assertSessionHasErrors([
+            'email' => __(Password::INVALID_TOKEN),
+        ]);
+
+        $user->refresh();
+
+        // Password dari reset pertama tetap berlaku, tidak berubah oleh
+        // percobaan reset kedua yang ditolak.
+        $this->assertSame($passwordAfterFirstReset, $user->password);
+        $this->assertTrue(Hash::check('passwordPertama123', $user->password));
+        $this->assertFalse(Hash::check('passwordKedua456', $user->password));
+    }
+
+    public function test_authenticated_user_is_redirected_away_from_forgot_password_page(): void
+    {
+        $siswa = User::factory()->create(['role' => 'siswa']);
+
+        // Route GET /forgot-password ada di dalam Route::middleware('guest')
+        // (routes/web.php) -- user yang sudah login tidak boleh mengakses
+        // halaman ini. Middleware 'guest' bawaan Laravel tidak menemukan
+        // route bernama 'dashboard'/'home' di project ini, sehingga redirect
+        // default-nya jatuh ke '/'.
+        $response = $this->actingAs($siswa)->get(route('password.request'));
+
+        $response->assertRedirect('/');
+    }
+
+    public function test_authenticated_user_is_redirected_away_when_submitting_forgot_password_form(): void
+    {
+        Notification::fake();
+
+        $siswa = User::factory()->create(['role' => 'siswa']);
+
+        $response = $this->actingAs($siswa)->post(route('password.email'), [
+            'email' => $siswa->email,
+        ]);
+
+        $response->assertRedirect('/');
+
+        // Request diblokir middleware 'guest' sebelum mencapai
+        // ForgotPasswordController::store(), jadi tidak ada notifikasi yang
+        // terkirim sama sekali.
+        Notification::assertNothingSent();
+    }
+
+    public function test_authenticated_user_is_redirected_away_from_reset_password_page(): void
+    {
+        $siswa = User::factory()->create(['role' => 'siswa']);
+        $token = Password::broker('users')->createToken($siswa);
+
+        $response = $this->actingAs($siswa)->get(route('password.reset', [
+            'token' => $token,
+            'email' => $siswa->email,
+        ]));
+
+        $response->assertRedirect('/');
+    }
+
+    public function test_authenticated_user_is_redirected_away_when_submitting_reset_password_form(): void
+    {
+        $siswa = User::factory()->create(['role' => 'siswa']);
+        $token = Password::broker('users')->createToken($siswa);
+        $originalPasswordHash = $siswa->password;
+
+        $response = $this->actingAs($siswa)->post(route('password.update'), [
+            'token'                 => $token,
+            'email'                 => $siswa->email,
+            'password'              => 'passwordBaru123',
+            'password_confirmation' => 'passwordBaru123',
+        ]);
+
+        $response->assertRedirect('/');
+
+        $siswa->refresh();
+
+        // Request diblokir middleware 'guest' sebelum mencapai
+        // ResetPasswordController::store(), jadi password tidak pernah
+        // berubah.
+        $this->assertSame($originalPasswordHash, $siswa->password);
+    }
+
+    public function test_expired_reset_token_is_rejected(): void
+    {
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.expired.token.test@example.test',
+        ]);
+
+        $oldPasswordHash = $user->password;
+
+        $token = Password::broker('users')->createToken($user);
+
+        // config/auth.php: passwords.users.expire = 60 (menit). Majukan
+        // waktu memakai time travel bawaan Laravel (Carbon::setTestNow(),
+        // otomatis direset setelah test ini selesai) -- bukan sleep()
+        // ataupun bergantung pada waktu nyata.
+        $this->travel(61)->minutes();
+
+        $response = $this->post(route('password.update'), [
+            'token'                 => $token,
+            'email'                 => $user->email,
+            'password'              => 'passwordBaru123',
+            'password_confirmation' => 'passwordBaru123',
+        ]);
+
+        $response->assertSessionHasErrors([
+            'email' => __(Password::INVALID_TOKEN),
+        ]);
+
+        $user->refresh();
+
+        $this->assertSame($oldPasswordHash, $user->password);
+        $this->assertTrue(Hash::check('password', $user->password));
+        $this->assertFalse(Hash::check('passwordBaru123', $user->password));
+    }
+
+    public function test_forgot_password_request_is_throttled_when_reset_token_was_recently_created(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'reset.broker.throttle.test@example.test',
+        ]);
+
+        // Token pertama dibuat langsung lewat broker (meniru link reset yang
+        // baru saja dikirim). config/auth.php: passwords.users.throttle = 60
+        // (detik) -- permintaan berikutnya untuk email yang sama masih ada
+        // di dalam window tersebut tanpa perlu menunggu waktu nyata.
+        Password::broker('users')->createToken($user);
+
+        $response = $this->post(route('password.email'), [
+            'email' => $user->email,
+        ]);
+
+        $response->assertSessionHasErrors([
+            'email' => __(Password::RESET_THROTTLED),
+        ]);
+
+        Notification::assertNothingSent();
+    }
+
+    public function test_forgot_password_post_is_throttled_after_five_attempts_within_a_minute(): void
+    {
+        Notification::fake();
+
+        // Email sengaja tidak terdaftar supaya tidak menyentuh throttle
+        // broker (Password::INVALID_USER dikembalikan sebelum broker
+        // memeriksa recentlyCreatedToken()) -- test ini murni membuktikan
+        // throttle:5,1 pada route POST /forgot-password (routes/web.php).
+        $unregisteredEmail = 'reset.route.throttle.test@example.test';
+
+        for ($i = 1; $i <= 5; $i++) {
+            $response = $this->post(route('password.email'), [
+                'email' => $unregisteredEmail,
+            ]);
+
+            $response->assertStatus(302);
+        }
+
+        $response = $this->post(route('password.email'), [
+            'email' => $unregisteredEmail,
+        ]);
+
+        $response->assertStatus(429);
+
+        Notification::assertNothingSent();
+    }
+
+    public function test_reset_password_post_is_throttled_after_five_attempts_within_a_minute(): void
+    {
+        // Token & email sengaja tidak valid -- test ini murni membuktikan
+        // throttle:5,1 pada route POST /reset-password (routes/web.php),
+        // bukan behavior Password::reset() itu sendiri (sudah dicakup test
+        // lain di file ini).
+        for ($i = 1; $i <= 5; $i++) {
+            $response = $this->post(route('password.update'), [
+                'token'                 => 'token-tidak-valid',
+                'email'                 => 'tidak.terdaftar.throttle.test@example.test',
+                'password'              => 'passwordBaru123',
+                'password_confirmation' => 'passwordBaru123',
+            ]);
+
+            $response->assertStatus(302);
+        }
+
+        $response = $this->post(route('password.update'), [
+            'token'                 => 'token-tidak-valid',
+            'email'                 => 'tidak.terdaftar.throttle.test@example.test',
+            'password'              => 'passwordBaru123',
+            'password_confirmation' => 'passwordBaru123',
+        ]);
+
+        $response->assertStatus(429);
+    }
 }
