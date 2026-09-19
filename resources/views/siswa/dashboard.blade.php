@@ -1414,4 +1414,4 @@
         nums.forEach(function (el) { statObserver.observe(el); });
     })();
 </script>
-@endpushJSVO  
+@endpush
