@@ -25,16 +25,16 @@ Route::get('/', function () {
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])
-        ->middleware('throttle:5,1')
+        ->middleware('throttle:login')
         ->name('login.post');
 
     Route::get('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'create'])->name('password.request');
     Route::post('/forgot-password', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'store'])
-        ->middleware('throttle:5,1')
+        ->middleware('throttle:password-email')
         ->name('password.email');
     Route::get('/reset-password/{token}', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'create'])->name('password.reset');
     Route::post('/reset-password', [\App\Http\Controllers\Auth\ResetPasswordController::class, 'store'])
-        ->middleware('throttle:5,1')
+        ->middleware('throttle:password-reset')
         ->name('password.update');
 });
 

@@ -48,4 +48,44 @@ class LoginThrottleTest extends TestCase
 
         $response->assertStatus(429);
     }
+
+    /**
+     * TAHAP 1 poin 7: batas dihitung per kombinasi email + IP, bukan per IP.
+     * Di jaringan sekolah dengan satu IP publik, salah password berulang pada
+     * satu akun tidak boleh mengunci siswa lain yang login dengan benar.
+     */
+    public function test_throttled_account_does_not_block_other_accounts_from_the_same_ip(): void
+    {
+        $victimless = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'siswa.salah@example.test',
+        ]);
+        $other = User::factory()->create([
+            'role'  => 'siswa',
+            'email' => 'siswa.lain@example.test',
+        ]);
+
+        // Akun pertama dikunci: 5 percobaan gagal, percobaan ke-6 mendapat 429.
+        for ($i = 1; $i <= 5; $i++) {
+            $this->post('/login', [
+                'email'    => $victimless->email,
+                'password' => 'password-salah',
+            ])->assertStatus(302);
+        }
+
+        $this->post('/login', [
+            'email'    => $victimless->email,
+            'password' => 'password-salah',
+        ])->assertStatus(429);
+
+        // Akun lain dari IP yang sama tetap bisa login dengan password benar
+        // (password bawaan UserFactory: "password").
+        $response = $this->post('/login', [
+            'email'    => $other->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect(route('siswa.dashboard'));
+        $this->assertAuthenticatedAs($other);
+    }
 }

@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -56,7 +58,7 @@ class PasswordResetTest extends TestCase
 
         // Redirect ke login + status sukses di session (Password::PASSWORD_RESET).
         $response->assertRedirect(route('login'));
-        $response->assertSessionHas('status', __(Password::PASSWORD_RESET));
+        $response->assertSessionHas('status', ResetPasswordController::SUCCESS_STATUS);
         $response->assertSessionHasNoErrors();
 
         $user->refresh();
@@ -108,11 +110,11 @@ class PasswordResetTest extends TestCase
             'password_confirmation' => 'passwordBaru123',
         ]);
 
-        // ResetPasswordController::store() memetakan status selain
-        // Password::PASSWORD_RESET (di sini: Password::INVALID_TOKEN) ke
-        // field 'email' lewat ValidationException.
+        // ResetPasswordController::store() memetakan status gagal apa pun
+        // (di sini: Password::INVALID_TOKEN) ke satu pesan seragam pada field
+        // 'email' lewat ValidationException.
         $response->assertSessionHasErrors([
-            'email' => __(Password::INVALID_TOKEN),
+            'email' => ResetPasswordController::FAILED_MESSAGE,
         ]);
 
         $user->refresh();
@@ -223,7 +225,7 @@ class PasswordResetTest extends TestCase
         // ForgotPasswordController::store(): status Password::RESET_LINK_SENT
         // -> back()->with('status', __($status)), tanpa validation error.
         $response->assertRedirect(route('password.request'));
-        $response->assertSessionHas('status', __(Password::RESET_LINK_SENT));
+        $response->assertSessionHas('status', ForgotPasswordController::GENERIC_STATUS);
         $response->assertSessionHasNoErrors();
 
         // Password broker default (config/auth.php, broker "users") memanggil
@@ -253,14 +255,11 @@ class PasswordResetTest extends TestCase
             'email' => $unregisteredEmail,
         ]);
 
-        // Behavior aktual ForgotPasswordController::store(): saat
-        // Password::sendResetLink() tidak menemukan user, broker
-        // mengembalikan Password::INVALID_USER, dan controller
-        // memetakan status tersebut ke field 'email' lewat
-        // ValidationException (bukan redirect back() dengan status sukses).
-        $response->assertSessionHasErrors([
-            'email' => __(Password::INVALID_USER),
-        ]);
+        // Behavior aktual ForgotPasswordController::store(): email yang tidak
+        // terdaftar dijawab dengan pesan SAMA seperti email terdaftar, tanpa
+        // validation error, sehingga orang luar tidak bisa menebak akun yang ada.
+        $response->assertSessionHasNoErrors();
+        $response->assertSessionHas('status', ForgotPasswordController::GENERIC_STATUS);
 
         // Tidak ada notification reset password yang terkirim ke siapapun,
         // karena tidak ada user yang cocok dengan email tersebut.
@@ -343,7 +342,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $secondResponse->assertSessionHasErrors([
-            'email' => __(Password::INVALID_TOKEN),
+            'email' => ResetPasswordController::FAILED_MESSAGE,
         ]);
 
         $user->refresh();
@@ -448,7 +447,7 @@ class PasswordResetTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'email' => __(Password::INVALID_TOKEN),
+            'email' => ResetPasswordController::FAILED_MESSAGE,
         ]);
 
         $user->refresh();
@@ -477,9 +476,10 @@ class PasswordResetTest extends TestCase
             'email' => $user->email,
         ]);
 
-        $response->assertSessionHasErrors([
-            'email' => __(Password::RESET_THROTTLED),
-        ]);
+        // Broker menolak (RESET_THROTTLED) -> tidak ada email kedua, tetapi
+        // pengguna tetap melihat pesan seragam (tidak membocorkan status akun).
+        $response->assertSessionHasNoErrors();
+        $response->assertSessionHas('status', ForgotPasswordController::GENERIC_STATUS);
 
         Notification::assertNothingSent();
     }
