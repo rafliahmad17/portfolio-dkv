@@ -23,3 +23,10 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Alat bantu AI & artefak sementara -- bukan bagian aplikasi, jangan di-commit
+/.agents
+/.claude
+/skills-lock.json
+/*.zip
+/*.patch

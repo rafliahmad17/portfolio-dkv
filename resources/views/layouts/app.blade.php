@@ -9,7 +9,7 @@
     {{-- Meta tags khusus halaman child --}}
     @stack('meta')
 
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-sekolah.png') }}">
 
     {{-- Asset Tailwind CSS & JS via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
