@@ -34,13 +34,33 @@ class PublicPortfolioController extends Controller
             ->where('role', 'siswa')
             ->firstOrFail();
 
-        $portfolios = Portfolio::with('category')
-            ->where('user_id', $user->id)
-            ->latest()
-            ->get();
+        // Daftar karya dipaginasi (12 per halaman) agar profil siswa dengan banyak
+        // karya tidak memuat semuanya sekaligus. Angka ringkasan & tagline dihitung
+        // lewat query terpisah supaya mencerminkan SEMUA karya, bukan hanya halaman ini.
+        $worksOfUser = fn () => Portfolio::where('user_id', $user->id);
 
-        $totalKarya = $portfolios->count();
-        $totalKategori = $portfolios->pluck('category_id')->unique()->count();
+        $portfolios = $worksOfUser()
+            ->with('category')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate(12)
+            ->withQueryString()
+            ->fragment('karya');
+
+        $totalKarya = $worksOfUser()->count();
+        $totalKategori = $worksOfUser()->whereNotNull('category_id')->distinct()->count('category_id');
+
+        // Kategori terbanyak -> dipakai untuk tagline "Spesialis ..." di profil.
+        $kategoriDominan = $worksOfUser()
+            ->with('category')
+            ->whereNotNull('category_id')
+            ->selectRaw('category_id, COUNT(*) as total')
+            ->groupBy('category_id')
+            ->orderByDesc('total')
+            ->orderBy('category_id')
+            ->first()
+            ?->category
+            ?->name;
 
         // 2. Penambahan query achievements sebelum return view
         $achievements = Achievement::where('user_id', $user->id)
@@ -48,7 +68,7 @@ class PublicPortfolioController extends Controller
             ->get();
 
         // 3. Penambahan 'achievements' ke dalam compact
-        return view('public.portfolio.profile', compact('user', 'portfolios', 'totalKarya', 'totalKategori', 'achievements'));
+        return view('public.portfolio.profile', compact('user', 'portfolios', 'totalKarya', 'totalKategori', 'kategoriDominan', 'achievements'));
     }
 
     // Tampilkan PDF ringkas (1-2 halaman) milik siswa secara publik lewat slug,

@@ -594,13 +594,7 @@
      * setiap profil terasa personal sesuai karya yang sudah diunggah.
      */
     $tagline = 'Siswa Desain Komunikasi Visual';
-    $kategoriDominan = $portfolios
-        ->pluck('category.name')
-        ->filter()
-        ->countBy()
-        ->sortDesc()
-        ->keys()
-        ->first();
+    // $kategoriDominan dihitung di controller dari SEMUA karya (bukan hanya halaman ini).
     if ($kategoriDominan) {
         $tagline = 'Spesialis ' . $kategoriDominan;
     }
@@ -729,7 +723,7 @@
     <section id="karya" class="section-block">
         <h2 class="karya-heading reveal">Semua Karya</h2>
 
-        @if($portfolios->count() > 0)
+        @if($totalKarya > 0)
         <div class="works-grid">
             @foreach($portfolios as $portfolio)
             <a href="{{ route('portfolio.public', $portfolio->slug) }}" class="work-card reveal" style="--i: {{ $loop->index }}">
@@ -753,6 +747,8 @@
             </a>
             @endforeach
         </div>
+
+        @include('partials.pagination', ['paginator' => $portfolios])
         @else
         <div class="empty-state reveal">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 15l-5-5-9 9"/></svg>

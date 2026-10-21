@@ -24,33 +24,58 @@ class DashboardController extends Controller
             $user->save();
         }
 
-        $portfolios = Portfolio::with('category')
+        // Karya terbaru dipajang besar sebagai hero (selalu karya terbaru milik
+        // siswa, di halaman berapa pun). Sisanya masuk grid yang dipaginasi
+        // 12 per halaman, sehingga dashboard tidak memuat seluruh karya sekaligus.
+        // Urutan memakai created_at lalu id agar stabil saat dua karya dibuat
+        // pada detik yang sama (tanpa ini karya bisa tampil dobel/hilang antar halaman).
+        $ownWorks = fn () => Portfolio::with('category')
             ->where('user_id', Auth::id())
-            ->latest()
-            ->get();
+            ->orderByDesc('created_at')
+            ->orderByDesc('id');
 
-        $totalKarya = $portfolios->count();
+        $totalKarya = Portfolio::where('user_id', Auth::id())->count();
 
-        $categoryPoster = Category::where('slug', 'poster-banner')->first();
-        $categoryUIUX   = Category::where('slug', 'ui-ux-design')->first();
+        $featured = $ownWorks()->first();
 
-        $totalPoster = $categoryPoster
-            ? Portfolio::where('user_id', Auth::id())
-                       ->where('category_id', $categoryPoster->id)
-                       ->count()
-            : 0;
+        $portfolios = $ownWorks()
+            ->when($featured, fn ($q) => $q->where('id', '!=', $featured->id))
+            ->paginate(12)
+            ->withQueryString();
 
-        $totalUIUX = $categoryUIUX
-            ? Portfolio::where('user_id', Auth::id())
-                       ->where('category_id', $categoryUIUX->id)
-                       ->count()
-            : 0;
+        // Statistik per kategori dihitung dari category_id karya siswa ini, BUKAN
+        // dari slug kategori yang ditulis tetap di kode. Slug berubah setiap kali
+        // guru mengganti nama kategori (CategoryController::update), sehingga
+        // pencarian berdasarkan slug tetap membuat hitungan menjadi 0.
+        // Dua kategori yang paling banyak dipakai siswa ditampilkan dengan nama
+        // yang tersimpan saat ini. Dihitung lewat GROUP BY di database (bukan
+        // dari koleksi yang dimuat penuh) supaya tetap benar setelah paginasi.
+        // Hasil selalu berisi 2 slot (slot kosong total 0).
+        $kategoriTeratas = Portfolio::with('category')
+            ->where('user_id', Auth::id())
+            ->whereNotNull('category_id')
+            ->selectRaw('category_id, COUNT(*) as total')
+            ->groupBy('category_id')
+            ->orderByDesc('total')
+            ->orderBy('category_id')
+            ->limit(2)
+            ->get()
+            ->map(fn ($row) => [
+                'name'  => $row->category?->name ?? 'Tanpa Kategori',
+                'total' => (int) $row->total,
+            ])
+            ->values()
+            ->all();
+
+        while (count($kategoriTeratas) < 2) {
+            $kategoriTeratas[] = ['name' => null, 'total' => 0];
+        }
 
         return view('siswa.dashboard', compact(
+            'featured',
             'portfolios',
             'totalKarya',
-            'totalPoster',
-            'totalUIUX'
+            'kategoriTeratas'
         ));
     }
 

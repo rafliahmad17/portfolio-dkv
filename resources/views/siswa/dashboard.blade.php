@@ -958,9 +958,9 @@
                     <span>Arsip Kreator &middot; NIS {{ auth()->user()->nis_nip ?? '—' }}</span>
                     <span class="sep">&middot;</span>
                     <span>Status Aktif</span>
-                    @if($portfolios->isNotEmpty())
+                    @if($featured)
                         <span class="sep">&middot;</span>
-                        <a href="{{ route('portfolio.public', $portfolios->first()->slug) }}" target="_blank" rel="noopener noreferrer">Lihat Etalase Publik &#8599;</a>
+                        <a href="{{ route('portfolio.public', $featured->slug) }}" target="_blank" rel="noopener noreferrer">Lihat Etalase Publik &#8599;</a>
                     @endif
                 </div>
                 <h1 class="studio-headline">
@@ -981,37 +981,37 @@
         </div>
 
         {{-- ── HERO SPOTLIGHT — karya terbaru dipajang besar ── --}}
-        @if($portfolios->isNotEmpty())
+        @if($featured)
         <section class="hero-spotlight" aria-labelledby="hero-heading">
             <div class="hero-grid">
                 <div class="hero-frame">
-                    <a href="{{ route('portfolio.public', $portfolios->first()->slug) }}" target="_blank" rel="noopener noreferrer" class="hero-frame-inner" data-glow data-cursor-target>
+                    <a href="{{ route('portfolio.public', $featured->slug) }}" target="_blank" rel="noopener noreferrer" class="hero-frame-inner" data-glow data-cursor-target>
                         <img
-                            src="{{ asset('storage/' . $portfolios->first()->image_path) }}"
-                            alt="{{ $portfolios->first()->title }}"
+                            src="{{ asset('storage/' . $featured->image_path) }}"
+                            alt="{{ $featured->title }}"
                             class="hero-image"
                             loading="lazy"
                             decoding="async"
                             onerror="this.onerror=null; this.closest('.hero-frame-inner').classList.add('thumb-broken');"
                         >
-                        @if($portfolios->first()->file_pdf_path)
+                        @if($featured->file_pdf_path)
                             <div class="pdf-pill">PDF</div>
                         @endif
                     </a>
                 </div>
                 <div class="hero-content">
                     <div class="hero-eyebrow">Karya Terbaru &middot; No. 001</div>
-                    <div class="hero-category">{{ $portfolios->first()->category?->name ?? 'Umum' }}</div>
-                    <h2 class="hero-title" id="hero-heading">{{ $portfolios->first()->title }}</h2>
-                    <p class="hero-desc">{{ $portfolios->first()->description }}</p>
+                    <div class="hero-category">{{ $featured->category?->name ?? 'Umum' }}</div>
+                    <h2 class="hero-title" id="hero-heading">{{ $featured->title }}</h2>
+                    <p class="hero-desc">{{ $featured->description }}</p>
                     <div class="hero-meta">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        {{ $portfolios->first()->created_at->diffForHumans() }}
+                        {{ $featured->created_at->diffForHumans() }}
                     </div>
                     <div class="hero-actions">
-                        <a href="{{ route('portfolio.public', $portfolios->first()->slug) }}" target="_blank" rel="noopener noreferrer" class="btn-primary on-dark">
+                        <a href="{{ route('portfolio.public', $featured->slug) }}" target="_blank" rel="noopener noreferrer" class="btn-primary on-dark">
                             <span>Lihat Karya</span>
                             <span class="btn-icon-chip">
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -1019,7 +1019,7 @@
                                 </svg>
                             </span>
                         </a>
-                        <a href="{{ route('siswa.portfolio.edit', $portfolios->first()) }}" class="btn-ghost on-dark">
+                        <a href="{{ route('siswa.portfolio.edit', $featured) }}" class="btn-ghost on-dark">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                             </svg>
@@ -1042,21 +1042,20 @@
                 </div>
             </div>
 
+            {{-- Dua kartu kategori mengikuti kategori yang paling banyak dipakai siswa
+                 (dihitung lewat category_id di DashboardController), sehingga nama
+                 kartu ikut berubah jika guru mengganti nama kategori. --}}
+            @foreach($kategoriTeratas as $kategori)
             <div class="stat-block">
-                <div class="stat-label"><span class="idx">02</span>Karya Poster</div>
-                <div class="stat-number" data-count="{{ $totalPoster }}">0</div>
+                <div class="stat-label">
+                    <span class="idx">{{ str_pad($loop->iteration + 1, 2, '0', STR_PAD_LEFT) }}</span>{{ $kategori['name'] ? 'Karya ' . $kategori['name'] : 'Kategori Lainnya' }}
+                </div>
+                <div class="stat-number" data-count="{{ $kategori['total'] }}">0</div>
                 <div class="stat-bar-wrap">
-                    <div class="stat-bar" style="width:{{ $totalKarya > 0 ? min(100, ($totalPoster / $totalKarya) * 100) : 0 }}%;"></div>
+                    <div class="stat-bar" style="width:{{ $totalKarya > 0 ? min(100, ($kategori['total'] / $totalKarya) * 100) : 0 }}%;"></div>
                 </div>
             </div>
-
-            <div class="stat-block">
-                <div class="stat-label"><span class="idx">03</span>Karya UI/UX</div>
-                <div class="stat-number" data-count="{{ $totalUIUX }}">0</div>
-                <div class="stat-bar-wrap">
-                    <div class="stat-bar" style="width:{{ $totalKarya > 0 ? min(100, ($totalUIUX / $totalKarya) * 100) : 0 }}%;"></div>
-                </div>
-            </div>
+            @endforeach
 
         </section>
 
@@ -1067,7 +1066,7 @@
                 <div>
                     <h2 class="section-title" id="portfolio-heading">Arsip Karya Lengkap</h2>
                     <div class="section-sub">
-                        {{ $portfolios->count() }} karya tersimpan &middot; karya terbaru tampil di atas
+                        {{ $totalKarya }} karya tersimpan &middot; karya terbaru tampil di atas
                     </div>
                 </div>
                 <div style="display:flex; align-items:center; gap:10px;">
@@ -1089,7 +1088,7 @@
                 </div>
             </div>
 
-            @if($portfolios->isEmpty())
+            @if(! $featured)
 
                 {{-- Empty State --}}
                 <div class="empty-wrap">
@@ -1117,7 +1116,7 @@
 
                 <div class="portfolio-grid">
 
-                    @foreach($portfolios->skip(1) as $portfolio)
+                    @foreach($portfolios as $portfolio)
                     <div class="portfolio-card" data-reveal data-glow>
                         <a href="{{ route('portfolio.public', $portfolio->slug) }}" target="_blank" rel="noopener noreferrer" class="thumb-wrapper" data-cursor-target>
                             <img
@@ -1197,6 +1196,8 @@
                     </a>
 
                 </div>
+
+                @include('partials.pagination', ['paginator' => $portfolios])
 
             @endif
 
