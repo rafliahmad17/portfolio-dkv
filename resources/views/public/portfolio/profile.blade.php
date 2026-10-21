@@ -611,7 +611,7 @@
      * ataupun "+62".
      */
     $waNumber = null;
-    if ($user->contact) {
+    if ($user->show_contact && $user->contact) {
         $waDigits = preg_replace('/\D/', '', $user->contact);
         if (str_starts_with($waDigits, '0')) {
             $waDigits = '62' . substr($waDigits, 1);
@@ -676,17 +676,12 @@
             @endif
 
             <div class="info-grid">
-                @if($user->nis_nip)
-                <div>
-                    <div class="info-item-label">NIS / NIP</div>
-                    <div class="info-item-value">{{ $user->nis_nip }}</div>
-                </div>
-                @endif
+                {{-- NIS/NIP sengaja TIDAK ditampilkan di halaman publik (data pribadi siswa). --}}
                 <div>
                     <div class="info-item-label">Institusi</div>
                     <div class="info-item-value">SMK Negeri 2 Padang Panjang</div>
                 </div>
-                @if($user->contact)
+                @if($user->show_contact && $user->contact)
                 <div>
                     <div class="info-item-label">Kontak (WhatsApp)</div>
                     <div class="info-item-value">{{ $user->contact }}</div>
@@ -864,7 +859,7 @@
     <p class="footer-cta-sub">Hubungi langsung atau unduh portofolio lengkap dalam format PDF.</p>
 
     <div class="footer-contact-row">
-        @if($user->contact)
+        @if($user->show_contact && $user->contact)
         <a href="https://wa.me/{{ $waNumber }}" target="_blank" rel="noopener" class="footer-pill">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             {{ $user->contact }}

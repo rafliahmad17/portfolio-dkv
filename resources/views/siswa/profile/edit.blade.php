@@ -579,7 +579,7 @@
                                    value="{{ old('contact', $user->contact) }}"
                                    class="input-field {{ $errors->has('contact') ? 'is-error' : '' }}">
                         </div>
-                        <div class="field-hint">Opsional — ditampilkan sebagai tautan WhatsApp di halaman portofolio publik.</div>
+                        <div class="field-hint">Opsional — hanya ditampilkan sebagai tautan WhatsApp di halaman publik jika Anda mencentang "Tampilkan kontak" di bawah.</div>
                         @error('contact')
                             <div class="field-error">
                                 <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
@@ -607,6 +607,21 @@
                                 <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
                                 {{ $message }}
                             </div>
+                        @enderror
+                    </div>
+
+                    <div class="field-wrap">
+                        <label for="show_contact" style="display:flex; align-items:flex-start; gap:10px; cursor:pointer;">
+                            <input type="checkbox" id="show_contact" name="show_contact" value="1"
+                                   style="margin-top:3px;"
+                                   {{ old('show_contact', $user->show_contact) ? 'checked' : '' }}>
+                            <span>
+                                <span class="field-label" style="display:block; margin-bottom:2px;">Tampilkan kontak di halaman publik</span>
+                                <span class="field-hint" style="display:block; margin-top:0;">Jika dicentang, WhatsApp dan Instagram Anda dapat dilihat siapa saja yang membuka portofolio publik dan PDF Anda. Jika tidak dicentang (pilihan awal), keduanya disembunyikan. NIS dan email tidak pernah ditampilkan di halaman publik.</span>
+                            </span>
+                        </label>
+                        @error('show_contact')
+                            <div class="field-error">{{ $message }}</div>
                         @enderror
                     </div>
 

@@ -71,6 +71,7 @@ class ProfileController extends Controller
                 'nullable',
                 'string',
                 'max:50',
+                Rule::unique('users', 'nis_nip')->ignore($user->id),
             ],
 
             'bio' => [
@@ -93,6 +94,15 @@ class ProfileController extends Controller
                 'nullable',
                 'string',
                 'max:255',
+            ],
+
+            /*
+             * Persetujuan menampilkan kontak (WhatsApp & Instagram) di halaman
+             * publik /u/{slug} dan PDF publik. Default: tidak ditampilkan.
+             */
+            'show_contact' => [
+                'nullable',
+                'boolean',
             ],
 
             'photo' => [
@@ -171,32 +181,62 @@ class ProfileController extends Controller
                 'min:0',
                 'max:100',
             ],
+        ], [
+            'nis_nip.unique' => 'NIS/NIP ini sudah digunakan oleh akun lain.',
         ]);
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI ISI FILE FOTO (sebelum ada perubahan apa pun)
+        |--------------------------------------------------------------------------
+        |
+        | Dilakukan sebelum file lama disentuh, sehingga unggahan yang isinya
+        | tidak valid tidak pernah menghapus foto lama.
+        */
+
+        if ($request->hasFile('photo')) {
+            $this->validateFileContent($request->file('photo'), ['image/jpeg', 'image/png'], 'photo');
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VERIFIKASI PASSWORD SAAT INI (sebelum ada file yang disimpan)
+        |--------------------------------------------------------------------------
+        |
+        | Diverifikasi lebih awal supaya penolakan di sini tidak meninggalkan
+        | file foto baru yang yatim di storage.
+        */
+
+        if (
+            !empty($validated['password'])
+            && !Hash::check($validated['current_password'], $user->password)
+        ) {
+            return back()
+                ->withErrors([
+                    'current_password' =>
+                        'Password saat ini yang Anda masukkan salah.',
+                ])
+                ->onlyInput('current_password');
+        }
 
         /*
         |--------------------------------------------------------------------------
         | FOTO PROFIL
         |--------------------------------------------------------------------------
+        |
+        | Urutan aman: simpan file baru dulu. File lama baru dihapus setelah
+        | data user berhasil disimpan ke database.
         */
 
-        $photoPath = $user->photo;
+        $oldPhotoPath = $user->photo;
+        $photoPath = $oldPhotoPath;
+        $newPhotoPath = null;
 
         if ($request->hasFile('photo')) {
-
-            /*
-             * Hapus foto lama jika ada.
-             */
-            if ($photoPath) {
-                Storage::disk('public')->delete($photoPath);
-            }
-
-            /*
-             * Simpan foto baru dengan validasi konten server-side.
-             */
-            $this->validateFileContent($request->file('photo'), ['image/jpeg', 'image/png'], 'photo');
-            $photoPath = $request
+            $newPhotoPath = $request
                 ->file('photo')
                 ->store('profiles/photos', 'public');
+            $photoPath = $newPhotoPath;
         }
 
         /*
@@ -325,6 +365,11 @@ class ProfileController extends Controller
          */
         $user->instagram = $validated['instagram'] ?? null;
 
+        /*
+         * Persetujuan tampil di halaman publik (default false).
+         */
+        $user->show_contact = $request->boolean('show_contact');
+
         $user->photo = $photoPath;
 
         /*
@@ -342,28 +387,9 @@ class ProfileController extends Controller
         if (!empty($validated['password'])) {
 
             /*
-             * Verifikasi password saat ini sebelum mengizinkan
-             * penggantian password -- mencegah pengambilalihan akun
-             * lewat form profil jika sesi/perangkat siswa diakses
-             * pihak lain tanpa mengetahui password lama.
+             * current_password sudah diverifikasi di atas (sebelum file
+             * apa pun disimpan), jadi di sini cukup menyimpan hash baru.
              */
-            if (
-                !Hash::check(
-                    $validated['current_password'],
-                    $user->password
-                )
-            ) {
-
-                return back()
-                    ->withErrors([
-                        'current_password' =>
-                            'Password saat ini yang Anda masukkan salah.',
-                    ])
-                    ->onlyInput(
-                        'current_password'
-                    );
-            }
-
             $user->password = Hash::make(
                 $validated['password']
             );
@@ -375,7 +401,23 @@ class ProfileController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $user->save();
+        try {
+            $user->save();
+        } catch (\Throwable $e) {
+            // Simpan gagal: buang file baru agar tidak yatim, foto lama tetap utuh.
+            if ($newPhotoPath) {
+                Storage::disk('public')->delete($newPhotoPath);
+            }
+
+            throw $e;
+        }
+
+        /*
+         * Database sudah menunjuk ke foto baru -> baru aman menghapus foto lama.
+         */
+        if ($newPhotoPath && $oldPhotoPath && $oldPhotoPath !== $newPhotoPath) {
+            Storage::disk('public')->delete($oldPhotoPath);
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -426,6 +468,10 @@ class ProfileController extends Controller
                 'nullable',
                 'string',
                 'max:50',
+                Rule::unique(
+                    'users',
+                    'nis_nip'
+                )->ignore($user->id),
             ],
 
             'email' => [
@@ -444,31 +490,36 @@ class ProfileController extends Controller
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
             ],
+        ], [
+            'nis_nip.unique' => 'NIS/NIP ini sudah digunakan oleh akun lain.',
+            'email.unique'   => 'Email ini sudah digunakan oleh akun lain.',
         ]);
 
         /*
         |--------------------------------------------------------------------------
         | FOTO GURU
         |--------------------------------------------------------------------------
+        |
+        | Urutan aman: validasi isi file -> simpan file baru -> simpan DB ->
+        | baru hapus file lama.
         */
 
-        $photoPath = $user->photo;
+        if ($request->hasFile('avatar')) {
+            $this->validateFileContent($request->file('avatar'), ['image/jpeg', 'image/png', 'image/webp'], 'avatar');
+        }
+
+        $oldPhotoPath = $user->photo;
+        $photoPath = $oldPhotoPath;
+        $newPhotoPath = null;
 
         if ($request->hasFile('avatar')) {
-
-            if ($photoPath) {
-                Storage::disk('public')->delete(
-                    $photoPath
-                );
-            }
-
-            $this->validateFileContent($request->file('avatar'), ['image/jpeg', 'image/png', 'image/webp'], 'avatar');
-            $photoPath = $request
+            $newPhotoPath = $request
                 ->file('avatar')
                 ->store(
                     'profiles/photos',
                     'public'
                 );
+            $photoPath = $newPhotoPath;
         }
 
         /*
@@ -485,7 +536,19 @@ class ProfileController extends Controller
 
         $user->photo = $photoPath;
 
-        $user->save();
+        try {
+            $user->save();
+        } catch (\Throwable $e) {
+            if ($newPhotoPath) {
+                Storage::disk('public')->delete($newPhotoPath);
+            }
+
+            throw $e;
+        }
+
+        if ($newPhotoPath && $oldPhotoPath && $oldPhotoPath !== $newPhotoPath) {
+            Storage::disk('public')->delete($oldPhotoPath);
+        }
 
         return redirect()
             ->route('guru.profile')

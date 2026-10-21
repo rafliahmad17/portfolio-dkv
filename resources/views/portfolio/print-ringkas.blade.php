@@ -934,9 +934,17 @@
     |--------------------------------------------------------------------------
     */
 
+    /*
+     * PRIVASI: view ini juga dipakai halaman publik /u/{slug}/print (tanpa
+     * login), jadi aturan yang sama berlaku untuk semua pemirsa agar PDF yang
+     * dibagikan konsisten dengan pratinjau pemilik:
+     * - Email & NIS/NIP TIDAK pernah dicetak.
+     * - WhatsApp & Instagram hanya dicetak jika siswa mengaktifkan
+     *   "Tampilkan kontak di halaman publik" (users.show_contact).
+     */
     $kontakItems = collect([
 
-        !empty($user->contact)
+        ($user->show_contact && !empty($user->contact))
             ? [
                 'label' => 'WhatsApp',
                 'value' => $user->contact,
@@ -944,15 +952,7 @@
             ]
             : null,
 
-        !empty($user->email)
-            ? [
-                'label' => 'Email',
-                'value' => $user->email,
-                'icon' => 'mail'
-            ]
-            : null,
-
-        !empty($user->instagram)
+        ($user->show_contact && !empty($user->instagram))
             ? [
                 'label' => 'Instagram',
                 'value' => $formatInstagram($user->instagram),
@@ -1669,9 +1669,7 @@
 
                 SMK Negeri 2 Padang Panjang
 
-                @if($user->nis_nip)
-                    · NIS/NIP {{ $user->nis_nip }}
-                @endif
+                {{-- NIS/NIP sengaja tidak dicetak (data pribadi siswa). --}}
 
             </div>
 

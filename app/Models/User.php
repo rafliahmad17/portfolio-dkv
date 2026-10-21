@@ -36,6 +36,11 @@ class User extends Authenticatable
         'instagram',
 
         /*
+         * Persetujuan menampilkan kontak di halaman publik (default false).
+         */
+        'show_contact',
+
+        /*
          * Skills disimpan sebagai JSON/array.
          */
         'skills',
@@ -81,6 +86,8 @@ class User extends Authenticatable
              * $user->skills
              */
             'skills' => 'array',
+
+            'show_contact' => 'boolean',
         ];
     }
 

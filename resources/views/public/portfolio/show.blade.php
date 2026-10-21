@@ -702,7 +702,8 @@
                         </svg>
                     </div>
                     <div class="pw-byline-role">
-                        Siswa DKV &middot; SMK Negeri 2 Padang Panjang{{ $portfolio->user->nis_nip ? ' · NIS ' . $portfolio->user->nis_nip : '' }}
+                        {{-- NIS sengaja TIDAK ditampilkan di halaman publik (data pribadi siswa). --}}
+                        Siswa DKV &middot; SMK Negeri 2 Padang Panjang
                     </div>
                 </div>
             </a>

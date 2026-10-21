@@ -59,9 +59,14 @@ class DashboardController extends Controller
         $categories = Category::all();
 
         $totalSiswa = User::where('role', 'siswa')->count();
-        $totalKarya = Portfolio::count();
+        // Hanya karya milik siswa yang masih aktif (belum diarsipkan/soft-deleted).
+        // Karya milik siswa yang diarsipkan tidak ikut soft-delete, sehingga relasi
+        // `user` bernilai null dan view akan error 500 jika tidak disaring di sini.
+        // Pola yang sama dipakai PublicPortfolioController::show().
+        $totalKarya = Portfolio::whereHas('user')->count();
 
         $portfolios = Portfolio::with(['user', 'category'])
+            ->whereHas('user')
             ->latest()
             ->when($request->filled('search'), function ($q) use ($request) {
                 $search = $request->search;
