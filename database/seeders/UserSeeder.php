@@ -63,13 +63,14 @@ class UserSeeder extends Seeder
 
     private function createUser(array $data): void
     {
-        User::updateOrCreate(
-            ['email' => $data['email']],
-            array_merge([
-                'password'          => Hash::make('password123'),
-                'email_verified_at' => now(),
-            ], $data)
-        );
+        // forceFill(): seeder adalah kode tepercaya dan perlu mengisi kolom yang
+        // sengaja tidak mass-assignable (role, portfolio_slug).
+        $user = User::firstOrNew(['email' => $data['email']]);
+
+        $user->forceFill(array_merge([
+            'password'          => Hash::make('password123'),
+            'email_verified_at' => now(),
+        ], $data))->save();
     }
 
     private function allSkillOptions(): array

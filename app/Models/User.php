@@ -23,7 +23,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        // 'role' SENGAJA tidak ada di sini (mass assignment protection): role
+        // menentukan hak akses (admin/guru/siswa), jadi tidak boleh bisa diisi
+        // lewat create()/update()/fill() dari data request. Set eksplisit lewat
+        // $user->role = '...' (lihat StudentController::store) atau forceFill()
+        // pada kode tepercaya seperti seeder.
         'nis_nip',
         'photo',
         'bio',
