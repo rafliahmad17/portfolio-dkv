@@ -6,6 +6,7 @@ use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -25,6 +26,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Tanggal relatif (diffForHumans) & translatedFormat mengikuti APP_LOCALE.
+        Carbon::setLocale(config('app.locale'));
+
         $this->configureRateLimiting();
         $this->configureResetPasswordMail();
     }
