@@ -82,6 +82,25 @@
     --radius-pill: 999px;
 }
 
+/* ── Tahap 4 — poin 18.1a: token bersama halaman dashboard/dll ──
+   Sebelumnya blok :root ini diulang di <style> hampir semua file Blade,
+   dan resources/css/components/dashboard-shell*.css memakainya tanpa
+   mendefinisikannya. Nilai disalin PERSIS dari blok inline yang identik.
+   Sengaja :root biasa (tanpa @layer) agar perilakunya sama dengan blok
+   inline; halaman yang punya nilai berbeda (public/portfolio/profile,
+   welcome) tetap menimpa lewat :root miliknya sendiri, yang dimuat
+   setelah file ini. --shadow-lift sengaja tidak dipusatkan (hanya dipakai
+   siswa/dashboard). */
+:root {
+    --surface-sunk:    #F6F1E7;
+    --hairline:        rgba(25,24,22,0.10);
+    --hairline-strong: rgba(25,24,22,0.18);
+    --oxblood-soft:    rgba(122,46,46,0.08);
+    --oxblood-border:  rgba(122,46,46,0.26);
+    --oxblood-ink:     #6E2A2A;
+    --shadow-paper:    0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
+}
+
 /* ── Tahap 1 refactor CSS: ekstraksi zero-risk ──
    Token & keyframe berikut disalin PERSIS (tanpa perubahan nilai) dari
    blok yang identik byte-per-byte di beberapa file Blade tema gelap
