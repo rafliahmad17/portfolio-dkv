@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -75,14 +76,14 @@ class StudentController extends Controller
             'password.min'      => 'Password minimal 8 karakter.',
         ]);
 
-        $siswa = User::create([
+        // role TIDAK mass-assignable (lihat User::$fillable), jadi diisi eksplisit.
+        $siswa = new User([
             'name'     => $validated['name'],
             'email'    => $validated['email'],
             'nis_nip'  => $validated['nis_nip'] ?? null,
             'password' => Hash::make($validated['password']),
-            'role'     => 'siswa',
         ]);
-
+        $siswa->role = 'siswa';
         $siswa->portfolio_slug = User::generateUniquePortfolioSlug($validated['name']);
         $siswa->save();
 
@@ -184,6 +185,13 @@ class StudentController extends Controller
      * tambahan sebelum data benar-benar tidak bisa dikembalikan lagi —
      * termasuk seluruh portofolio & prestasi terkait, karena forceDelete()
      * memicu DELETE fisik sehingga cascadeOnDelete() di database ikut berjalan.
+     *
+     * Cascade hanya menghapus BARIS database. File di storage (foto profil,
+     * gambar & PDF karya, gambar & dokumen prestasi) tidak ikut terhapus dan
+     * akan menjadi file yatim, jadi daftar path-nya dikumpulkan SEBELUM
+     * forceDelete() (setelah cascade barisnya sudah hilang) dan file baru
+     * dihapus SETELAH database berhasil. Jika forceDelete() gagal, data dan
+     * file siswa tetap utuh.
      */
     public function forceDelete(User $siswa): RedirectResponse
     {
@@ -191,10 +199,48 @@ class StudentController extends Controller
         abort_unless($siswa->trashed(), 403, 'Pindahkan akun ke arsip terlebih dahulu sebelum menghapus permanen.');
 
         $namaSiswa = $siswa->name;
+        $filePaths = $this->collectStoragePaths($siswa);
+
         $siswa->forceDelete();
+
+        // Database sudah bersih -> aman membuang file. Kegagalan hapus file
+        // (mis. izin folder) dicatat di log, tidak menggagalkan penghapusan akun.
+        try {
+            Storage::disk('public')->delete($filePaths);
+        } catch (\Throwable $e) {
+            report($e);
+        }
 
         return redirect()->route('guru.siswa.index', ['trashed' => 1])
             ->with('success', "Akun siswa '{$namaSiswa}' beserta seluruh datanya dihapus permanen.");
+    }
+
+    /**
+     * Kumpulkan seluruh path file milik siswa di disk 'public': foto profil,
+     * gambar & PDF karya, gambar & dokumen prestasi. Path contoh seeder
+     * (mengandung "/dummy/") dilewati karena dipakai bersama oleh banyak
+     * akun demo, bukan file milik satu siswa.
+     */
+    private function collectStoragePaths(User $siswa): array
+    {
+        $paths = [$siswa->photo];
+
+        foreach ($siswa->portfolios()->get(['image_path', 'file_pdf_path']) as $karya) {
+            $paths[] = $karya->image_path;
+            $paths[] = $karya->file_pdf_path;
+        }
+
+        foreach ($siswa->achievements()->get(['image_path', 'file_path']) as $prestasi) {
+            $paths[] = $prestasi->image_path;
+            $paths[] = $prestasi->file_path;
+        }
+
+        return collect($paths)
+            ->filter()
+            ->reject(fn (string $path) => str_contains($path, '/dummy/'))
+            ->unique()
+            ->values()
+            ->all();
     }
 
     // Pembuatan portfolio_slug kini bersumber tunggal dari
