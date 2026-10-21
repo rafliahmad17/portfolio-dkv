@@ -11,6 +11,12 @@ class PortfolioSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            $this->command?->error('PortfolioSeeder (data dummy) diblokir di environment production.');
+
+            return;
+        }
+
         $siswa      = User::where('role', 'siswa')->get();
         $categories = Category::all();
 

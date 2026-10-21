@@ -11,6 +11,14 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
+        // Akun demo berpassword "password123" -- dilarang di produksi, termasuk
+        // jika seeder ini dipanggil langsung (php artisan db:seed --class=UserSeeder).
+        if (app()->environment('production')) {
+            $this->command?->error('UserSeeder diblokir di environment production.');
+
+            return;
+        }
+
         $this->createUser([
             'name'    => 'Administrator',
             'email'   => 'admin@smkn2.sch.id',

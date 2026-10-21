@@ -10,6 +10,12 @@ class AchievementSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            $this->command?->error('AchievementSeeder (data dummy) diblokir di environment production.');
+
+            return;
+        }
+
         $siswa = User::where('role', 'siswa')->get();
 
         if ($siswa->isEmpty()) {
