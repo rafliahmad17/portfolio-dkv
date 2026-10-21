@@ -2,6 +2,9 @@
 
 ## 1. Persiapan server
 - PHP sesuai `composer.json`, MySQL/MariaDB, ekstensi PHP standar Laravel.
+- Node.js 20.19+ atau 22.12+ dan npm, untuk membangun aset frontend
+  (folder `public/build` tidak disimpan di Git, jadi harus dibangun di server
+  atau di mesin build lalu disalin).
 - Document root web server diarahkan ke folder `public/`, bukan ke root project.
 - Situs wajib diakses lewat HTTPS.
 
@@ -17,6 +20,8 @@ Lalu edit `.env` dan ganti semua nilai bertanda `GANTI`. Pastikan:
 | `APP_ENV` | `production` |
 | `APP_DEBUG` | `false` |
 | `APP_URL` | URL HTTPS publik |
+| `APP_LOCALE` | `id` |
+| `APP_TIMEZONE` | `Asia/Jakarta` |
 | `LOG_LEVEL` | `error` |
 | `SESSION_SECURE_COOKIE` | `true` |
 | `MAIL_MAILER` | `smtp` (bukan `log`/`array`) |
@@ -27,12 +32,18 @@ Lalu edit `.env` dan ganti semua nilai bertanda `GANTI`. Pastikan:
 ## 3. Instalasi
 ```
 composer install --no-dev --optimize-autoloader
+npm ci
+npm run build
 php artisan migrate --force
 php artisan storage:link
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 ```
+
+Jika zona waktu diubah pada database yang sudah berisi data, kolom
+`created_at`/`updated_at` lama (tersimpan sebagai UTC) akan terbaca sebagai WIB
+dan tampak 7 jam lebih awal. Untuk instalasi baru hal ini tidak berlaku.
 
 ## 4. Seeder di produksi
 **Jangan** menjalankan `UserSeeder`, `PortfolioSeeder`, atau `AchievementSeeder`.

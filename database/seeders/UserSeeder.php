@@ -38,6 +38,20 @@ class UserSeeder extends Seeder
             'photo'   => 'users/dummy/guru-1.jpg',
         ]);
 
+        // Akun siswa demo dengan email tetap, supaya alur siswa bisa dicoba tanpa
+        // menebak email. Siswa lain di bawah dibuat acak (nama & email berbeda
+        // setiap kali seeder dijalankan). NIS ini sengaja di luar rentang acak.
+        $this->createUser([
+            'name'           => 'Siswa Demo',
+            'email'          => 'siswa@smkn2.sch.id',
+            'role'           => 'siswa',
+            'nis_nip'        => '2201100000',
+            'bio'            => 'Akun siswa demo untuk mencoba fitur portofolio.',
+            'contact'        => '+62 812-0000-0000',
+            'portfolio_slug' => 'siswa-demo',
+            'skills'         => array_slice($this->allSkillOptions(), 0, 5),
+        ]);
+
         for ($i = 1; $i <= 12; $i++) {
             $name = fake('id_ID')->name();
             $slug = Str::slug($name);

@@ -74,7 +74,10 @@ class UserMassAssignmentTest extends TestCase
 
         $this->assertSame('admin', User::where('email', 'admin@smkn2.sch.id')->value('role'));
         $this->assertSame('guru', User::where('email', 'guru@smkn2.sch.id')->value('role'));
-        $this->assertSame(12, User::where('role', 'siswa')->count());
+        // 1 akun siswa demo (email tetap) + 12 siswa acak.
+        $this->assertSame(13, User::where('role', 'siswa')->count());
+        $this->assertSame('siswa', User::where('email', 'siswa@smkn2.sch.id')->value('role'));
+        $this->assertSame('siswa-demo', User::where('email', 'siswa@smkn2.sch.id')->value('portfolio_slug'));
         $this->assertSame(0, User::where('role', 'siswa')->whereNull('portfolio_slug')->count());
     }
 }
