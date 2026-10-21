@@ -17,15 +17,8 @@
 
 @push('styles')
 <style>
-    :root {
-        --hairline:        rgba(25,24,22,0.10);
-        --hairline-strong: rgba(25,24,22,0.18);
-        --surface-sunk:    #F6F1E7;
-        --oxblood-soft:    rgba(122,46,46,0.08);
-        --oxblood-border:  rgba(122,46,46,0.26);
-        --oxblood-ink:     #6E2A2A;
-        --shadow-paper:    0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
-    }
+    /* Token --hairline(-strong), --surface-sunk, --oxblood-*, --shadow-paper kini
+       global di resources/css/app.css (Tahap 4 — 18.1b). */
 
     /* ── DESIGN TOKENS (migrasi Fase 2.2: --tk-* → token editorial resmi) ── */
     /* --tk-border-3 sudah selesai dimigrasikan & dihapus di Batch 2 (dipakai

@@ -12,16 +12,9 @@
 <style>
     :root {
         /* Fase 2.1 File 2 — reskin ke sistem editorial "Kertas & Oxblood".
-           Token lokal berikut menyalin PERSIS nama & nilai yang sudah dipakai
-           di resources/views/guru/dashboard.blade.php (Fase 2.1 File 1) supaya
-           konsisten lintas halaman guru. --red/--red-bright/--red-glow/
+           Token --surface-sunk, --hairline(-strong), --oxblood-* kini global di
+           resources/css/app.css (Tahap 4 — 18.1b). --red/--red-bright/--red-glow/
            --red-soft/--border (app.css) TIDAK dipakai lagi di halaman ini. */
-        --surface-sunk:    #F6F1E7;
-        --hairline:        rgba(25,24,22,0.10);
-        --hairline-strong: rgba(25,24,22,0.18);
-        --oxblood-soft:    rgba(122,46,46,0.08);
-        --oxblood-border:  rgba(122,46,46,0.26);
-        --oxblood-ink:     #6E2A2A;
 
         /* --green & --green-glow unik untuk halaman ini (banner sukses avatar
            & indikator status akun), tidak dipindah ke app.css. Nilai TIDAK

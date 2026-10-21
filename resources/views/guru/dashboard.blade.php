@@ -10,14 +10,8 @@
 
 @push('styles')
 <style>
-        :root {
-            --surface-sunk:    #F6F1E7;
-            --hairline:        rgba(25,24,22,0.10);
-            --hairline-strong: rgba(25,24,22,0.18);
-            --oxblood-soft:    rgba(122,46,46,0.08);
-            --oxblood-border:  rgba(122,46,46,0.26);
-            --oxblood-ink:     #6E2A2A;
-        }
+        /* Token --surface-sunk, --hairline(-strong), --oxblood-* kini global di
+           resources/css/app.css (Tahap 4 — 18.1b); blok :root lokal dihapus. */
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

@@ -24,16 +24,9 @@
 @push('styles')
 <style>
     :root {
-
-        --surface-sunk:   #F6F1E7;
-
-
-        --hairline:       rgba(25,24,22,0.10);
-        --hairline-strong:rgba(25,24,22,0.18);
-        --oxblood-soft:   rgba(122,46,46,0.08);
-        --oxblood-border: rgba(122,46,46,0.26);
-        --oxblood-ink:    #6E2A2A;
-        --shadow-paper:   0 1px 2px rgba(25,24,22,0.04), 0 16px 34px -20px rgba(25,24,22,0.16);
+        /* Token --surface-sunk, --hairline(-strong), --oxblood-*, --shadow-paper
+           kini global di resources/css/app.css (Tahap 4 — 18.1b).
+           --shadow-lift tetap lokal (hanya dipakai halaman ini). */
         --shadow-lift:    0 1px 2px rgba(25,24,22,0.05), 0 22px 44px -20px rgba(122,46,46,0.22);
     }
 
