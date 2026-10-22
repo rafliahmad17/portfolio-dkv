@@ -445,7 +445,7 @@
             </a>
 
             <div class="brandmark">
-                <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK Negeri 2 Padang Panjang">
+                <x-school-logo />
                 <span class="brandmark-text"><b>DKV SMEKDA</b> / Portal</span>
             </div>
 

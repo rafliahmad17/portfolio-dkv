@@ -527,7 +527,7 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-mark">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                        <x-school-logo alt="Logo SMK" />
                     </div>
                     DKV<span class="dot">.</span>SMEKDA
                 </div>
@@ -545,7 +545,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
             <div class="profile-avatar" style="overflow:hidden;">
                 @if(auth()->user()->photo)
-                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" width="64" height="64" decoding="async" style="width:100%; height:100%; object-fit:cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif
@@ -772,7 +772,7 @@
                                 </div>
 
                                 <div id="tkImagePreviewWrap" class="absolute inset-0 hidden">
-                                    <img src="#" alt="Pratinjau gambar karya" id="tkImagePreviewImg" class="w-full h-full object-cover">
+                                    <img src="#" alt="Pratinjau gambar karya" width="800" height="600" id="tkImagePreviewImg" class="w-full h-full object-cover">
 
                                     <button type="button" id="tkRemoveImageBtn"
                                             class="hidden absolute top-3 right-3 z-10 w-7 h-7 rounded-full border items-center justify-center transition-colors duration-200 focus-visible:outline-none"

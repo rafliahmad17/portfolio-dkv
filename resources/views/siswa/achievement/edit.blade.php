@@ -280,7 +280,7 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-mark">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                        <x-school-logo alt="Logo SMK" />
                     </div>
                     DKV<span class="dot">.</span>SMEKDA
                 </div>
@@ -298,7 +298,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
             <div class="profile-avatar" style="overflow:hidden;">
                 @if(auth()->user()->photo)
-                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" width="64" height="64" decoding="async" style="width:100%; height:100%; object-fit:cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif
@@ -504,7 +504,7 @@
 
                     @if($achievement->image_path)
                         <div class="current-file-box">
-                            <img src="{{ asset('storage/' . $achievement->image_path) }}" alt="{{ $achievement->title }}" class="current-file-thumb">
+                            <img src="{{ asset('storage/' . $achievement->image_path) }}" alt="{{ $achievement->title }}" width="44" height="44" class="current-file-thumb">
                             <div>
                                 <div class="current-file-text">Gambar saat ini tersimpan</div>
                                 <div class="current-file-sub">Unggah gambar baru di bawah untuk menggantinya.</div>

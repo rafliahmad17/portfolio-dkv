@@ -50,7 +50,7 @@
             <div class="sidebar-logo-row">
                 <div class="logo-wordmark">
                     <div class="logo-icon" style="background: var(--surface-sunk); border: 1px solid var(--hairline); box-shadow: none;">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+                        <x-school-logo alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;" />
                     </div>
                     DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
                 </div>
@@ -63,7 +63,7 @@
         @else
             <div class="logo-wordmark">
                 <div class="logo-icon" style="background: var(--surface-sunk); border: 1px solid var(--hairline); box-shadow: none;">
-                    <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;">
+                    <x-school-logo alt="Logo SMK" style="width: 100%; height: 100%; object-fit: contain; padding: 2px;" />
                 </div>
                 DKV<span style="color:var(--color-accent-600);">.</span>SMEKDA
             </div>
@@ -78,7 +78,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
             <div class="profile-avatar" style="overflow: hidden;">
                 @if($sidebarAvatarPath)
-                    <img src="{{ asset('storage/' . $sidebarAvatarPath) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ asset('storage/' . $sidebarAvatarPath) }}" alt="{{ auth()->user()->name }}" width="64" height="64" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif

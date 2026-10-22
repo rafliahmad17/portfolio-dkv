@@ -626,12 +626,14 @@
                             @if(auth()->user()->avatar)
                                 <img id="avatarPreview"
                                      src="{{ asset('storage/' . auth()->user()->avatar) }}"
+                                     width="160" height="160" decoding="async"
                                      class="avatar-img" alt="Foto Profil">
                             @else
                                 <div id="avatarInitials" class="avatar-initials-lg">
                                     {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
                                 </div>
                                 <img id="avatarPreview" src="" class="avatar-img"
+                                     width="160" height="160"
                                      style="display:none;" alt="Foto Profil">
                             @endif
                         </div>

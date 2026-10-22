@@ -9,7 +9,8 @@
     {{-- Meta tags khusus halaman child --}}
     @stack('meta')
 
-    <link rel="icon" type="image/png" href="{{ asset('images/logo-sekolah.png') }}">
+    @php($faviconFile = is_file(public_path('images/logo-sekolah-64.png')) ? 'images/logo-sekolah-64.png' : 'images/logo-sekolah.png')
+    <link rel="icon" type="image/png" href="{{ asset($faviconFile) }}">
 
     {{-- Asset Tailwind CSS & JS via Vite --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])

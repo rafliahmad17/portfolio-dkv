@@ -912,7 +912,7 @@
     <div class="container nav-inner">
         <a href="{{ url('/') }}" class="nav-logo">
             <span class="nav-logo-mark">
-                <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK Negeri 2 Padang Panjang">
+                <x-school-logo />
             </span>
             <span>DKV<em>.</em>SMEKDA</span>
         </a>

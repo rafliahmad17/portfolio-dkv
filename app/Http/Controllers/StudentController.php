@@ -225,8 +225,9 @@ class StudentController extends Controller
     {
         $paths = [$siswa->photo];
 
-        foreach ($siswa->portfolios()->get(['image_path', 'file_pdf_path']) as $karya) {
+        foreach ($siswa->portfolios()->get(['image_path', 'thumbnail_path', 'file_pdf_path']) as $karya) {
             $paths[] = $karya->image_path;
+            $paths[] = $karya->thumbnail_path;
             $paths[] = $karya->file_pdf_path;
         }
 

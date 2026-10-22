@@ -823,7 +823,7 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-mark">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                        <x-school-logo alt="Logo SMK" />
                     </div>
                     DKV<span class="dot">.</span>SMEKDA
                 </div>
@@ -844,7 +844,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
             <div class="profile-avatar">
                 @if(auth()->user()->photo)
-                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" width="64" height="64" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif
@@ -980,10 +980,11 @@
                 <div class="hero-frame">
                     <a href="{{ route('portfolio.public', $featured->slug) }}" target="_blank" rel="noopener noreferrer" class="hero-frame-inner" data-glow data-cursor-target>
                         <img
-                            src="{{ asset('storage/' . $featured->image_path) }}"
+                            src="{{ $featured->image_url }}"
+                            {!! $featured->imageSizeAttributes() !!}
                             alt="{{ $featured->title }}"
                             class="hero-image"
-                            loading="lazy"
+                            fetchpriority="high"
                             decoding="async"
                             onerror="this.onerror=null; this.closest('.hero-frame-inner').classList.add('thumb-broken');"
                         >
@@ -1113,7 +1114,8 @@
                     <div class="portfolio-card" data-reveal data-glow>
                         <a href="{{ route('portfolio.public', $portfolio->slug) }}" target="_blank" rel="noopener noreferrer" class="thumb-wrapper" data-cursor-target>
                             <img
-                                src="{{ asset('storage/' . $portfolio->image_path) }}"
+                                src="{{ $portfolio->thumbnail_url }}"
+                                {!! $portfolio->imageSizeAttributes(true) !!}
                                 alt="{{ $portfolio->title }}"
                                 class="portfolio-thumb"
                                 loading="lazy"

@@ -28,7 +28,8 @@ seluruh karya siswa dan mengelola kategori serta akun siswa.
 - **Lupa & Reset Password**: tautan reset dikirim lewat email.
 - **CRUD Portofolio**: siswa mengunggah, mengedit, dan menghapus karya
   (gambar JPG/PNG maks. 2 MB, PDF opsional maks. 5 MB). Isi file diperiksa,
-  bukan hanya ekstensinya.
+  bukan hanya ekstensinya. Gambar otomatis diperkecil (maks. 1600 px),
+  dikonversi ke WebP, dan dibuatkan thumbnail 480 px untuk kartu/galeri.
 - **Live URL Portfolio**: halaman profil publik per siswa lewat slug (`/u/{slug}`)
   dan halaman detail karya (`/p/{slug}`). Daftar karya dipaginasi 12 per halaman.
 - **PDF Ringkas**: cetak/unduh portofolio ringkas 1-2 halaman, bisa diakses
@@ -55,8 +56,10 @@ seluruh karya siswa dan mengelola kategori serta akun siswa.
 ## Prasyarat
 
 - **PHP 8.3 atau lebih baru**, dengan ekstensi umum Laravel (`mbstring`,
-  `openssl`, `pdo_mysql`, `fileinfo`, `ctype`, `tokenizer`, `xml`). Untuk
-  menjalankan test, aktifkan juga `pdo_sqlite`.
+  `openssl`, `pdo_mysql`, `fileinfo`, `ctype`, `tokenizer`, `xml`). Aktifkan
+  juga `gd` (dengan dukungan WebP) dan `exif` untuk optimasi gambar; tanpa
+  keduanya aplikasi tetap jalan, gambar disimpan apa adanya. Untuk menjalankan
+  test, aktifkan `pdo_sqlite`.
 - **Composer 2**
 - **Node.js 20.19+ atau 22.12+** dan npm (syarat Vite 8)
 - **MySQL 8 atau MariaDB 10.x**
@@ -118,6 +121,17 @@ Buka <http://127.0.0.1:8000>. Selama mengembangkan tampilan, ganti langkah
 ```bash
 php artisan migrate:fresh --seed
 ```
+
+**Optimasi gambar.** Karya yang diunggah setelah fitur thumbnail ada sudah
+otomatis dioptimasi. Untuk data lama (dan sekali untuk logo sekolah), jalankan:
+
+```bash
+php artisan images:optimize --logo
+```
+
+Perintah ini membuat thumbnail + dimensi untuk karya lama (gambar utamanya tidak
+diubah) dan membuat `logo-sekolah.webp` (256 px) serta `logo-sekolah-64.png`
+(favicon) dari logo asli. Aman dijalankan berulang.
 
 Email pada instalasi lokal tidak benar-benar terkirim (`MAIL_MAILER=log`).
 Tautan reset password dapat dibaca di `storage/logs/laravel.log`.

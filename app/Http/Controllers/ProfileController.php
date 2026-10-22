@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ValidatesFileContent;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -15,6 +16,10 @@ use App\Models\User;
 class ProfileController extends Controller
 {
     use ValidatesFileContent;
+
+    public function __construct(private ImageOptimizer $images)
+    {
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -233,9 +238,11 @@ class ProfileController extends Controller
         $newPhotoPath = null;
 
         if ($request->hasFile('photo')) {
-            $newPhotoPath = $request
-                ->file('photo')
-                ->store('profiles/photos', 'public');
+            $newPhotoPath = $this->images->storeResized(
+                $request->file('photo'),
+                'profiles/photos',
+                512
+            );
             $photoPath = $newPhotoPath;
         }
 
@@ -513,12 +520,11 @@ class ProfileController extends Controller
         $newPhotoPath = null;
 
         if ($request->hasFile('avatar')) {
-            $newPhotoPath = $request
-                ->file('avatar')
-                ->store(
-                    'profiles/photos',
-                    'public'
-                );
+            $newPhotoPath = $this->images->storeResized(
+                $request->file('avatar'),
+                'profiles/photos',
+                512
+            );
             $photoPath = $newPhotoPath;
         }
 

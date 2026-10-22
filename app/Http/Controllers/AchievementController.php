@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\ValidatesFileContent;
 use App\Models\Achievement;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -13,6 +14,10 @@ use Illuminate\Support\Facades\Storage;
 class AchievementController extends Controller
 {
     use ValidatesFileContent;
+
+    public function __construct(private ImageOptimizer $images)
+    {
+    }
 
     /**
      * Daftar prestasi & sertifikat milik siswa yang login.
@@ -227,6 +232,11 @@ class AchievementController extends Controller
             : ['application/pdf'];
 
         $this->validateFileContent($file, $allowedMimes, $field);
+
+        // Gambar sertifikat/prestasi diperkecil & dikonversi ke WebP; PDF disimpan apa adanya.
+        if ($field === 'image') {
+            return $this->images->storeResized($file, $folder, 1280);
+        }
 
         return $file->store($folder, 'public');
     }

@@ -426,7 +426,7 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-mark">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                        <x-school-logo alt="Logo SMK" />
                     </div>
                     DKV<span class="dot">.</span>SMEKDA
                 </div>
@@ -444,7 +444,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
             <div class="profile-avatar" style="overflow:hidden;">
                 @if(auth()->user()->photo)
-                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" width="64" height="64" decoding="async" style="width:100%; height:100%; object-fit:cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif
@@ -633,7 +633,8 @@
                                 {{-- Preview: shown with existing image by default --}}
                                 <div class="preview-wrap" id="imagePreviewWrap">
                                     <img
-                                        src="{{ asset('storage/' . $portfolio->image_path) }}"
+                                        src="{{ $portfolio->image_url }}"
+                                        {!! $portfolio->imageSizeAttributes() !!}
                                         alt="{{ $portfolio->title }}"
                                         class="preview-img"
                                         id="imagePreviewImg"

@@ -1,7 +1,8 @@
 # Panduan Deployment Produksi — Portfolio DKV SMEKDA
 
 ## 1. Persiapan server
-- PHP sesuai `composer.json`, MySQL/MariaDB, ekstensi PHP standar Laravel.
+- PHP sesuai `composer.json`, MySQL/MariaDB, ekstensi PHP standar Laravel,
+  ditambah `gd` (dengan WebP) dan `exif` untuk optimasi gambar unggahan.
 - Node.js 20.19+ atau 22.12+ dan npm, untuk membangun aset frontend
   (folder `public/build` tidak disimpan di Git, jadi harus dibangun di server
   atau di mesin build lalu disalin).
@@ -35,6 +36,7 @@ composer install --no-dev --optimize-autoloader
 npm ci
 npm run build
 php artisan migrate --force
+php artisan images:optimize    # thumbnail untuk karya lama; aman diulang
 php artisan storage:link
 php artisan config:cache
 php artisan route:cache

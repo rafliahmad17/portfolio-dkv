@@ -629,7 +629,7 @@
             <span class="corner corner-br"></span>
             <div class="hero-frame-inner mat-frame-inner">
                 @if($user->photo)
-                    <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}">
+                    <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" width="480" height="480" decoding="async">
                 @else
                     <span class="hero-frame-initial">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
                 @endif
@@ -732,7 +732,8 @@
                     <span class="corner corner-br"></span>
                     <div class="work-figure-inner mat-frame-inner">
                         <img
-                            src="{{ asset('storage/' . $portfolio->image_path) }}"
+                            src="{{ $portfolio->thumbnail_url }}"
+                            {!! $portfolio->imageSizeAttributes(true) !!}
                             alt="{{ $portfolio->title }}"
                             class="work-thumb"
                             loading="lazy"
@@ -772,6 +773,7 @@
                     @if($achievement->image_path)
                         <img
                             src="{{ asset('storage/' . $achievement->image_path) }}"
+                            width="640" height="480"
                             alt="{{ $achievement->title }}"
                             class="achv-thumb"
                             loading="lazy"

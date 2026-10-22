@@ -8,11 +8,7 @@
 
             {{-- LOGO SMK --}}
             <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-paper-border bg-paper-muted p-1 sm:h-11 sm:w-11">
-                <img
-                    src="{{ asset('images/logo-sekolah.png') }}"
-                    alt="Logo SMK Negeri 2 Padang Panjang"
-                    class="!block !h-full !w-full !max-w-none !object-contain"
-                >
+                <x-school-logo class="!block !h-full !w-full !max-w-none !object-contain" />
             </div>
 
             {{-- IDENTITAS WEBSITE --}}

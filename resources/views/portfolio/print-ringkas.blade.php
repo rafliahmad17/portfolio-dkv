@@ -746,7 +746,7 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-mark">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                        <x-school-logo alt="Logo SMK" />
                     </div>
                     DKV<span class="dot">.</span>SMEKDA
                 </div>
@@ -764,7 +764,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
             <div class="profile-avatar" style="overflow:hidden;">
                 @if(auth()->user()->photo)
-                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ asset('storage/' . auth()->user()->photo) }}" alt="{{ auth()->user()->name }}" width="64" height="64" decoding="async" style="width:100%; height:100%; object-fit:cover;">
                 @else
                     {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
                 @endif
@@ -1610,11 +1610,7 @@
 
     <div class="school-header avoid">
 
-        <img
-            src="{{ asset('images/logo-sekolah.png') }}"
-            alt="Logo SMK Negeri 2 Padang Panjang"
-            class="school-logo"
-        >
+        <x-school-logo class="school-logo" />
 
         <div>
 
@@ -1644,6 +1640,7 @@
                 <img
                     src="{{ asset('storage/' . $user->photo) }}"
                     alt="{{ $user->name }}"
+                    width="160" height="160"
                 >
 
             @else
@@ -1821,7 +1818,8 @@
                             @if(!empty($karya->image_path))
 
                                 <img
-                                    src="{{ asset('storage/' . $karya->image_path) }}"
+                                    src="{{ $karya->thumbnail_url }}"
+                                    {!! $karya->imageSizeAttributes(true) !!}
                                     alt="{{ $karya->title }}"
                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                                 >

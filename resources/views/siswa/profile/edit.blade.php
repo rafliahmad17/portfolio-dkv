@@ -328,7 +328,7 @@
             <div>
                 <div class="logo-wordmark">
                     <div class="logo-mark">
-                        <img src="{{ asset('images/logo-sekolah.png') }}" alt="Logo SMK">
+                        <x-school-logo alt="Logo SMK" />
                     </div>
                     DKV<span class="dot">.</span>SMEKDA
                 </div>
@@ -346,7 +346,7 @@
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:14px;">
             <div class="profile-avatar" id="sidebarAvatar">
                 @if($user->photo)
-                    <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" style="width:100%; height:100%; object-fit:cover;">
+                    <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" width="64" height="64" decoding="async" style="width:100%; height:100%; object-fit:cover;">
                 @else
                     {{ strtoupper(substr($user->name, 0, 1)) }}
                 @endif
@@ -468,7 +468,7 @@
                     <div class="photo-row">
                         <div class="photo-preview" id="photoPreview">
                             @if($user->photo)
-                                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}">
+                                <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->name }}" width="160" height="160" decoding="async">
                             @else
                                 {{ strtoupper(substr($user->name, 0, 1)) }}
                             @endif

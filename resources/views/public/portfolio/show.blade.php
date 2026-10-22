@@ -241,6 +241,7 @@
     .pw-frame-inner img {
         display: block;
         width: 100%;
+        height: auto; /* atribut width/height di <img> hanya untuk rasio, bukan ukuran paksa */
         max-height: 74vh;
         object-fit: contain;
         background: var(--color-paper-elevated);
@@ -639,7 +640,7 @@
     <nav class="pw-nav" aria-label="Navigasi halaman publik">
         <div class="pw-nav-inner">
             <a href="{{ url('/') }}" class="pw-brand">
-                <img src="{{ asset('images/logo-sekolah.png') }}" alt="Lambang SMK Negeri 2 Padang Panjang">
+                <x-school-logo alt="Lambang SMK Negeri 2 Padang Panjang" />
                 <span class="pw-brand-text">DKV<em>.</em>SMEKDA</span>
             </a>
 
@@ -667,7 +668,9 @@
         <div class="pw-frame pw-reveal pw-reveal-1">
             <div class="pw-frame-inner">
                 <img
-                    src="{{ asset('storage/' . $portfolio->image_path) }}"
+                    src="{{ $portfolio->image_url }}"
+                    {!! $portfolio->imageSizeAttributes() !!}
+                    fetchpriority="high" decoding="async"
                     alt="{{ $portfolio->title }}"
                     onerror="this.closest('.pw-frame-inner').innerHTML='<div style=&quot;padding:48px 20px;text-align:center;color:var(--pw-stone-2);font-size:0.82rem;&quot;>Gambar karya tidak dapat dimuat</div>'"
                 >
@@ -689,7 +692,7 @@
             <a href="{{ route('portfolio.profile', $portfolio->user->portfolio_slug) }}" class="pw-byline">
                 <div class="pw-avatar">
                     @if($portfolio->user->photo)
-                        <img src="{{ asset('storage/' . $portfolio->user->photo) }}" alt="{{ $portfolio->user->name }}">
+                        <img src="{{ asset('storage/' . $portfolio->user->photo) }}" alt="{{ $portfolio->user->name }}" width="96" height="96" decoding="async">
                     @else
                         {{ strtoupper(substr($portfolio->user->name, 0, 1)) }}
                     @endif
@@ -799,7 +802,8 @@
             <a href="{{ route('portfolio.public', $related->slug) }}" class="pw-related-card">
                 <div class="pw-related-thumb-wrap">
                     <img
-                        src="{{ asset('storage/' . $related->image_path) }}"
+                        src="{{ $related->thumbnail_url }}"
+                        {!! $related->imageSizeAttributes(true) !!}
                         alt="{{ $related->title }}"
                         loading="lazy"
                         onerror="this.parentElement.style.background='var(--pw-surface-2)'; this.remove();"

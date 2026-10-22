@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\ValidatesFileContent;
 use App\Models\Category;
 use App\Models\Portfolio;
+use App\Services\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -14,6 +15,10 @@ use Illuminate\Support\Facades\Storage;
 class PortfolioController extends Controller
 {
     use ValidatesFileContent;
+
+    public function __construct(private ImageOptimizer $images)
+    {
+    }
 
     public function create(): View
     {
@@ -36,7 +41,12 @@ class PortfolioController extends Controller
             $this->validateFileContent($request->file('file_pdf'), ['application/pdf'], 'file_pdf');
         }
 
-        $imagePath = $request->file('image')->store('portfolios/images', 'public');
+        // Gambar utama + thumbnail WebP (lihat App\Services\ImageOptimizer).
+        $image = $this->images->storeWithThumbnail(
+            $request->file('image'),
+            'portfolios/images',
+            'portfolios/thumbs'
+        );
 
         $pdfPath = null;
         if ($request->hasFile('file_pdf')) {
@@ -49,8 +59,11 @@ class PortfolioController extends Controller
             'description'   => $validated['description'],
             'category_id'   => $validated['category_id'],
             'user_id'       => Auth::id(),
-            'image_path'    => $imagePath,
-            'file_pdf_path' => $pdfPath,
+            'image_path'     => $image['path'],
+            'thumbnail_path' => $image['thumbnail_path'],
+            'image_width'    => $image['width'],
+            'image_height'   => $image['height'],
+            'file_pdf_path'  => $pdfPath,
         ]);
 
         return redirect()->route('siswa.dashboard')
@@ -76,10 +89,24 @@ class PortfolioController extends Controller
             $this->validateFileContent($request->file('file_pdf'), ['application/pdf'], 'file_pdf');
         }
 
-        $imagePath = $portfolio->image_path;
+        // Berkas gambar lama baru dihapus SETELAH database menunjuk ke yang baru,
+        // sehingga kegagalan di tengah jalan tidak membuat karya kehilangan gambar.
+        $imageData = [];
+        $oldImagePaths = [];
         if ($request->hasFile('image')) {
-            Storage::disk('public')->delete($portfolio->image_path);
-            $imagePath = $request->file('image')->store('portfolios/images', 'public');
+            $image = $this->images->storeWithThumbnail(
+                $request->file('image'),
+                'portfolios/images',
+                'portfolios/thumbs'
+            );
+
+            $imageData = [
+                'image_path'     => $image['path'],
+                'thumbnail_path' => $image['thumbnail_path'],
+                'image_width'    => $image['width'],
+                'image_height'   => $image['height'],
+            ];
+            $oldImagePaths = [$portfolio->image_path, $portfolio->thumbnail_path];
         }
 
         $pdfPath = $portfolio->file_pdf_path;
@@ -94,9 +121,12 @@ class PortfolioController extends Controller
             'title'         => $validated['title'],
             'description'   => $validated['description'],
             'category_id'   => $validated['category_id'],
-            'image_path'    => $imagePath,
             'file_pdf_path' => $pdfPath,
-        ]);
+        ] + $imageData);
+
+        if ($oldImagePaths) {
+            Storage::disk('public')->delete(array_filter($oldImagePaths));
+        }
 
         return redirect()->route('siswa.dashboard')
                          ->with('success', 'Karya berhasil diperbarui! ✏️');
@@ -114,7 +144,10 @@ class PortfolioController extends Controller
     {
         abort_if($portfolio->user_id !== Auth::id(), 403);
 
-        Storage::disk('public')->delete($portfolio->image_path);
+        Storage::disk('public')->delete(array_filter([
+            $portfolio->image_path,
+            $portfolio->thumbnail_path,
+        ]));
 
         if ($portfolio->file_pdf_path) {
             Storage::disk('public')->delete($portfolio->file_pdf_path);
