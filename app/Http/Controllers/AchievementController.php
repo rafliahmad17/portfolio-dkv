@@ -87,46 +87,40 @@ class AchievementController extends Controller
 
         $validated = $this->validated($request);
 
+        // Periksa isi file yang diunggah SEBELUM menyentuh file lama, supaya
+        // unggahan yang isinya tidak valid tidak pernah menghapus file yang ada.
+        $this->validateUploadedContent($request);
+
         // Jangan masukkan object UploadedFile ke database
         unset($validated['image'], $validated['file']);
 
-        /*
-         * Jika ada gambar baru:
-         * hapus gambar lama, kemudian simpan gambar baru.
-         */
+        // File lama baru dihapus SETELAH database menunjuk ke file baru.
+        $oldFiles = [];
+
         if ($request->hasFile('image')) {
-
-            if ($achievement->image_path) {
-                Storage::disk('public')
-                    ->delete($achievement->image_path);
-            }
-
             $validated['image_path'] = $this->storeFile(
                 $request,
                 'image',
                 'achievements/photos'
             );
+            $oldFiles[] = $achievement->image_path;
         }
 
-        /*
-         * Jika ada PDF baru:
-         * hapus PDF lama, kemudian simpan PDF baru.
-         */
         if ($request->hasFile('file')) {
-
-            if ($achievement->file_path) {
-                Storage::disk('public')
-                    ->delete($achievement->file_path);
-            }
-
             $validated['file_path'] = $this->storeFile(
                 $request,
                 'file',
                 'achievements/docs'
             );
+            $oldFiles[] = $achievement->file_path;
         }
 
         $achievement->update($validated);
+
+        $oldFiles = array_filter($oldFiles);
+        if ($oldFiles) {
+            Storage::disk('public')->delete($oldFiles);
+        }
 
         return redirect()
             ->route('siswa.achievement.index')
@@ -212,6 +206,21 @@ class AchievementController extends Controller
                 'max:4096'
             ],
         ]);
+    }
+
+    /**
+     * Validasi isi file (finfo) untuk semua unggahan di request, tanpa menyimpan
+     * atau menghapus apa pun. Dipanggil lebih dulu sebelum file lama disentuh.
+     */
+    private function validateUploadedContent(Request $request): void
+    {
+        if ($request->hasFile('image')) {
+            $this->validateFileContent($request->file('image'), ['image/jpeg', 'image/png'], 'image');
+        }
+
+        if ($request->hasFile('file')) {
+            $this->validateFileContent($request->file('file'), ['application/pdf'], 'file');
+        }
     }
 
     /**
