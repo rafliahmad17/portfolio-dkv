@@ -1,0 +1,499 @@
+/* resources/css/pages/siswa-portfolio-create.css
+   CSS halaman resources/views/siswa/portfolio/create.blade.php
+   Tahap 4 - poin 18.2: dipindahkan APA ADANYA dari blok <style> inline halaman tersebut.
+   Dimuat lewat @vite('resources/css/pages/siswa-portfolio-create.css') di @push('styles'), SETELAH app.css,
+   supaya urutan penimpaan sama seperti saat masih inline. */
+
+/* Token --hairline(-strong), --surface-sunk, --oxblood-*, --shadow-paper kini
+   global di resources/css/app.css (Tahap 4 — 18.1b). */
+
+/* ── DESIGN TOKENS (migrasi Fase 2.2: --tk-* → token editorial resmi) ── */
+/* --tk-border-3 sudah selesai dimigrasikan & dihapus di Batch 2 (dipakai
+   langsung sebagai var(--color-paper-border) di .tk-card::before).
+   --tk-red, --tk-red-bright, --tk-red-glow-1/2/3 sudah selesai
+   dimigrasikan & dihapus pada Batch 5 — seluruh rule dropzone/PDF di
+   bawah sudah memakai var(--color-accent-*) langsung, sehingga custom
+   property lokal ini tidak lagi direferensikan di mana pun pada file ini. */
+
+body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible, [tabindex]:focus-visible {
+    outline: 2px solid var(--color-accent-600);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.skip-link {
+    position: fixed; top: -100px; left: 16px; z-index: 100;
+    background: var(--color-ink); color: var(--color-paper);
+    padding: 10px 18px; border-radius: 8px;
+    font-family: var(--font-sans); font-size: 0.8rem; font-weight: 600;
+    text-decoration: none; transition: top 0.2s ease;
+}
+.skip-link:focus { top: 16px; }
+
+/* Elemen topbar kanan khusus halaman ini (page-specific per dokumentasi
+   dashboard-shell-siswa.css — lihat catatan #4 di file tersebut). */
+.badge-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--hairline-strong); border-radius: 30px; padding: 6px 14px;
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--color-ink-muted); letter-spacing: 0.5px; white-space: nowrap;
+}
+
+.tk-page {
+    position: relative;
+}
+.tk-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.025;
+    mix-blend-mode: overlay;
+    background-repeat: repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── CARD SURFACE / DEPTH ── */
+.tk-card {
+    position: relative;
+    background: var(--color-paper-elevated);
+    border: 1px solid var(--color-paper-border);
+    box-shadow: var(--shadow-paper);
+}
+.tk-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-paper-border), transparent);
+    pointer-events: none;
+}
+
+/* ── IMAGE DROPZONE ── */
+.tk-dropzone {
+    transition: border-color .3s ease, background-color .3s ease, box-shadow .3s ease;
+}
+.tk-dropzone:hover,
+.tk-dropzone:focus-visible {
+    border-color: var(--color-accent-600);
+    background-color: color-mix(in srgb, var(--color-accent-600) 4.5%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+    outline: none;
+}
+.tk-dropzone.has-error {
+    border-color: color-mix(in srgb, var(--color-accent-500) 60%, transparent) !important;
+    background-color: color-mix(in srgb, var(--color-accent-500) 5%, transparent) !important;
+}
+.tk-dropzone.has-preview {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+.tk-dropzone.is-dragover {
+    animation: tk-border-pulse 1.4s ease-in-out infinite;
+}
+@keyframes tk-border-pulse {
+    0%, 100% { border-color: var(--color-accent-600); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 12%, transparent); }
+    50%      { border-color: var(--color-accent-500); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 18%, transparent); }
+}
+
+.tk-drop-icon-box { transition: background-color .3s ease, border-color .3s ease; }
+.tk-drop-icon-box svg { transition: color .3s ease; }
+.tk-drop-title { transition: color .3s ease; }
+.tk-dropzone:hover .tk-drop-icon-box,
+.tk-dropzone:focus-visible .tk-drop-icon-box {
+    background-color: color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent-600) 25%, transparent);
+}
+.tk-dropzone:hover .tk-drop-icon-box svg,
+.tk-dropzone:focus-visible .tk-drop-icon-box svg { color: var(--color-accent-600); }
+.tk-dropzone:hover .tk-drop-title,
+.tk-dropzone:focus-visible .tk-drop-title { color: var(--color-ink); }
+
+.tk-preview-overlay {
+    opacity: 0;
+    background-color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+    transition: opacity .3s ease;
+}
+.tk-dropzone:hover .tk-preview-overlay,
+.tk-dropzone:focus-within .tk-preview-overlay { opacity: 1; }
+
+/* ── IMAGE PREVIEW CONTROLS: tombol Hapus (Batch 5.1d-2 — migrasi token editorial) ── */
+#tkRemoveImageBtn {
+    background-color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+    border-color: color-mix(in srgb, var(--color-paper) 15%, transparent);
+    color: color-mix(in srgb, var(--color-paper) 60%, transparent);
+}
+#tkRemoveImageBtn:hover {
+    color: var(--color-accent-500);
+    border-color: color-mix(in srgb, var(--color-accent-500) 40%, transparent);
+}
+#tkRemoveImageBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+
+/* ── IMAGE PREVIEW CONTROLS: tombol Ganti Gambar (Batch 5.1d-4 ── migrasi token editorial) ── */
+#tkChangeImageBtn {
+    background-color: color-mix(in srgb, var(--color-accent-600) 90%, transparent);
+    color: var(--color-paper);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+#tkChangeImageBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 40%, transparent), 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+
+/* ── PREVIEW REVEAL ANIMATION ── */
+@keyframes tk-fade-in {
+    from { opacity: 0; transform: scale(0.97); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.tk-fade-in { animation: tk-fade-in 0.35s ease forwards; }
+
+/* ── ERROR SHAKE ── */
+@keyframes tk-shake {
+    10%, 90% { transform: translateX(-1px); }
+    20%, 80% { transform: translateX(2px); }
+    30%, 50%, 70% { transform: translateX(-3px); }
+    40%, 60% { transform: translateX(3px); }
+}
+.tk-shake { animation: tk-shake 0.4s ease-in-out; }
+
+/* ── PDF AREA ── */
+.tk-pdf-area { transition: border-color .25s ease, background-color .25s ease; }
+.tk-pdf-area:hover,
+.tk-pdf-area:focus-visible {
+    border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent-600) 3.5%, transparent);
+    outline: none;
+}
+.tk-pdf-area.has-error {
+    border-color: color-mix(in srgb, var(--color-accent-500) 55%, transparent) !important;
+    background-color: color-mix(in srgb, var(--color-accent-500) 5%, transparent) !important;
+}
+.tk-pdf-area.has-file {
+    border-style: solid;
+    border-color: color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent-600) 5%, transparent);
+}
+.tk-pdf-area.has-file .tk-pdf-text { color: var(--color-accent-500); }
+.tk-pdf-area.has-file .tk-pdf-icon-box {
+    color: var(--color-accent-600);
+    border-color: color-mix(in srgb, var(--color-accent-600) 25%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent-600) 12%, transparent);
+}
+.tk-pdf-area.is-dragover {
+    border-color: var(--color-accent-600) !important;
+    background-color: color-mix(in srgb, var(--color-accent-600) 12%, transparent) !important;
+}
+
+/* ── PDF PREVIEW CONTROLS: tombol Hapus PDF (Batch 5.2f — migrasi token editorial) ── */
+#tkRemovePdfBtn {
+    background-color: color-mix(in srgb, var(--color-ink) 5%, transparent);
+    border-color: color-mix(in srgb, var(--color-ink) 10%, transparent);
+    color: var(--color-ink-faint);
+}
+#tkRemovePdfBtn:hover {
+    color: var(--color-accent-500);
+    border-color: color-mix(in srgb, var(--color-accent-500) 30%, transparent);
+}
+#tkRemovePdfBtn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+
+/* ── FIELD: JUDUL KARYA (Batch 4.1 — migrasi token editorial) ── */
+.tk-title-icon {
+    color: var(--color-ink-faint);
+    transition: color .2s ease;
+}
+.group:focus-within .tk-title-icon {
+    color: var(--color-accent-600);
+}
+.tk-title-input {
+    color: var(--color-ink);
+    background-color: var(--color-paper-elevated);
+    border-color: var(--color-paper-border);
+    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.tk-title-input::placeholder {
+    color: var(--color-ink-faint);
+}
+.tk-title-input:hover {
+    border-color: var(--color-accent-700);
+}
+.tk-title-input:focus {
+    outline: none;
+    border-color: var(--color-accent-600);
+    background-color: var(--color-paper-elevated);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+}
+.tk-title-input.has-error {
+    border-color: var(--color-accent-500);
+    background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
+}
+
+/* ── FIELD: KATEGORI (Batch 4.2 — migrasi token editorial) ── */
+.tk-category-icon {
+    color: var(--color-ink-faint);
+    transition: color .2s ease;
+}
+.group:focus-within .tk-category-icon {
+    color: var(--color-accent-600);
+}
+.tk-category-chevron {
+    color: var(--color-ink-faint);
+}
+.tk-category-select {
+    color: var(--color-ink);
+    background-color: var(--color-paper-elevated);
+    border-color: var(--color-paper-border);
+    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.tk-category-select:invalid {
+    color: var(--color-ink-faint);
+}
+.tk-category-select:hover:not(:disabled) {
+    border-color: var(--color-accent-700);
+}
+.tk-category-select:focus:not(:disabled) {
+    outline: none;
+    border-color: var(--color-accent-600);
+    background-color: var(--color-paper-elevated);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+}
+.tk-category-select.has-error {
+    border-color: var(--color-accent-500);
+    background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
+}
+.tk-category-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.tk-category-select option {
+    background-color: var(--color-paper-elevated);
+    color: var(--color-ink);
+}
+
+/* ── FIELD: DESKRIPSI (Batch 4.3 — migrasi token editorial) ── */
+.tk-description-textarea {
+    color: var(--color-ink);
+    background-color: var(--color-paper-elevated);
+    border-color: var(--color-paper-border);
+    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+}
+.tk-description-textarea::placeholder {
+    color: var(--color-ink-faint);
+}
+.tk-description-textarea:hover {
+    border-color: var(--color-accent-700);
+}
+.tk-description-textarea:focus {
+    outline: none;
+    border-color: var(--color-accent-600);
+    background-color: var(--color-paper-elevated);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+}
+.tk-description-textarea.has-error {
+    border-color: var(--color-accent-500);
+    background-color: color-mix(in srgb, var(--color-accent-500) 8%, transparent);
+}
+
+/* ── PAGE HEADER (Batch 5.3c — migrasi token editorial) ── */
+.tk-header-blur {
+    background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+}
+.tk-header-back-link {
+    border-color: var(--color-paper-border);
+    background-color: var(--color-paper-elevated);
+    color: var(--color-ink-muted);
+    transition: color .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.tk-header-back-link:hover {
+    color: var(--color-accent-500);
+    border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+    background-color: color-mix(in srgb, var(--color-accent-600) 6%, transparent);
+}
+.tk-header-back-link:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+.tk-header-eyebrow {
+    color: color-mix(in srgb, var(--color-accent-600) 70%, transparent);
+}
+.tk-header-title {
+    color: var(--color-ink);
+}
+.tk-header-title-accent {
+    color: var(--color-accent-600);
+    text-shadow: 0 0 26px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+}
+.tk-header-subtitle {
+    color: var(--color-ink-faint);
+}
+
+/* ── SUCCESS FLASH BANNER (Batch 5.3e — migrasi token editorial) ── */
+.tk-success-banner {
+    border-color: color-mix(in srgb, var(--color-accent-600) 25%, transparent);
+    border-left-color: var(--color-accent-600);
+    background-color: color-mix(in srgb, var(--color-accent-600) 6%, transparent);
+}
+.tk-success-icon-box {
+    background-color: color-mix(in srgb, var(--color-accent-600) 15%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+}
+.tk-success-icon {
+    color: var(--color-accent-500);
+}
+.tk-success-text {
+    color: var(--color-ink);
+}
+
+/* ── GLOBAL ERROR ALERT (Batch 5.3f — migrasi token editorial) ── */
+.tk-error-banner {
+    border-color: color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+    border-left-color: var(--color-accent-600);
+    background-color: color-mix(in srgb, var(--color-accent-600) 8%, transparent);
+}
+.tk-error-heading {
+    color: var(--color-accent-500);
+}
+.tk-error-bullet {
+    color: var(--color-accent-600);
+}
+.tk-error-text {
+    color: color-mix(in srgb, var(--color-ink) 80%, transparent);
+}
+
+/* ── EMPTY CATEGORY WARNING (migrasi: dulu Tailwind arbitrary yellow-500,
+     sekarang class lokal — warna amber dipertahankan sebagai warna semantik
+     "peringatan" yang terpisah dari aksen oxblood, konsisten dengan
+     .flash-success di siswa/achievement/index.blade.php yang juga memakai
+     warna semantik (hijau) di luar token oxblood) ── */
+.tk-warning-banner {
+    background: rgba(217,158,10,0.08);
+    border: 1px solid rgba(217,158,10,0.25);
+    border-left: 3px solid #D97706;
+    border-radius: 12px;
+}
+.tk-warning-icon { color: #D97706; }
+.tk-warning-text { color: color-mix(in srgb, var(--color-ink) 80%, transparent); }
+.tk-warning-text strong { color: #B45309; }
+.tk-warning-code {
+    background: var(--color-paper-muted);
+    border: 1px solid var(--color-paper-border);
+    color: var(--color-ink-muted);
+}
+
+/* ── MEDIA KARYA CARD HEADER (Batch 5.3h — migrasi token editorial) ── */
+.tk-media-header-border {
+    border-bottom-color: var(--color-paper-border);
+}
+.tk-media-icon-box {
+    background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+}
+.tk-media-icon {
+    color: var(--color-accent-600);
+}
+.tk-media-title {
+    color: var(--color-ink);
+}
+.tk-media-subtitle {
+    color: var(--color-ink-faint);
+}
+
+/* ── INFORMASI KARYA HEADER (Batch 5.3i — migrasi token editorial) ── */
+.tk-info-header-border {
+    border-bottom-color: var(--color-paper-border);
+}
+.tk-info-icon-box {
+    background-color: color-mix(in srgb, var(--color-accent-600) 10%, transparent);
+    border-color: color-mix(in srgb, var(--color-accent-600) 20%, transparent);
+}
+.tk-info-icon {
+    color: var(--color-accent-600);
+}
+.tk-info-title {
+    color: var(--color-ink);
+}
+.tk-info-subtitle {
+    color: var(--color-ink-faint);
+}
+
+/* ── TIPS CARD (migrasi: dulu border-red-600/[...] + text-white/[...],
+     sekarang token oxblood-soft, konsisten dengan .tips-card di
+     siswa/portfolio/edit.blade.php) ── */
+.tk-tips-card {
+    background: var(--oxblood-soft);
+    border: 1px solid var(--oxblood-border);
+    border-radius: 14px;
+}
+.tk-tips-title { color: var(--oxblood-ink); }
+.tk-tips-item { color: var(--color-ink-muted); }
+.tk-tips-item strong { color: var(--color-ink); }
+.tk-tips-bullet { background: var(--color-accent-600); }
+.tk-tips-asterisk { color: var(--color-accent-600); }
+
+/* ── TOMBOL SIMPAN (migrasi: dulu bg-red-600 hardcoded, sekarang
+     var(--color-accent-*), konsisten dengan .btn-submit di
+     siswa/portfolio/edit.blade.php) ── */
+.tk-btn-submit {
+    background: var(--color-accent-600);
+    color: var(--color-paper);
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent);
+    position: relative; overflow: hidden;
+    transition: all 0.3s ease;
+}
+.tk-btn-submit::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--color-accent-700), var(--color-accent-500));
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.tk-btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px color-mix(in srgb, var(--color-accent-600) 45%, transparent), 0 0 0 4px color-mix(in srgb, var(--color-accent-600) 15%, transparent);
+}
+.tk-btn-submit:hover:not(:disabled)::before { opacity: 1; }
+.tk-btn-submit:active:not(:disabled) { transform: translateY(0); }
+.tk-btn-submit span, .tk-btn-submit svg { position: relative; z-index: 1; }
+.tk-btn-submit:focus-visible {
+    outline: none;
+    box-shadow: 0 4px 20px color-mix(in srgb, var(--color-accent-600) 30%, transparent), 0 0 0 3px color-mix(in srgb, var(--color-accent-600) 35%, transparent);
+}
+.tk-btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+/* ── TOMBOL BATAL (migrasi: dulu border-white/[...] bg-white/[...],
+     sekarang token paper/oxblood) ── */
+.tk-btn-cancel {
+    border: 1px solid var(--color-paper-border);
+    background: var(--color-paper-elevated);
+    color: var(--color-ink-faint);
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+.tk-btn-cancel:hover {
+    color: var(--oxblood-ink);
+    border-color: var(--oxblood-border);
+    background: var(--oxblood-soft);
+}
+.tk-btn-cancel:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent-600) 40%, transparent);
+}
+
+/* ── DEKORASI BLOB BAWAH (migrasi: dulu bg-red-600/[0.05]) ── */
+.tk-decor-blob {
+    background: color-mix(in srgb, var(--color-accent-600) 5%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tk-page *, .tk-page *::before, .tk-page *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

@@ -11,6 +11,12 @@ export default defineConfig({
                 // CSS halaman/komponen yang dimuat per halaman lewat @vite (Tahap 4 — 18.2).
                 'resources/css/components/auth.css',
                 'resources/css/pages/public-portfolio-show.css',
+                'resources/css/pages/siswa-achievement-index.css',
+                'resources/css/pages/siswa-achievement-edit.css',
+                'resources/css/pages/siswa-profile-edit.css',
+                'resources/css/pages/siswa-portfolio-create.css',
+                'resources/css/pages/siswa-portfolio-edit.css',
+                'resources/css/pages/siswa-dashboard.css',
             ],
             refresh: true,
         }),
