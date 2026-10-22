@@ -10,6 +10,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 // CSS halaman/komponen yang dimuat per halaman lewat @vite (Tahap 4 — 18.2).
                 'resources/css/components/auth.css',
+                'resources/css/pages/public-portfolio-show.css',
             ],
             refresh: true,
         }),
